@@ -14,7 +14,7 @@
 
 <body>
   <nav class="navbar navbar-expand-lg"
-  :class="{'navbar-light bg-light': !useDarkNavbar, 'navbar-dark bg-dark': useDarkNavbar}" >
+  :class="navbarClasses" >
     <div class="container-fluid">
       <a class="navbar-brand" href="#">My Vue</a>
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -33,7 +33,7 @@
       <form class="d-flex">
         <button
           class="btn btn-primary"
-          @click.prevent="useDarkNavbar = !useDarkNavbar"> # prevent just prevent default behavior it's same as @click (on click event) only
+          @click.prevent="useDarkNavbar = !useDarkNavbar"> <!-- prevent just prevent default behavior it's same as @click (on click event) only -->
           Toggle Navbar
         </button>
       </form>
@@ -48,6 +48,14 @@
 <script>
 
   Vue.createApp({
+    computed: {
+      navbarClasses() {
+        return {
+          'navbar-light bg-light': !this.useDarkNavbar,
+          'navbar-dark bg-dark': this.useDarkNavbar,
+        }
+      }
+    },
     data() {
       return {
         activePage: 0,
