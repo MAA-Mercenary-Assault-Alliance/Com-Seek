@@ -1,6 +1,8 @@
 <template>
-  <div class="bg-red-500 flex top-0 w-full p-4 text-white">
-    hey
+  <div class="bg-[#F2F6FC] flex top-0 w-full h-20 p-4 text-black px-42 justify-center">
+    <div>
+      Hey
+    </div>
   </div>
 </template>
 
