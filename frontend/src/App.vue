@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue"
-
+import AppNavbar from "./components/AppNavbar.vue";
 const message = ref("")
 
 async function callBackend() {
@@ -11,6 +11,7 @@ async function callBackend() {
 </script>
 
 <template>
+  <AppNavbar></AppNavbar>
   <div>
     <h1>Vue + Go Boilerplate</h1>
     <button @click="callBackend">Call Go Backend</button>
