@@ -1,0 +1,19 @@
+<script setup>
+import { ref } from "vue"
+
+const message = ref("")
+
+async function callBackend() {
+  const res = await fetch("http://localhost:8080/api/hello")
+  const data = await res.json()
+  message.value = data.message
+}
+</script>
+
+<template>
+  <div>
+    <h1>Vue + Go Boilerplate</h1>
+    <button @click="callBackend">Call Go Backend</button>
+    <p>{{ message }}</p>
+  </div>
+</template>
