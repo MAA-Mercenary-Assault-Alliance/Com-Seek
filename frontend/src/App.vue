@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from "vue"
-import AppNavbar from "./components/AppNavbar.vue";
-import JobBoard from "./components/JobBoard.vue";
+import GuestNavbar from "./components/GuestNavbar.vue";
 const message = ref("")
 
 async function callBackend() {
@@ -12,11 +11,11 @@ async function callBackend() {
 </script>
 
 <template>
-  <AppNavbar></AppNavbar>
+  <GuestNavbar></GuestNavbar>
   <div id="all" class="bg-[#F2F6FC] text-black"> <!--Default Text set to black right here -->
 
     <div id="main" class="flex justify-center">
-      <JobBoard></JobBoard>
+      <router-view></router-view>
     </div>
 
   </div>
