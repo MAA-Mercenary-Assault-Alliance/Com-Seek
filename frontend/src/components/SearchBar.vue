@@ -5,10 +5,10 @@
 <template>
   <div class="flex bg-[#153243] w-full h-40">
     <div class="flex px-42 w-full flex-col justify-center items-center space-y-7 text-xl">
-      <div class="text-white min-w-300 w-1/2">
+      <div class="text-white min-w-250 w-1/2">
         Search for your jobs now
       </div>
-      <div class="flex flex-row space-x-10 min-w-300 w-1/2">
+      <div class="flex flex-row space-x-10 min-w-250 w-1/2">
         <label class="input-box">
           <input type="search" class="grow pl-3 placeholder-black" placeholder="Keywords" />
         </label>

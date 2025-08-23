@@ -12,3 +12,11 @@ body {
 .input-box {
     @apply input input-lg rounded-2xl placeholder-black
 }
+
+.in-line-stat {
+    @apply flex flex-row text-xs items-center
+}
+
+.in-line-icon {
+    @apply mr-4 w-5
+}
