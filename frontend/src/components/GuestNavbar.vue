@@ -1,18 +1,17 @@
 <template>
   <div class="flex bg-[#F2F6FC] justify-between items-center top-0 w-full h-18 p-4 text-black px-42 text-xl">
     <ul class="flex space-x-4">
-      <li><a href="#">LOGO</a></li>
+      <li><router-link to="/">LOGO</router-link></li>
     </ul>
     <ul class="flex space-x-15">
-      <li><a href="#">Home</a></li>
-      <li><a href="#">Profile</a></li>
+      <li><router-link to="/">Home</router-link></li>
       <!-- Grouped links inside one li -->
       <li class="flex space-x-3 items-center">
-        <a href="#">Sign in</a>
+        <router-link to="/sign-in">Sign in</router-link>
         <span>|</span>
-        <a href="#">Sign up</a>
+        <router-link to="/sign-up">Sign-up</router-link>
       </li>
-      <li><a href="#">For Company</a></li>
+      <li><router-link to="/for-company">For Company</router-link></li>
     </ul>
 
   </div>
