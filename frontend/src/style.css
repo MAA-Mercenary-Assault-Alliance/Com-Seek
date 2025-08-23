@@ -1,8 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Prompt&family=Winky+Sans:ital,wght@0,300..900;1,300..900&display=swap');
 @import "tailwindcss";
-@import "daisyui";
+@plugin "daisyui" {
+    themes: light --default
+}
 
 body {
     font-family: 'Prompt', sans-serif;
     font-size: 16px;  /* default */
+}
+
+.input-box {
+    @apply input input-lg rounded-2xl placeholder-black
 }
