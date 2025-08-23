@@ -12,10 +12,17 @@
         <label class="input-box">
           <input type="search" class="grow pl-3 placeholder-black" placeholder="Keywords" />
         </label>
-        <label class="input-box">
-          <img src="../assets/case.svg" class="px-2 w-13" alt="case"/>
-          <input type="text" class="grow placeholder-black" placeholder="Job Type" />
-        </label>
+        <div class="relative">
+          <img src="../assets/case.svg" class="absolute px-2 w-12 left-3 top-2 z-10" alt="case"/>
+          <select class="select rounded-2xl select-lg pl-18 z-0">
+            <option disabled selected>Job Type</option>
+            <option>Full-Stack Developer</option>
+            <option>Front-End Developer</option>
+            <option>Back-End Developer</option>
+            <option>DevOps Engineer</option>
+            <option>Add more later</option>
+          </select>
+        </div>
         <label class="input-box">
           <img src="../assets/location.svg" class="px-2 w-13" alt="location"/>
           <input type="text" class="grow placeholder-black" placeholder="Location" />
