@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Prompt&family=Winky+Sans:ital,wght@0,300..900;1,300..900&display=swap');
 @import "tailwindcss";
+@import "daisyui";
 
 body {
     font-family: 'Prompt', sans-serif;

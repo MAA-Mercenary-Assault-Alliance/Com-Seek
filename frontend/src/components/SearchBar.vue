@@ -8,8 +8,18 @@
       <div class="text-white">
         Search for your jobs now
       </div>
-      <div>
-        J*B
+      <div class="flex flex-row">
+        <label class="input">
+          <input type="search" class="grow" placeholder="Search" />
+        </label>
+        <label class="input">
+          <input type="text" class="grow" placeholder="index.php" />
+        </label>
+        <label class="input">
+          Path
+          <input type="text" class="grow" placeholder="src/app/" />
+        </label>
+        <button class="btn btn-primary">Primary</button>
       </div>
     </div>
 
