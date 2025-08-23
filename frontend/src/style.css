@@ -3,6 +3,7 @@
 @plugin "daisyui" {
     themes: light --default
 }
+@plugin "@tailwindcss/typography";
 
 body {
     font-family: 'Prompt', sans-serif;
@@ -19,4 +20,12 @@ body {
 
 .in-line-icon {
     @apply mr-4 w-5
+}
+
+.requirements-icon {
+    @apply mr-4 w-7
+}
+
+.requirements-div {
+    @apply flex flex-row items-center
 }
