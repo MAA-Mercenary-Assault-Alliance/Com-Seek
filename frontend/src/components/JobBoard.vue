@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { marked } from "marked"
 
 const jobMarkdown = `
@@ -20,7 +21,20 @@ The Account Manager is responsible for building and maintaining strong client re
 - Excellent problem-solving and communication abilities.
 `
 
-const jobHtml = marked(jobMarkdown)
+const LIST_JOBOBJ = ref('')
+const selectedJobID = ref('')
+
+const CHOSEN_JOB_TEMPLATE = {
+  name: "ACCOUNT MANAGER (Sales Engineer)",
+  company: "TE Connectivity",
+  location: "กรุงเทพมหานคร",
+  salary_range: "฿12000-฿15000 per month", // MAKE THIS FLOOR AND CEILING
+  type: "full-time",
+  experience: "1-2 years",
+  desc: jobMarkdown,
+}
+
+const desc_html = marked(CHOSEN_JOB_TEMPLATE.desc)
 
 </script>
 
@@ -33,20 +47,20 @@ const jobHtml = marked(jobMarkdown)
 
        <img src="../assets/company.jpg" class="w-20 h-20 rounded-2xl" alt="company-logo"/>
        <div id="job-box-content" class="flex mr-2 flex-col space-y-1.5">
-         <span class="underline">ACCOUNT MANAGER (Sales Engineer)</span>
-         <span class="mb-2">TE Connectivity</span>
+         <span class="underline">{{ CHOSEN_JOB_TEMPLATE.name }}</span>
+         <span class="mb-2">{{ CHOSEN_JOB_TEMPLATE.company }}</span>
 
          <div class="in-line-stat">
            <img src="../assets/money.svg" class="in-line-icon" alt="money-icon"/>
-           <span>฿12000-฿15000 per month</span>
+           <span>{{ CHOSEN_JOB_TEMPLATE.salary_range }}</span>
          </div>
          <div class="in-line-stat">
            <img src="../assets/cap.svg" class="in-line-icon" alt="cap-icon"/>
-           <span>1-2 years</span>
+           <span>{{ CHOSEN_JOB_TEMPLATE.experience }}</span>
          </div>
          <div class="in-line-stat">
            <img src="../assets/location.svg" class="in-line-icon" alt="location-icon"/>
-           <span>จตุจักร, กรุงเทพมหานคร</span>
+           <span>{{ CHOSEN_JOB_TEMPLATE.location }}</span>
          </div>
        </div>
        <span class="absolute bottom-3 right-5 text-gray-500">24 days ago</span>
@@ -64,8 +78,8 @@ const jobHtml = marked(jobMarkdown)
      <div id="title-box" class="flex row items-center mt-3">
        <img src="../assets/company.jpg" class="w-20 h-20 rounded-2xl" alt="company-logo"/>
        <div id="title" class="flex flex-col ml-7 space-y-4">
-         <span class="text-2xl">TE Connectivity</span>
-         <span class="underline">ACCOUNT MANAGER (Sales Engineer)</span>
+         <span class="text-2xl">{{ CHOSEN_JOB_TEMPLATE.company }}</span>
+         <span class="underline">{{ CHOSEN_JOB_TEMPLATE.name }}</span>
        </div>
        <button class="btn shadow-none bg-[#1F7AB9] border-0 h-12 rounded-2xl text-white text-xl font-extralight ml-auto mt-6">Apply Now</button>
      </div>
@@ -75,25 +89,25 @@ const jobHtml = marked(jobMarkdown)
      <div id="requirements-box" class="grid grid-cols-2 gap-4 w-full max-w-4xl mt-6 space-y-2">
        <div class="requirements-div">
          <img src="../assets/location.svg" class="requirements-icon" alt="location-icon"/>
-         <span>จตุจักร, กรุงเทพมหานคร</span>
+         <span>{{ CHOSEN_JOB_TEMPLATE.location }}</span>
        </div>
        <div class="requirements-div">
          <img src="../assets/money.svg" class="requirements-icon" alt="money-icon"/>
-         <span>฿12000-฿15000 per month</span>
+         <span>{{ CHOSEN_JOB_TEMPLATE.salary_range }}</span>
        </div>
        <div class="requirements-div">
          <img src="../assets/time.svg" class="requirements-icon" alt="time-icon"/>
-         <span>Full-time</span>
+         <span>{{ CHOSEN_JOB_TEMPLATE.type }}</span>
        </div>
        <div class="requirements-div">
          <img src="../assets/cap.svg" class="requirements-icon" alt="cap-icon"/>
-         <span>1-2 years</span>
+         <span>{{ CHOSEN_JOB_TEMPLATE.experience }}</span>
        </div>
      </div>
 
      <span class="mt-12 text-lg">Full Job Description</span>
      <div class="prose">
-       <div v-html="jobHtml"></div>
+       <div v-html="desc_html"></div>
      </div>
 
    </div>
