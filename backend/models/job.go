@@ -2,8 +2,6 @@ package models
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type Job struct {
@@ -11,7 +9,6 @@ type Job struct {
 	Title       string
 	CompanyID		uint	`gorm:"index`
   Company     Company `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignKey:CompanyID;references:UserID"` // belongs to Company
-	Description string
 	Location    string
 	Salary      uint
 	Description	string
