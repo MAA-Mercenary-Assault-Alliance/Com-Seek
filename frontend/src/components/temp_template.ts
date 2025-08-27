@@ -17,14 +17,24 @@ The Account Manager is responsible for building and maintaining strong client re
 - Excellent problem-solving and communication abilities.
 `
 
-const CHOSEN_JOB_TEMPLATE = {
-  name: "ACCOUNT MANAGER (Sales Engineer)",
-  company: "TE Connectivity",
-  location: "กรุงเทพมหานคร",
-  salary_range: "฿12000-฿15000 per month", // MAKE THIS FLOOR AND CEILING
-  type: "full-time",
-  experience: "1-2 years",
-  desc: jobMarkdown,
+const TE_Info = {
+    name: "ACCOUNT MANAGER (Sales Engineer)",
+    company: "TE Connectivity",
+    location: "กรุงเทพมหานคร",
+    salary_range: "฿12000-฿15000 per month", // MAKE THIS FLOOR AND CEILING
+    type: "full-time",
+    experience: "1-2 years",
+    desc: jobMarkdown,
 }
 
-export { CHOSEN_JOB_TEMPLATE }
+export { TE_Info }
+
+export interface JobTemplate {
+    name: string;
+    company: string;
+    location: string;
+    salary_range: string;
+    type: string;
+    experience: string;
+    desc: string;
+}
