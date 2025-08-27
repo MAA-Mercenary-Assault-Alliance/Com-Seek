@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue"
-
+import GuestNavbar from "./components/GuestNavbar.vue";
 const message = ref("")
 
 async function callBackend() {
@@ -11,9 +11,13 @@ async function callBackend() {
 </script>
 
 <template>
-  <div>
-    <h1>Vue + Go Boilerplate</h1>
-    <button @click="callBackend">Call Go Backend</button>
-    <p>{{ message }}</p>
+  <GuestNavbar></GuestNavbar>
+  <div id="all" class="bg-[#F2F6FC] text-black"> <!--Default Text set to black right here -->
+
+    <div id="main" class="flex justify-center">
+      <router-view></router-view>
+    </div>
+
   </div>
+
 </template>
