@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { marked } from "marked"
 import { TE_Info } from './temp_template'
 import JobBox from "./JobBox.vue";
 import JobFull from "./JobFull.vue";
@@ -15,9 +14,9 @@ const selectedJobID = ref('')
 
    <div id="job-box-column" class="flex border-1 w-1/3 flex-col space-y-10 mr-10">
 
-     <JobBox :jobInfo=TE_Info />
+     <JobBox :jobInfo=TE_Info :h-r="false"/>
 
-     <JobBox :jobInfo=TE_Info />
+     <JobBox :jobInfo=TE_Info :h-r="false"/>
 
    </div>
 
