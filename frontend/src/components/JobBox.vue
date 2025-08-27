@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import {ref} from 'vue'
 import {JobTemplate} from './temp_template'
 const props = defineProps<{
   jobInfo: JobTemplate,
   HR: boolean
 }>();
 
+const applied = ref(0)
+const new_app = ref(0)
 </script>
 
 <template>
@@ -31,8 +34,8 @@ const props = defineProps<{
     <span class="absolute bottom-3 right-5 text-gray-500">24 days ago</span>
 
     <div v-if=HR>
-      <span class="absolute top-5 right-10 text-gray-500">Applied: {{0}}</span>
-      <span class="absolute top-12   right-10 text-gray-500">New: {{0}}</span>
+      <span class="absolute top-5 right-10 text-gray-500">Applied: {{applied}}</span>
+      <span class="absolute top-12   right-10 text-gray-500">New: {{new_app}}</span>
     </div>
   </div>
 </template>
