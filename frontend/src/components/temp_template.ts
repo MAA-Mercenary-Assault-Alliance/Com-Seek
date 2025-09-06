@@ -28,7 +28,18 @@ const TE_Info = {
     desc: jobMarkdown,
 }
 
-export { TE_Info }
+const TE_Info_Company = {
+    name: "TE Connectivity",
+    website: "some url",
+    location: "กรุงเทพมหานคร",
+    description: jobMarkdown,
+    createdAt: "16/07/2025",
+    approved: true,
+    number: "111111111",
+    email: "TeConnecc@gmail.com",
+}
+
+export { TE_Info, TE_Info_Company }
 
 export interface JobTemplate {
     name: string;
@@ -38,4 +49,15 @@ export interface JobTemplate {
     type: string;
     experience: string;
     desc: string;
+}
+
+export interface CompanyTemplate {
+    name: string;
+    website: string;
+    location: string;
+    description: string;
+    createdAt: string;
+    approved: boolean;
+    number: string;
+    email: string;
 }
