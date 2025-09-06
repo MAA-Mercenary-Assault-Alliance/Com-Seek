@@ -38,12 +38,12 @@ const routes = [
   //   component: JobList,
   //   meta: { requiresAuth: true }
   // },
-  // {
-  //   path: '/profile',
-  //   name: 'Profile',
-  //   component: Profile,
-  //   meta: { requiresAuth: true }
-  // },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: Profile,
+    meta: { requiresAuth: true }
+  },
   // {
   //   path: '/:pathMatch(.*)*',
   //   name: 'NotFound',

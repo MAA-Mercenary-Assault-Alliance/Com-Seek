@@ -4,6 +4,7 @@ import { RouterView, useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
 const route = useRoute()
+import GuestNavbar from "./components/GuestNavbar.vue";
 const message = ref("")
 
 async function callBackend() {
@@ -38,6 +39,7 @@ function logout() {
       <RouterView />
     </main>
   </div>
+
 </template>
 
 <style>
