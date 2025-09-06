@@ -12,7 +12,7 @@ const selectedJobID = ref('')
 <template>
  <div class="flex w-full flex-row px-42 py-10 bg-[#f2f6fc]">
 
-   <div id="job-box-column" class="flex border-1 w-1/3 flex-col space-y-10 mr-10">
+   <div id="job-box-column" class="flex w-1/3 flex-col space-y-10 mr-10">
 
      <JobBox :jobInfo=TE_Info :h-r="false"/>
 
