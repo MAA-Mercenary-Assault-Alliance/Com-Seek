@@ -3,12 +3,14 @@ import AppHome from '../views/AppHome.vue'
 import AppProfile from '../views/AppProfile.vue'
 import AppLogin from "../views/AppLogin.vue"
 import AppHR from "../views/AppHR.vue";
+import AppApplicants from "../views/AppApplicants.vue";
 
 const routes = [
   { path: '/', component: AppHome },
   { path: '/profile', component: AppProfile },
   { path: '/sign-in', component: AppLogin },
   { path: '/hr-dashboard', component: AppHR },
+  { path: '/applicants', component: AppApplicants }
 ]
 
 const router = createRouter({
