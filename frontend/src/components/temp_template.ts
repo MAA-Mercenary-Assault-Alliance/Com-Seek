@@ -18,6 +18,7 @@ The Account Manager is responsible for building and maintaining strong client re
 `
 
 const TE_Info = {
+    id: "1",
     name: "ACCOUNT MANAGER (Sales Engineer)",
     company: "TE Connectivity",
     location: "กรุงเทพมหานคร",

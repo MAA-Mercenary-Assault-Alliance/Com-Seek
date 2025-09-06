@@ -10,12 +10,15 @@ const routes = [
   { path: '/profile', component: AppProfile },
   { path: '/sign-in', component: AppLogin },
   { path: '/hr-dashboard', component: AppHR },
-  { path: '/applicants', component: AppApplicants }
+  { path: '/applicants', component: AppApplicants },
+
+  { path: '/applicants/:id', name: 'Applicants', component: AppApplicants },
 ]
+
 
 const router = createRouter({
   history: createWebHistory(),
-  routes,
+  routes: routes,
 })
 
 export default router

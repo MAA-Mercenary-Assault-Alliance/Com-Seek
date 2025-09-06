@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 </script>
 
 <template>
@@ -11,7 +10,7 @@
         <span>3rd Year</span>
       </div>
       <div class="flex flex-col ml-auto">
-        <span class="text-gray-500 ml-auto">16/07/2548</span>
+        <span class="text-gray-500 ml-auto">16/07/2025</span>
         <button class="btn shadow-none bg-[#9A0000] border-0 h-9 w-25 rounded-4xl text-white text-md font-extralight mt-auto">Delete</button>
       </div>
     </div>

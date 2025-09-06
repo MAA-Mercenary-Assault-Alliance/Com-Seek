@@ -9,7 +9,7 @@ const desc_html = marked(props.jobInfo.desc)
 </script>
 
 <template>
-  <div id="job full" class="flex relative w-2/3 ml-7 px-25 py-10 flex-col rounded-2xl box-shadow bg-white">
+  <div id="job full" class="flex relative w-2/3 px-25 py-10 flex-col rounded-2xl box-shadow bg-white">
 
     <div id="title-box" class="flex row items-center mt-3">
       <img src="../assets/company.jpg" class="w-20 h-20 rounded-2xl" alt="company-logo"/>

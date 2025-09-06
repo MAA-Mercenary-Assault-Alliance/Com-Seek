@@ -2,6 +2,10 @@
 import JobFull from "../components/JobFull.vue";
 import { TE_Info } from '../components/temp_template';
 import ApplicantsColumn from "../components/ApplicantsColumn.vue";
+
+import { useRoute } from 'vue-router'
+const route = useRoute()
+const jobId = route.params.id
 </script>
 
 <template>

@@ -11,7 +11,7 @@ const new_app = ref(0)
 </script>
 
 <template>
-  <div id="job-box" class="flex relative rounded-2xl flex-row p-4 pb-7 space-x-5 box-shadow bg-white">
+  <div id="job-box" class="flex relative rounded-2xl flex-row p-4 pb-7 space-x-5 box-shadow bg-white" @click="HR && $emit('click')"  :class="{ 'cursor-pointer': HR }">
 
     <img src="../assets/company.jpg" class="w-20 h-20 rounded-2xl" alt="company-logo"/>
     <div id="job-box-content" class="flex mr-2 flex-col space-y-1.5">
