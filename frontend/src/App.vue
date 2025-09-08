@@ -21,23 +21,19 @@ function logout() {
 </script>
 
 <template>
-  <div id="app">
-    <!-- Navigation -->
-    <nav v-if="route.name !== 'Auth' && route.name !== 'NotFound'" class="navbar">
-      <div class="nav-container">
-        <router-link to="/" class="nav-brand">Com-Seek</router-link>
-        <div class="nav-links">
-          <router-link to="/jobs">Jobs</router-link>
-          <router-link to="/profile">Profile</router-link>
-          <button @click="logout" class="logout-btn">Logout</button>
-        </div>
-      </div>
-    </nav>
+  <div class="flex flex-col relative min-h-screen">
+  <GuestNavbar></GuestNavbar>
+  <div id="all" class="flex flex-col bg-[#F2F6FC] w-full flex-grow text-black"> <!--Default Text set to black right here -->
+
+    <div id="main" class="flex justify-center">
+      <router-view></router-view>
+    </div>
 
     <!-- Main content -->
     <main>
       <RouterView />
     </main>
+  </div>
   </div>
 
 </template>
