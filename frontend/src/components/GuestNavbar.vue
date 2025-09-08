@@ -7,6 +7,7 @@
         </router-link>
       </li>
       <li class="font-[righteous] text-3xl"><router-link to="/">Com-Seek</router-link></li>
+      <li class="flex ml-4 box-shadow text-xl bg-[#56A45C] rounded-4xl w-48 h-9 text-center items-center justify-center">Admin User</li>
     </ul>
     <ul class="flex space-x-15 items-center">
       <li><router-link to="/">Home</router-link></li>
