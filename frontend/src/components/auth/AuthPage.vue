@@ -1,19 +1,22 @@
 <template>
-  <div class="auth-page">
-    <div class="auth-container">
-      <div class="logo">
-        <h1>Com-Seek</h1>
-        <p>KU Computer Engineering Job Portal</p>
-      </div>
+  <div class="min-h-screen bg-gradient-to-br from-sky-300 to-blue-700 flex items-center justify-center p-4">
+    <div class="card bg-base-100 shadow-2xl w-full max-w-md">
+      <div class="card-body">
+        <!-- Logo -->
+        <div class="text-center mb-6">
+          <h1 class="text-3xl font-bold text-primary">Com-Seek</h1>
+          <p class="text-sm text-gray-500">KU Computer Engineering Job Portal</p>
+        </div>
 
-      <!-- Login Form -->
-      <div v-if="!showRegister" class="form-container">
-        <LoginForm @switch-to-register="showRegister = true" />
-      </div>
+        <!-- Login Form -->
+        <div v-if="!showRegister">
+          <LoginForm @switch-to-register="showRegister = true" />
+        </div>
 
-      <!-- Registration Form -->
-      <div v-else class="form-container">
-        <RegisterForm @switch-to-login="showRegister = false" />
+        <!-- Registration Form -->
+        <div v-else>
+          <RegisterForm @switch-to-login="showRegister = false" />
+        </div>
       </div>
     </div>
   </div>
@@ -36,51 +39,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.auth-page {
-  background: linear-gradient(135deg, #87CEEB 0%, #4682B4 100%);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-.auth-container {
-  background: white;
-  border-radius: 12px;
-  padding: 40px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  width: 100%;
-  max-width: 400px;
-  position: relative;
-}
-
-.logo {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.logo h1 {
-  color: #2c5aa0;
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.logo p {
-  color: #666;
-  font-size: 14px;
-}
-
-@media (max-width: 480px) {
-  .auth-container {
-    padding: 30px 20px;
-  }
-  
-  .logo h1 {
-    font-size: 24px;
-  }
-}
-</style>
