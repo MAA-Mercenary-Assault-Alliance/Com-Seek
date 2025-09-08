@@ -33,21 +33,21 @@
       <div class="form-control flex flex-col">
         <label class="label" for="email"><span class="label-text">Email</span></label>
         <input type="email" id="email" v-model="form.email" placeholder="Enter your email" 
-               :class="errors.email ? 'input input-bordered input-error' : 'input input-bordered'" />
+               :class="errors.email ? 'input input-bordered input-error' : 'input input-bordered w-full'" />
         <label v-if="errors.email" class="label"><span class="label-text-alt text-error">{{ errors.email }}</span></label>
       </div>
 
       <div class="form-control flex flex-col">
         <label class="label" for="password"><span class="label-text">Password</span></label>
         <input type="password" id="password" v-model="form.password" placeholder="Enter a strong password" 
-               :class="errors.password ? 'input input-bordered input-error' : 'input input-bordered'" />
+               :class="errors.password ? 'input input-bordered input-error' : 'input input-bordered w-full'" />
         <label v-if="errors.password" class="label"><span class="label-text-alt text-error">{{ errors.password }}</span></label>
       </div>
 
       <div class="form-control flex flex-col">
         <label class="label" for="confirmPassword"><span class="label-text">Confirm Password</span></label>
         <input type="password" id="confirmPassword" v-model="form.confirmPassword" placeholder="Confirm your password" 
-               :class="errors.confirmPassword ? 'input input-bordered input-error' : 'input input-bordered'" />
+               :class="errors.confirmPassword ? 'input input-bordered input-error' : 'input input-bordered w-full'" />
         <label v-if="errors.confirmPassword" class="label"><span class="label-text-alt text-error">{{ errors.confirmPassword }}</span></label>
       </div>
 
@@ -55,21 +55,21 @@
       <div class="form-control flex flex-col">
         <label class="label" for="firstName"><span class="label-text">First Name</span></label>
         <input type="text" id="firstName" v-model="form.firstName" placeholder="Enter your first name" 
-               :class="errors.firstName ? 'input input-bordered input-error' : 'input input-bordered'" />
+               :class="errors.firstName ? 'input input-bordered input-error' : 'input input-bordered w-full'" />
         <label v-if="errors.firstName" class="label"><span class="label-text-alt text-error">{{ errors.firstName }}</span></label>
       </div>
 
       <div class="form-control flex flex-col">
         <label class="label" for="lastName"><span class="label-text">Last Name</span></label>
         <input type="text" id="lastName" v-model="form.lastName" placeholder="Enter your last name" 
-               :class="errors.lastName ? 'input input-bordered input-error' : 'input input-bordered'" />
+               :class="errors.lastName ? 'input input-bordered input-error' : 'input input-bordered w-full'" />
         <label v-if="errors.lastName" class="label"><span class="label-text-alt text-error">{{ errors.lastName }}</span></label>
       </div>
 
       <div class="form-control flex flex-col">
         <label class="label" for="description"><span class="label-text">About Me</span></label>
         <textarea id="description" v-model="form.description" placeholder="Tell us about yourself..." 
-                  class="textarea textarea-bordered"></textarea>
+                  class="textarea textarea-bordered w-full"></textarea>
       </div>
 
       <!-- Student Fields -->
@@ -77,7 +77,7 @@
         <div class="form-control flex flex-col">
           <label class="label" for="studentId"><span class="label-text">Student ID</span></label>
           <input type="text" id="studentId" v-model="form.studentId" placeholder="Enter your KU student ID" 
-                 :class="errors.studentId ? 'input input-bordered input-error' : 'input input-bordered'" />
+                 :class="errors.studentId ? 'input input-bordered input-error' : 'input input-bordered w-full'" />
           <label v-if="errors.studentId" class="label"><span class="label-text-alt text-error">{{ errors.studentId }}</span></label>
         </div>
 
