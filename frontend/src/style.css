@@ -34,3 +34,15 @@ body {
 .box-shadow {
     box-shadow: 0 4px 4px rgba(0,0,0,0.3);
 }
+
+.sidebar-properties {
+    @apply flex items-center h-35
+}
+
+.sidebar-highlight {
+    @apply bg-[#E6FEFF] border-l-8 border-[#6B98FF]
+}
+
+.sidebar-normal {
+    @apply hover:bg-[#D9D9D9]
+}
