@@ -7,4 +7,9 @@ type Student struct {
 	LastName		string
 	Description string
 	Approved		bool
+	GitHub			string
+	LinkedIn		string
+	Facebook		string
+	Instragram	string
+	Twitter			string
 }
