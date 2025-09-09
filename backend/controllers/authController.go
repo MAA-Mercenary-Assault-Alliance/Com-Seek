@@ -2,10 +2,13 @@ package controllers
 
 import (
 	"net/http"
+	"os"
+	"time"
 
 	"com-seek/backend/models"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -69,9 +72,9 @@ func (ac *AuthController) CreateUser(c *gin.Context) {
 	}
 
 	tx := ac.DB.Begin()
+	defer tx.Rollback()
 
 	if err := tx.Create(&user).Error; err != nil {
-		tx.Rollback()
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -80,7 +83,6 @@ func (ac *AuthController) CreateUser(c *gin.Context) {
 	case "student":
 		studentProfile := input.StudentProfile
 		if studentProfile == nil {
-			tx.Rollback()
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Student profile is required for student type"})
 			return
 		}
@@ -93,7 +95,6 @@ func (ac *AuthController) CreateUser(c *gin.Context) {
 		}
 
 		if err := tx.Create(&profile).Error; err != nil {
-			tx.Rollback()
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
@@ -101,7 +102,6 @@ func (ac *AuthController) CreateUser(c *gin.Context) {
 	case "company":
 		companyProfile := input.CompanyProfile
 		if companyProfile == nil {
-			tx.Rollback()
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Company profile is required for company type"})
 			return
 		}
@@ -115,17 +115,59 @@ func (ac *AuthController) CreateUser(c *gin.Context) {
 		}
 
 		if err := tx.Create(&profile).Error; err != nil {
-			tx.Rollback()
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 	}
 
 	if err := tx.Commit().Error; err != nil {
-		tx.Rollback()
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": user})
+}
+
+type LoginInput struct {
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
+func (ac *AuthController) Login(c *gin.Context) {
+	var loginInput LoginInput
+
+	if err := c.ShouldBindJSON(&loginInput); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var userFound models.User
+	ac.DB.Where("email=?", loginInput.Email).Find(&userFound)
+
+	if userFound.ID == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user not found"})
+		return
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(userFound.Password), []byte(loginInput.Password)); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid password"})
+		return
+	}
+
+	generateToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"id":  userFound.ID,
+		"exp": time.Now().Add((time.Minute * 30)),
+	})
+
+	token, err := generateToken.SignedString([]byte(os.Getenv("JWT_SECRET")))
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"token": token,
+		"email": userFound.Email,
+	})
 }
