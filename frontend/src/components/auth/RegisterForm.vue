@@ -11,16 +11,32 @@
     </div>
 
     <div class="flex justify-center mb-6">
-      <label class="flex items-center cursor-pointer">
-        <span class="mr-3 font-medium" :class="{ 'text-primary': userType === 'student' }">KU Student</span>
-        <input type="checkbox" class="toggle toggle-primary" 
-              :checked="userType === 'alumni'" 
-              @change="setUserType($event.target.checked ? 'alumni' : 'student')" />
-        <span class="ml-3 font-medium" :class="{ 'text-primary': userType === 'alumni' }">Alumni</span>
-      </label>
+      <div class="bg-base-200 rounded-full p-1 flex w-64 border-gray-300 border-2">
+        <!-- Student -->
+        <button
+          type="button"
+          @click="setUserType('student')"
+          :class="[
+            'flex-1 py-2 rounded-full font-medium transition',
+            userType === 'student' ? 'bg-primary text-white shadow' : 'text-gray-600'
+          ]"
+        >
+          KU Student
+        </button>
+
+        <!-- Alumni -->
+        <button
+          type="button"
+          @click="setUserType('alumni')"
+          :class="[
+            'flex-1 py-2 rounded-full font-medium transition',
+            userType === 'alumni' ? 'bg-primary text-white shadow' : 'text-gray-600'
+          ]"
+        >
+          Alum
+        </button>
+      </div>
     </div>
-
-
 
     <form @submit.prevent="handleRegister" class="flex flex-col gap-4">
       <!-- User Type Specific Fields -->
@@ -110,15 +126,15 @@
 
 
       <!-- Submit Button -->
-      <div class="form-control mt-4">
-        <button type="submit" class="btn btn-primary" :disabled="loading">
-          {{ loading ? 'CREATING ACCOUNT...' : 'SIGN UP' }}
+      <div class="form-control mt-4 flex justify-center">
+        <button type="submit" class="btn btn-primary w-full" :disabled="loading">
+          {{ loading ? 'CREATING ACCOUNT...' : 'REGISTER' }}
         </button>
       </div>
     </form>
 
     <!-- Switch to Login -->
-<p class="text-center mt-4 text-sm">
+<p class="text-center text-sm mt-4 border-t pt-4">
   Already have an account? 
   <router-link 
     to="/login" 
