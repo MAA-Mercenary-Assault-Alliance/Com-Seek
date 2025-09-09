@@ -23,43 +23,82 @@
 
 
     <form @submit.prevent="handleRegister" class="flex flex-col gap-4">
+      <!-- User Type Specific Fields -->
+        <div class="form-control flex flex-col">
+          <label class="label" for="email"><span class="label-text">Email</span></label>
+          <input
+            type="email"
+            id="email"
+            v-model="form.email"
+            placeholder="Enter your email"
+            class="input input-bordered w-full"
+            :class="{ 'input-error': errors.email }"
+          />
+          <label v-if="errors.email" class="label">
+            <span class="label-text-alt text-error">{{ errors.email }}</span>
+          </label>
+        </div>
 
-      <!-- Always on top -->
-      <div class="form-control flex flex-col">
-        <label class="label" for="email"><span class="label-text">Email</span></label>
-        <input type="email" id="email" v-model="form.email" placeholder="Enter your email" 
-               :class="errors.email ? 'input input-bordered input-error' : 'input input-bordered w-full'" />
-        <label v-if="errors.email" class="label"><span class="label-text-alt text-error">{{ errors.email }}</span></label>
-      </div>
+        <div class="form-control flex flex-col">
+          <label class="label" for="password"><span class="label-text">Password</span></label>
+          <input
+            type="password"
+            id="password"
+            v-model="form.password"
+            placeholder="Enter a strong password"
+            class="input input-bordered w-full"
+            :class="{ 'input-error': errors.password }"
+          />
+          <label v-if="errors.password" class="label">
+            <span class="label-text-alt text-error">{{ errors.password }}</span>
+          </label>
+        </div>
 
-      <div class="form-control flex flex-col">
-        <label class="label" for="password"><span class="label-text">Password</span></label>
-        <input type="password" id="password" v-model="form.password" placeholder="Enter a strong password" 
-               :class="errors.password ? 'input input-bordered input-error' : 'input input-bordered w-full'" />
-        <label v-if="errors.password" class="label"><span class="label-text-alt text-error">{{ errors.password }}</span></label>
-      </div>
+        <div class="form-control flex flex-col">
+          <label class="label" for="confirmPassword"><span class="label-text">Confirm Password</span></label>
+          <input
+            type="password"
+            id="confirmPassword"
+            v-model="form.confirmPassword"
+            placeholder="Confirm your password"
+            class="input input-bordered w-full"
+            :class="{ 'input-error': errors.confirmPassword }"
+          />
+          <label v-if="errors.confirmPassword" class="label">
+            <span class="label-text-alt text-error">{{ errors.confirmPassword }}</span>
+          </label>
+        </div>
 
-      <div class="form-control flex flex-col">
-        <label class="label" for="confirmPassword"><span class="label-text">Confirm Password</span></label>
-        <input type="password" id="confirmPassword" v-model="form.confirmPassword" placeholder="Confirm your password" 
-               :class="errors.confirmPassword ? 'input input-bordered input-error' : 'input input-bordered w-full'" />
-        <label v-if="errors.confirmPassword" class="label"><span class="label-text-alt text-error">{{ errors.confirmPassword }}</span></label>
-      </div>
+        <!-- Common Fields -->
+        <div class="form-control flex flex-col">
+          <label class="label" for="firstName"><span class="label-text">First Name</span></label>
+          <input
+            type="text"
+            id="firstName"
+            v-model="form.firstName"
+            placeholder="Enter your first name"
+            class="input input-bordered w-full"
+            :class="{ 'input-error': errors.firstName }"
+          />
+          <label v-if="errors.firstName" class="label">
+            <span class="label-text-alt text-error">{{ errors.firstName }}</span>
+          </label>
+        </div>
 
-      <!-- Common Fields -->
-      <div class="form-control flex flex-col">
-        <label class="label" for="firstName"><span class="label-text">First Name</span></label>
-        <input type="text" id="firstName" v-model="form.firstName" placeholder="Enter your first name" 
-               :class="errors.firstName ? 'input input-bordered input-error' : 'input input-bordered w-full'" />
-        <label v-if="errors.firstName" class="label"><span class="label-text-alt text-error">{{ errors.firstName }}</span></label>
-      </div>
-
-      <div class="form-control flex flex-col">
-        <label class="label" for="lastName"><span class="label-text">Last Name</span></label>
-        <input type="text" id="lastName" v-model="form.lastName" placeholder="Enter your last name" 
-               :class="errors.lastName ? 'input input-bordered input-error' : 'input input-bordered w-full'" />
-        <label v-if="errors.lastName" class="label"><span class="label-text-alt text-error">{{ errors.lastName }}</span></label>
-      </div>
+        <div class="form-control flex flex-col">
+          <label class="label" for="lastName"><span class="label-text">Last Name</span></label>
+          <input
+            type="text"
+            id="lastName"
+            v-model="form.lastName"
+            placeholder="Enter your last name"
+            class="input input-bordered w-full"
+            :class="{ 'input-error': errors.lastName }"
+          />
+          <label v-if="errors.lastName" class="label">
+            <span class="label-text-alt text-error">{{ errors.lastName }}</span>
+          </label>
+        </div>
 
       <!-- Transcript Fields -->
         <div class="form-control flex flex-col">
@@ -114,16 +153,23 @@ export default {
     }
   },
   methods: {
+    // Set user type (student/alumni)
     setUserType(type) { 
       this.userType = type; 
       this.errors = {}; 
     },
+
+    // Email validation
     validateEmail(email) { 
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); 
     },
+
+    // Password validation (min 8 characters)
     validatePassword(password) { 
       return password.length >= 8; 
     },
+
+    // File upload handler
     handleFileUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -133,6 +179,7 @@ export default {
         this.$refs.transcriptInput.value = ''; 
         return; 
       }
+
       if (file.size > 10 * 1024 * 1024) { 
         this.errors.transcript = 'Max 10MB'; 
         this.$refs.transcriptInput.value = ''; 
@@ -143,6 +190,8 @@ export default {
       this.transcriptFileName = file.name;
       delete this.errors.transcript;
     },
+
+    // Form validation
     validateForm() {
       this.errors = {};
 
@@ -152,36 +201,43 @@ export default {
       if (!this.validatePassword(this.form.password)) this.errors.password = 'Min 8 chars';
       if (this.form.password !== this.form.confirmPassword) this.errors.confirmPassword = 'Passwords do not match';
 
-      // Alumni still requires transcript
+      // Transcript validation for alumni (optional for students)
       if (this.userType === 'alumni' && !this.form.transcript) {
         this.errors.transcript = 'Upload transcript';
       }
 
       return Object.keys(this.errors).length === 0;
     },
+
+    // Handle registration
     async handleRegister() {
       if (!this.validateForm()) return;
+
       this.loading = true;
       this.alert = { message: 'Creating account...', type: 'success' };
+
       try {
-        await new Promise(r => setTimeout(r, 2000));
+        await new Promise(r => setTimeout(r, 2000)); // simulate API call
+
+        // All users now require admin approval
         this.alert = { 
-          message: this.userType === 'alumni' 
-            ? 'Registration successful! Pending approval.' 
-            : 'Registration successful! You can login now.', 
+          message: 'Registration successful! Pending admin approval.', 
           type: 'success' 
         };
+
         setTimeout(() => { 
           this.resetForm(); 
           this.$emit('switch-to-login'); 
         }, 2000);
-      } catch { 
-        this.alert = { message: 'Registration failed', type: 'error' }; 
-      }
-      finally { 
-        this.loading = false; 
+
+      } catch {
+        this.alert = { message: 'Registration failed', type: 'error' };
+      } finally {
+        this.loading = false;
       }
     },
+
+    // Reset form to initial state
     resetForm() {
       this.form = { 
         firstName: '', 
@@ -193,12 +249,11 @@ export default {
       };
       this.transcriptFileName = '';
       this.errors = {};
-      this.alert = { message:'', type:'' };
+      this.alert = { message: '', type: '' };
     }
   }
 }
 </script>
-
 
 <style>
 .form-control { transition: all 0.3s ease; }
