@@ -9,8 +9,8 @@ export async function fetchStudentProfile() {
     email: "mybigthing@gmail.com",
     joinDate: "2019-04-13",
     bio: "This is going to be fantastic!",
-    avatar: "/src/assets/avatar.jpg",
-    cover: "/src/assets/cover.jpg",
+    avatar: "/src/assets/avatar.png",
+    cover: "/src/assets/cover.jpeg",
     socials: {
       facebook: "https://facebook.com",
       twitter: "https://twitter.com",
