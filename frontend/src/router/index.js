@@ -6,6 +6,7 @@ import AppHR from "../views/AppHR.vue";
 import AuthPage from '../components/auth/AuthPage.vue';
 import LoginForm from '../components/auth/LoginForm.vue';
 import RegisterForm from '../components/auth/RegisterForm.vue';
+import StudentProfilePage from '../components/StudentProfilePage.vue';
 
 const routes = [
   { path: '/', component: AppHome },
@@ -15,6 +16,8 @@ const routes = [
   { path: '/auth', component: AuthPage},
   { path: '/login', component: LoginForm},
   { path: '/register', component: RegisterForm},
+  { path: '/student-profile', component: StudentProfilePage},
+
 
 ]
 
