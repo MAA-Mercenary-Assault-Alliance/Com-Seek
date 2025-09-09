@@ -1,4 +1,5 @@
 <template>
+  <div class="min-h-screen pt-32">
   <div class="max-w-md mx-auto p-6 bg-base-100 shadow-xl rounded-xl">
     <h2 class="text-2xl font-bold text-center mb-6">Login</h2>
 
@@ -67,6 +68,7 @@
   </p>
 </div>
 
+  </div>
   </div>
 </template>
 
