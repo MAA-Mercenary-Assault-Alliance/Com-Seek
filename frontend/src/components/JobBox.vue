@@ -3,7 +3,7 @@ import {ref} from 'vue'
 import {JobTemplate} from './temp_template'
 const props = defineProps<{
   jobInfo: JobTemplate,
-  HR: boolean
+  hR: boolean
 }>();
 
 const applied = ref(0)
@@ -11,7 +11,7 @@ const new_app = ref(0)
 </script>
 
 <template>
-  <div id="job-box" class="flex relative rounded-2xl flex-row p-4 pb-7 space-x-5 box-shadow bg-white" @click="HR && $emit('click')"  :class="{ 'cursor-pointer': HR }">
+  <div id="job-box" class="flex relative rounded-2xl flex-row p-4 pb-7 space-x-5 box-shadow bg-white" @click="hR && $emit('click')"  :class="{ 'cursor-pointer': hR }">
 
     <img src="../assets/company.jpg" class="w-20 h-20 rounded-2xl" alt="company-logo"/>
     <div id="job-box-content" class="flex mr-2 flex-col space-y-1.5">
@@ -33,7 +33,7 @@ const new_app = ref(0)
     </div>
     <span class="absolute bottom-3 right-5 text-gray-500">24 days ago</span>
 
-    <div v-if=HR>
+    <div v-if=hR>
       <span class="absolute top-5 right-10 text-gray-500">Applied: {{applied}}</span>
       <span class="absolute top-12   right-10 text-gray-500">New: {{new_app}}</span>
     </div>

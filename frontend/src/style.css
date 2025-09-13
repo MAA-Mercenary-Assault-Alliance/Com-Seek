@@ -6,6 +6,11 @@
 }
 @plugin "@tailwindcss/typography";
 
+@theme {
+    --color-title: #0a3b1f;
+    --color-lighter: #44b15b;
+}
+
 body {
     font-family: 'Prompt', sans-serif;
     font-size: 16px;  /* default */

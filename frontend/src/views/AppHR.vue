@@ -15,7 +15,7 @@ function goToJob(id) {
 
 <template>
   <div class="flex flex-col w-full space-y-10">
-    <div class="flex bg-[#153243] w-full h-40 px-42 items-center">
+    <div class="flex bg-title w-full h-40 px-42 items-center">
       <span class="text-white text-5xl font-bold">Your Job Offer</span>
     </div>
 

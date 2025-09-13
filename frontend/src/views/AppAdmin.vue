@@ -1,7 +1,9 @@
 <script setup lang="ts" xmlns:hover="http://www.w3.org/1999/xhtml">
 import { ref } from 'vue'
 import CompanyBox from "../components/CompanyBox.vue";
-import { TE_Info_Company } from "../components/temp_template";
+import { TE_Info_Company, Student_Info, TE_Info } from "../components/temp_template";
+import StudentBox from "../components/StudentBox.vue";
+import JobBoxAdmin from "../components/JobBoxAdmin.vue";
 const activeTab = ref('company')
 
 const template_list = [1,2,3]
@@ -31,12 +33,10 @@ const template_list = [1,2,3]
           <CompanyBox v-for="stuff in template_list" :key="stuff" :company-info="TE_Info_Company"/>
         </template>
         <template v-if="activeTab === 'alumni'">
-          <p>placeholder alumni</p>
-          <CompanyBox v-for="stuff in template_list" :key="stuff" :company-info="TE_Info_Company"/>
+          <StudentBox v-for="stuff in template_list" :key="stuff" :student-info="Student_Info"/>
         </template>
         <template v-if="activeTab === 'jobPosting'">
-          <p>placeholder jobPosting</p>
-          <CompanyBox v-for="stuff in template_list" :key="stuff" :company-info="TE_Info_Company"/>
+          <JobBoxAdmin v-for="stuff in template_list" :key="stuff" :job-info="TE_Info"/>
         </template>
       </div>
     </div>

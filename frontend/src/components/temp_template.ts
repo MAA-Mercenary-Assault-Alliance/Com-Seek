@@ -17,7 +17,7 @@ The Account Manager is responsible for building and maintaining strong client re
 - Excellent problem-solving and communication abilities.
 `
 
-const TE_Info = {
+export const TE_Info = {
     id: "1",
     name: "ACCOUNT MANAGER (Sales Engineer)",
     company: "TE Connectivity",
@@ -27,19 +27,6 @@ const TE_Info = {
     experience: "1-2 years",
     desc: jobMarkdown,
 }
-
-const TE_Info_Company = {
-    name: "TE Connectivity",
-    website: "some url",
-    location: "กรุงเทพมหานคร",
-    description: jobMarkdown,
-    createdAt: "16/07/2025",
-    approved: true,
-    number: "111111111",
-    email: "TeConnecc@gmail.com",
-}
-
-export { TE_Info, TE_Info_Company }
 
 export interface JobTemplate {
     name: string;
@@ -51,6 +38,17 @@ export interface JobTemplate {
     desc: string;
 }
 
+export const TE_Info_Company = {
+    name: "TE Connectivity",
+    website: "some url",
+    location: "กรุงเทพมหานคร",
+    description: jobMarkdown,
+    createdAt: "16/07/2025",
+    approved: true,
+    number: "111111111",
+    email: "TeConnecc@gmail.com",
+}
+
 export interface CompanyTemplate {
     name: string;
     website: string;
@@ -60,4 +58,24 @@ export interface CompanyTemplate {
     approved: boolean;
     number: string;
     email: string;
+}
+
+export const Student_Info = {
+    id: "11",
+    user: "what",
+    firstName: "Nagi",
+    lastName: "Seishiro",
+    profile_pic: "/nagi",
+    description: "I can even destroy blue lock",
+    approved: true,
+}
+
+export interface StudentTemplate {
+    id: string;
+    user: string;
+    firstName: string;
+    lastName: string;
+    profile_pic: string;
+    description: string;
+    approved: boolean;
 }

@@ -1,33 +1,33 @@
 <script setup lang="ts">
-import {CompanyTemplate} from './temp_template'
+import {ref} from 'vue'
+import {JobTemplate} from './temp_template'
 const props = defineProps<{
-  companyInfo: CompanyTemplate,
+  jobInfo: JobTemplate
 }>();
+
+const applied = ref(0)
+const new_app = ref(0)
 </script>
 
 <template>
-  <div id="company-box" class="flex relative rounded-2xl flex-row p-4 space-x-7 box-shadow bg-white cursor-pointer" @click="$emit('click')">
-    <div class="flex items-center">
-      <img src="../assets/company.jpg" class="w-30 h-30 rounded-2xl ml-2" alt="company-logo"/>
-    </div>
+  <div id="job-box" class="flex relative rounded-2xl flex-row p-5 pb-4 space-x-5 box-shadow bg-white" @click="hR && $emit('click')"  :class="{ 'cursor-pointer': hR }">
+
+    <img src="../assets/company.jpg" class="w-20 h-20 rounded-2xl" alt="company-logo"/>
     <div id="job-box-content" class="flex mr-2 flex-col space-y-1.5">
-      <span class="text-2xl">{{ companyInfo.name }}</span>
+      <span class="underline">{{ jobInfo.name }}</span>
+      <span class="mb-2">{{ jobInfo.company }}</span>
 
       <div class="in-line-stat">
         <img src="../assets/money.svg" class="in-line-icon" alt="money-icon"/>
-        <span>{{ companyInfo.number }}</span>
+        <span>{{ jobInfo.salary_range }}</span>
       </div>
       <div class="in-line-stat">
         <img src="../assets/cap.svg" class="in-line-icon" alt="cap-icon"/>
-        <span>{{ companyInfo.email }}</span>
+        <span>{{ jobInfo.experience }}</span>
       </div>
       <div class="in-line-stat">
         <img src="../assets/location.svg" class="in-line-icon" alt="location-icon"/>
-        <span>{{ companyInfo.website }}</span>
-      </div>
-      <div class="in-line-stat">
-        <img src="../assets/location.svg" class="in-line-icon" alt="location-icon"/>
-        <span>{{ companyInfo.location }}</span>
+        <span>{{ jobInfo.location }}</span>
       </div>
     </div>
 
