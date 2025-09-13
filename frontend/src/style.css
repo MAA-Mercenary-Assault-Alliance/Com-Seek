@@ -40,7 +40,7 @@ body {
 }
 
 .sidebar-highlight {
-    @apply bg-[#E6FEFF] border-l-8 border-[#6B98FF]
+    @apply bg-[#e3ffea] border-l-8 border-[#21803a]
 }
 
 .sidebar-normal {

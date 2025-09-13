@@ -10,8 +10,8 @@ const template_list = [1,2,3]
 <template>
   <div class="flex flex-col w-full">
 
-    <div class="flex bg-[#153243] w-full h-40 px-42 items-center">
-      <span class="text-white text-5xl font-bold">Admin Dashboard CHANGE BACKGROUND</span>
+    <div class="flex w-full h-40 px-42 items-center bg-[url('/adminBar.png')] bg-right">
+      <span class="text-white text-5xl font-bold">Admin Dashboard</span>
     </div>
 
     <div id="content" class="flex flex-row space-x-10">
