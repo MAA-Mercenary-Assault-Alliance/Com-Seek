@@ -12,7 +12,7 @@
 }
 
 /*min-w-3xl THIS IS MIN WIDTH SIZE THE UI WILL SHRINK TO*/
-
+/*NO PADDING BELOW XL*/
 body {
     font-family: 'Prompt', sans-serif;
     font-size: 16px;  /* default */
