@@ -6,9 +6,9 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div id="company-box" class="flex relative rounded-2xl flex-row p-4 space-x-7 box-shadow bg-white cursor-pointer" @click="$emit('click')">
-    <div class="flex items-center">
-      <img src="../assets/company.jpg" class="w-30 h-30 rounded-2xl ml-2" alt="company-logo"/>
+  <div id="company-box" class="flex relative rounded-2xl flex-row p-4 space-x-7 box-shadow bg-white" @click="$emit('click')">
+    <div class="items-center flex-shrink-0">
+      <img src="../assets/company.jpg" class="company-admin-logo" alt="company-logo"/>
     </div>
     <div id="job-box-content" class="flex mr-2 flex-col space-y-1.5">
       <span class="text-2xl">{{ companyInfo.name }}</span>

@@ -11,6 +11,8 @@
     --color-lighter: #44b15b;
 }
 
+/*min-w-3xl THIS IS MIN WIDTH SIZE THE UI WILL SHRINK TO*/
+
 body {
     font-family: 'Prompt', sans-serif;
     font-size: 16px;  /* default */
@@ -50,4 +52,12 @@ body {
 
 .sidebar-normal {
     @apply hover:bg-[#D9D9D9]
+}
+
+.company-admin-logo {
+    @apply w-[120px] h-[120px] rounded-2xl ml-2
+}
+
+.admin-box {
+    @apply min-w-[168px]
 }

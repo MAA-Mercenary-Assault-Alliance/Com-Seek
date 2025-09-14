@@ -1,5 +1,5 @@
 <template>
-  <div class="flex bg-[#F2F6FC] justify-between items-center top-0 w-full h-18 p-4 text-black px-42 text-xl">
+  <div class="flex bg-[#F2F6FC] justify-between items-center top-0 w-full min-h-18 p-4 text-black px-42 text-xl flex-wrap">
     <ul class="flex space-x-4 items-center">
       <li>
         <router-link to="/">
