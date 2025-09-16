@@ -156,7 +156,7 @@ func (ac *AuthController) Login(c *gin.Context) {
 
 	generateToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":  userFound.ID,
-		"exp": time.Now().Add((time.Minute * 30)),
+		"exp": time.Now().Add((time.Minute * 30)).Unix(),
 	})
 
 	token, err := generateToken.SignedString([]byte(os.Getenv("JWT_SECRET")))
@@ -166,8 +166,20 @@ func (ac *AuthController) Login(c *gin.Context) {
 		return
 	}
 
+	maxAge := int((time.Minute * 30) / time.Second)
+
+	c.SetCookie(
+		"token",
+		token,
+		maxAge,
+		"/",
+		"",
+		true,
+		true,
+	)
+
 	c.JSON(http.StatusOK, gin.H{
-		"token": token,
-		"email": userFound.Email,
+		"message": "login successful",
+		"email":   userFound.Email,
 	})
 }
