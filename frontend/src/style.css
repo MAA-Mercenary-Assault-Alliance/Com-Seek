@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
 @import "tailwindcss";
 @plugin "daisyui" {
-    themes: light --default
+    themes: light --default;
 }
 @plugin "@tailwindcss/typography";
 
@@ -16,6 +16,10 @@
 body {
     font-family: 'Prompt', sans-serif;
     font-size: 16px;  /* default */
+}
+
+dialog:not([open]) {
+    display: none; /* remove it completely when closed */
 }
 
 .input-box {
