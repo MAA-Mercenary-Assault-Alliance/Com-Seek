@@ -1,6 +1,7 @@
 package main
 
 import (
+    "fmt"
     "embed"
     "io"
     "log"
@@ -8,12 +9,25 @@ import (
     "path"
     "strings"
     "time"
+
+    "com-seek/backend/database"
+
+    "github.com/joho/godotenv"
 )
 
 //go:embed public/*
 var embeddedStatic embed.FS
 
 func main() {
+    godotenv.Load()
+
+    db, err := database.InitDB()
+    if err != nil {
+        log.Fatalf("Failed to connect to the database: %v", err)
+    }
+
+    fmt.Println("Connected to the database", db != nil)
+
     mux := http.NewServeMux()
 
     // --- API routes ---
