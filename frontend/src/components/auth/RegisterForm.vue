@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen pt-10">
+  <div class="pt-10 pb-32">
   <div class="w-120 mx-auto p-6 bg-white rounded-xl shadow-md overflow-y-auto">
     <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Register</h2>
 
