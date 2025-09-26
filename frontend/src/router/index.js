@@ -16,12 +16,11 @@ const routes = [
   { path: '/hr-dashboard', component: AppHR },
   { path: '/applicants', component: AppApplicants },
   { path: '/admin', component: AppAdmin },
-
   { path: '/applicants/:id', name: 'Applicants', component: AppApplicants },
   { path: '/auth', component: AuthPage},
   { path: '/login', component: LoginForm},
   { path: '/register', component: RegisterForm},
-
+  
 ]
 
 
