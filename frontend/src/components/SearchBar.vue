@@ -28,7 +28,7 @@ const selectedJobID = ref('') // need to pass this value to JobBoard
 </script>
 
 <template>
-  <div class="flex bg-[#153243] w-full h-40">
+  <div class="flex bg-title w-full h-40">
     <div class="flex px-42 w-full flex-col justify-center items-center space-y-7 text-xl">
       <div class="text-white min-w-300 w-1/2">
         Search for your jobs now
@@ -59,7 +59,7 @@ const selectedJobID = ref('') // need to pass this value to JobBoard
             <option>นนทบุรี</option>
           </select>
         </div>
-        <button @click="something" class="btn shadow-none bg-[#1F7AB9] border-0 h-12 rounded-2xl text-white text-xl font-extralight">Find Now</button>
+        <button @click="something" class="btn shadow-none bg-lighter border-0 h-12 rounded-2xl text-white text-xl font-extralight">Find Now</button>
       </div>
     </div>
 
