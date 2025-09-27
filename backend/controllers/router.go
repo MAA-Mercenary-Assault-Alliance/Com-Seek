@@ -21,6 +21,7 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 
 	student := requiredLogin.Group("/students")
 	student.GET("/", StudentController.GetStudentProfile)
+	student.PATCH("/", StudentController.UpdateStudentProfile)
 
 	return router
 }
