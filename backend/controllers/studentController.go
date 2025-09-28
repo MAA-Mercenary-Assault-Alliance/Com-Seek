@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"com-seek/backend/models"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -73,8 +72,6 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	fmt.Printf("Received Input: %+v\n", input)
 
 	student := models.Student{
 		UserID: userID,
