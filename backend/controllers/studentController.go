@@ -4,6 +4,7 @@ import (
 	"com-seek/backend/models"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -21,12 +22,29 @@ func NewStudentController(db *gorm.DB) *StudentController {
 
 func (sc *StudentController) GetStudentProfile(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
+	idStr := c.Param("id")
 
-	student := models.Student{
-		UserID: userID,
+	var id uint
+
+	if idStr == "" {
+		id = userID
+	} else {
+		bitSize := strconv.IntSize
+		u, err := strconv.ParseUint(c.Param("id"), 10, bitSize)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+			return
+		}
+
+		id = uint(u)
 	}
 
-	if err := sc.DB.First(&student).Error; err != nil {
+	student := models.Student{
+		UserID: id,
+	}
+
+	if err := sc.DB.Preload("User").First(&student).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
