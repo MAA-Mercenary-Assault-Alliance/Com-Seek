@@ -9,5 +9,6 @@ type Company struct {
 	ContactNumber string
 	Location      string
 	Description   string
+	Approved      bool
 	Jobs          []Job `gorm:"foreignKey:CompanyID"`
 }

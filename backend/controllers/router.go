@@ -12,6 +12,7 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 
 	authController := NewAuthController(db)
 	StudentController := NewStudentController(db)
+	jobController := NewJobController(db)
 
 	authGroup := router.Group("/auth")
 	authGroup.POST("/register", authController.CreateUser)
@@ -21,6 +22,9 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 
 	student := requiredLogin.Group("/students")
 	student.GET("/", StudentController.GetStudentProfile)
+
+	job := requiredLogin.Group("/job")
+	job.POST("/", jobController.CreateJob)
 
 	return router
 }
