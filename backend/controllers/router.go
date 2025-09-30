@@ -24,6 +24,8 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 	student.GET("/", StudentController.GetStudentProfile)
 
 	job := requiredLogin.Group("/job")
+	job.GET("/", jobController.GetJobs)
+	job.GET("/:id", jobController.GetJobs)
 	job.POST("/", jobController.CreateJob)
 
 	return router

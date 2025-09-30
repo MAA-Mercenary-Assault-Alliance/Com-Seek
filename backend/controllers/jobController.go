@@ -3,6 +3,7 @@ package controllers
 import (
 	"com-seek/backend/models"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -68,4 +69,41 @@ func (jc *JobController) CreateJob(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"job": job})
+}
+
+func (jc *JobController) GetJobs(c *gin.Context) {
+	idStr := c.Param("id")
+
+	if idStr != "" {
+		bitSize := strconv.IntSize
+		u, err := strconv.ParseUint(c.Param("id"), 10, bitSize)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+			return
+		}
+
+		id := uint(u)
+
+		job := models.Job{
+			ID: id,
+		}
+
+		if err := jc.DB.Preload("Company.User").First(&job).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"job": job})
+		return
+	}
+
+	var jobs []models.Job
+
+	if err := jc.DB.Preload("Company.User").Find(&jobs).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"jobs": jobs})
 }
