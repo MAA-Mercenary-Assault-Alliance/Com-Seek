@@ -27,6 +27,7 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 	job.GET("/", jobController.GetJobs)
 	job.GET("/:id", jobController.GetJobs)
 	job.POST("/", jobController.CreateJob)
+	job.PATCH("/:id", jobController.UpdateJob)
 
 	return router
 }
