@@ -182,3 +182,40 @@ func (jc *JobController) UpdateJob(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "successfully updated the job"})
 }
+
+func (jc *JobController) DeleteJob(c *gin.Context) {
+	userID := c.MustGet("userID").(uint)
+	jobIDStr := c.Param("id")
+
+	var jobID uint
+
+	u, err := strconv.ParseUint(jobIDStr, 10, strconv.IntSize)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
+	}
+
+	jobID = uint(u)
+
+	job := models.Job{
+		ID: jobID,
+	}
+
+	if err := jc.DB.Preload("Company.User").First(&job).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "job not found"})
+		return
+	}
+
+	if job.CompanyID != userID {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	if err := jc.DB.Delete(&job).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "successfully deleted the job"})
+}
