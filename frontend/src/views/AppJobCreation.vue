@@ -78,7 +78,7 @@ const jobDesc = ref('')
         <div class="job-input-box">
           <div>
             <span class="text-xl">Experience Range</span>
-            <span class="text-xl text-gray-400"> *Year</span>
+            <span class="text-xl text-gray-400"> [Year] *leave empty if require no experience</span>
           </div>
           <div class="flex flex-row justify-start">
             <label class="input-box-half">
