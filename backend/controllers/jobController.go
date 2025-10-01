@@ -27,7 +27,10 @@ func (jc *JobController) CreateJob(c *gin.Context) {
 		Location         string `json:"location" binding:"required,max=256"`
 		JobType          string `json:"job_type" binding:"required,oneof='Software & Application Development' 'Data & AI' 'Cloud & Infrastructure' 'Cybersecurity' 'Product & Design' 'Testing & Quality' 'Hardware & Electronics' 'Management & Leadership' 'IT Support & Operations'"`
 		EmploymentStatus string `json:"employment_status" binding:"required,oneof='part-time' 'full-time' 'contract' 'internship'"`
-		Salary           uint   `json:"salary" binding:"required"`
+		MinSalary        uint   `json:"min_salary" binding:"required"`
+		MaxSalary        uint   `json:"max_salary" binding:"required"`
+		MinExperience    uint   `json:"min_experience" binding:"required"`
+		MaxExperience    uint   `json:"max_experience" binding:"required"`
 		Description      string `json:"description" binding:"required,max=10240"`
 	}
 
@@ -52,13 +55,26 @@ func (jc *JobController) CreateJob(c *gin.Context) {
 		return
 	}
 
+	if input.MaxSalary < input.MinSalary {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "max salary must be greater than or equal to min salary"})
+		return
+	}
+
+	if input.MaxExperience < input.MinExperience {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "max experience must be greater than or equal to min experience"})
+		return
+	}
+
 	job := models.Job{
 		Title:            input.Title,
 		CompanyID:        userID,
 		Location:         input.Location,
 		JobType:          models.JobType(input.JobType),
 		EmploymentStatus: models.EmploymentStatus(input.EmploymentStatus),
-		Salary:           input.Salary,
+		MinSalary:        input.MinSalary,
+		MaxSalary:        input.MaxSalary,
+		MinExperience:    input.MinExperience,
+		MaxExperience:    input.MaxExperience,
 		Description:      input.Description,
 		CheckNeeded:      true,
 	}
@@ -127,7 +143,10 @@ func (jc *JobController) UpdateJob(c *gin.Context) {
 		Location         string `json:"location" binding:"omitempty,max=256"`
 		JobType          string `json:"job_type" binding:"omitempty,oneof='Software & Application Development' 'Data & AI' 'Cloud & Infrastructure' 'Cybersecurity' 'Product & Design' 'Testing & Quality' 'Hardware & Electronics' 'Management & Leadership' 'IT Support & Operations'"`
 		EmploymentStatus string `json:"employment_status" binding:"omitempty,oneof='part-time' 'full-time' 'contract' 'internship'"`
-		Salary           uint   `json:"salary" binding:"omitempty"`
+		MinSalary        *uint  `json:"min_salary" binding:"omitempty"`
+		MaxSalary        *uint  `json:"max_salary" binding:"omitempty"`
+		MinExperience    *uint  `json:"min_experience" binding:"omitempty"`
+		MaxExperience    *uint  `json:"max_experience" binding:"omitempty"`
 		Description      string `json:"description" binding:"omitempty,max=10240"`
 	}
 
@@ -152,30 +171,45 @@ func (jc *JobController) UpdateJob(c *gin.Context) {
 		return
 	}
 
-	updates := map[string]interface{}{
-		"CheckNeeded": true,
-	}
-
 	if input.Title != "" {
-		updates["Title"] = input.Title
+		job.Title = input.Title
 	}
 	if input.Location != "" {
-		updates["Location"] = input.Location
+		job.Location = input.Location
 	}
 	if input.JobType != "" {
-		updates["JobType"] = input.JobType
+		job.JobType = models.JobType(input.JobType)
 	}
 	if input.EmploymentStatus != "" {
-		updates["EmploymentStatus"] = input.EmploymentStatus
+		job.EmploymentStatus = models.EmploymentStatus(input.EmploymentStatus)
 	}
-	if input.Salary != 0 {
-		updates["Salary"] = input.Salary
+	if input.MinSalary != nil {
+		job.MinSalary = *input.MinSalary
+	}
+	if input.MaxSalary != nil {
+		job.MaxSalary = *input.MaxSalary
+	}
+	if input.MinExperience != nil {
+		job.MinExperience = *input.MinExperience
+	}
+	if input.MaxExperience != nil {
+		job.MaxExperience = *input.MaxExperience
 	}
 	if input.Description != "" {
-		updates["Description"] = input.Description
+		job.Description = input.Description
+	}
+	if job.MaxSalary < job.MinSalary {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "max salary must be greater than or equal to min salary"})
+		return
+	}
+	if job.MaxExperience < job.MinExperience {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "max experience must be greater than or equal to min experience"})
+		return
 	}
 
-	if err := jc.DB.Model(&job).Updates(updates).Error; err != nil {
+	job.CheckNeeded = true
+
+	if err := jc.DB.Save(&job).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

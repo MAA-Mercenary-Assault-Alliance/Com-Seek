@@ -35,7 +35,10 @@ type Job struct {
 	Location         string
 	JobType          JobType
 	EmploymentStatus EmploymentStatus
-	Salary           uint
+	MinSalary        uint
+	MaxSalary        uint
+	MinExperience    uint
+	MaxExperience    uint
 	Description      string
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
