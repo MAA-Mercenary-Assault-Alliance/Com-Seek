@@ -27,10 +27,10 @@ func (jc *JobController) CreateJob(c *gin.Context) {
 		Location         string `json:"location" binding:"required,max=256"`
 		JobType          string `json:"job_type" binding:"required,oneof='Software & Application Development' 'Data & AI' 'Cloud & Infrastructure' 'Cybersecurity' 'Product & Design' 'Testing & Quality' 'Hardware & Electronics' 'Management & Leadership' 'IT Support & Operations'"`
 		EmploymentStatus string `json:"employment_status" binding:"required,oneof='part-time' 'full-time' 'contract' 'internship'"`
-		MinSalary        uint   `json:"min_salary" binding:"required"`
-		MaxSalary        uint   `json:"max_salary" binding:"required"`
-		MinExperience    uint   `json:"min_experience" binding:"required"`
-		MaxExperience    uint   `json:"max_experience" binding:"required"`
+		MinSalary        *uint  `json:"min_salary" binding:"required"`
+		MaxSalary        *uint  `json:"max_salary" binding:"required"`
+		MinExperience    *uint  `json:"min_experience" binding:"required"`
+		MaxExperience    *uint  `json:"max_experience" binding:"required"`
 		Description      string `json:"description" binding:"required,max=10240"`
 	}
 
@@ -55,12 +55,12 @@ func (jc *JobController) CreateJob(c *gin.Context) {
 		return
 	}
 
-	if input.MaxSalary < input.MinSalary {
+	if *input.MaxSalary < *input.MinSalary {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "max salary must be greater than or equal to min salary"})
 		return
 	}
 
-	if input.MaxExperience < input.MinExperience {
+	if *input.MaxExperience < *input.MinExperience {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "max experience must be greater than or equal to min experience"})
 		return
 	}
@@ -71,10 +71,10 @@ func (jc *JobController) CreateJob(c *gin.Context) {
 		Location:         input.Location,
 		JobType:          models.JobType(input.JobType),
 		EmploymentStatus: models.EmploymentStatus(input.EmploymentStatus),
-		MinSalary:        input.MinSalary,
-		MaxSalary:        input.MaxSalary,
-		MinExperience:    input.MinExperience,
-		MaxExperience:    input.MaxExperience,
+		MinSalary:        *input.MinSalary,
+		MaxSalary:        *input.MaxSalary,
+		MinExperience:    *input.MinExperience,
+		MaxExperience:    *input.MaxExperience,
 		Description:      input.Description,
 		CheckNeeded:      true,
 	}
