@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {JobTemplate, TE_Info} from './temp_template'
+import {JobTemplate} from './temp_template'
 import {marked} from "marked";
 const props = defineProps<{
   jobInfo: JobTemplate
@@ -9,7 +9,7 @@ const desc_html = marked(props.jobInfo.desc)
 </script>
 
 <template>
-  <div id="job full" class="flex relative w-2/3 ml-7 px-25 py-10 flex-col rounded-2xl box-shadow bg-white">
+  <div id="job full" class="flex relative w-2/3 px-25 py-10 flex-col rounded-2xl box-shadow bg-white">
 
     <div id="title-box" class="flex row items-center mt-3">
       <img src="../assets/company.jpg" class="w-20 h-20 rounded-2xl" alt="company-logo"/>
@@ -17,7 +17,7 @@ const desc_html = marked(props.jobInfo.desc)
         <span class="text-2xl">{{ jobInfo.company }}</span>
         <span class="underline">{{ jobInfo.name }}</span>
       </div>
-      <button class="btn shadow-none bg-[#1F7AB9] border-0 h-12 rounded-2xl text-white text-xl font-extralight ml-auto mt-6">Apply Now</button>
+      <button class="btn shadow-none bg-[#44b15b] border-0 h-12 rounded-2xl text-white text-xl font-extralight ml-auto mt-6">Apply Now</button>
     </div>
     <span class="absolute top-5 right-5 text-gray-500">16/07/2025</span>
 
