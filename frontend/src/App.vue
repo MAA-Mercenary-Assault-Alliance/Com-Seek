@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue"
 import GuestNavbar from "./components/GuestNavbar.vue";
+import Footer from "./components/Footer.vue";
 const message = ref("")
 
 async function callBackend() {
@@ -19,6 +20,7 @@ async function callBackend() {
       <router-view></router-view>
     </div>
 
+    <Footer></Footer>
   </div>
   </div>
 
