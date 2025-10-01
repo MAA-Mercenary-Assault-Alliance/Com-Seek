@@ -2,8 +2,7 @@
 import {ref} from 'vue'
 import {JobTemplate} from './temp_template'
 const props = defineProps<{
-  jobInfo: JobTemplate,
-  hR: boolean
+  jobInfo: JobTemplate
 }>();
 
 const applied = ref(0)
@@ -11,7 +10,7 @@ const new_app = ref(0)
 </script>
 
 <template>
-  <div id="job-box" class="flex relative rounded-2xl flex-row p-4 pb-7 space-x-5 box-shadow bg-white" @click="hR && $emit('click')"  :class="{ 'cursor-pointer': hR }">
+  <div id="job-box" class="flex relative rounded-2xl flex-row p-5 pr-4 pb-4 space-x-5 box-shadow bg-white">
 
     <img src="../assets/company.jpg" class="w-20 h-20 rounded-2xl" alt="company-logo"/>
     <div id="job-box-content" class="flex mr-2 flex-col space-y-1.5">
@@ -31,12 +30,16 @@ const new_app = ref(0)
         <span>{{ jobInfo.location }}</span>
       </div>
     </div>
-    <span class="absolute bottom-3 right-5 text-gray-500">24 days ago</span>
 
-    <div v-if=hR>
-      <span class="absolute top-5 right-10 text-gray-500">Applied: {{applied}}</span>
-      <span class="absolute top-12   right-10 text-gray-500">New: {{new_app}}</span>
+    <div class="flex flex-col ml-auto items-end space-y-3 mr-4">
+      <span class="text-gray-500">16/07/2025</span>
+      <img src="../assets/newTab.svg" class="w-5 h-5" alt="new-tab-icon"/>
+      <div class="flex flex-row mt-auto space-x-6">
+        <button class="btn shadow-none bg-[#1F7AB9] border-0 h-8 rounded-4xl text-white text-md font-extralight px-7">Accept</button>
+        <button class="btn shadow-none bg-[#9A0000] border-0 h-8 rounded-4xl text-white text-md font-extralight px-7">Reject</button>
+      </div>
     </div>
+
   </div>
 </template>
 
