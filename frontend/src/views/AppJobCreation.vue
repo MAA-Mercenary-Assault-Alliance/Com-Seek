@@ -100,7 +100,7 @@ const jobDesc = ref('')
             <span class="text-lg text-gray-400">*support markdown</span>
           </div>
           <label>
-            <textarea v-model="jobDesc" type="search" class="bg-white rounded-2xl border border-gray-300 placeholder-gray-300 grow pl-3 xl:w-5/6 w-full py-2" placeholder="E.g. Account Manager (Sales Engineer)" />
+            <textarea v-model="jobDesc" type="search" class="bg-white rounded-2xl border border-gray-300 placeholder-gray-300 grow pl-3 xl:w-5/6 w-full h-70 py-2" placeholder="E.g. Account Manager (Sales Engineer)" />
           </label>
         </div>
       </div>
