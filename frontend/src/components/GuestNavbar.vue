@@ -12,6 +12,7 @@
     <ul class="flex space-x-15 items-center">
       <li><router-link to="/">Home</router-link></li>
       <li><router-link to="/hr-dashboard">HR TEST</router-link></li>
+      <li><router-link to="/create-job">JC TEST</router-link></li>
       <li><router-link to="/applicants">Applicants TEST</router-link></li>
       <li><router-link to="/admin">Admin Test</router-link></li>
       <!-- Grouped links inside one li -->

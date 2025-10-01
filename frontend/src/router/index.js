@@ -8,6 +8,7 @@ import AppAdmin from "../views/AppAdmin.vue";
 import AuthPage from '../components/auth/AuthPage.vue';
 import LoginForm from '../components/auth/LoginForm.vue';
 import RegisterForm from '../components/auth/RegisterForm.vue';
+import AppJobCreation from "../views/AppJobCreation.vue";
 
 const routes = [
   { path: '/', component: AppHome },
@@ -20,6 +21,7 @@ const routes = [
   { path: '/auth', component: AuthPage},
   { path: '/login', component: LoginForm},
   { path: '/register', component: RegisterForm},
+  { path: '/create-job', component: AppJobCreation},
   
 ]
 
