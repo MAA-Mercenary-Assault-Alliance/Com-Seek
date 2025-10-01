@@ -1,19 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-100" v-if="profile">
-    <!-- Top bar -->
-    <!-- <div class="navbar bg-base-200 px-6 shadow-md">
-      <div class="flex-1">
-        <a class="text-xl font-bold flex items-center">
-          <img src="@/assets/logo.png" alt="logo" class="h-8 mr-2" />
-          Com-Seek
-        </a>
-      </div>
-      <div class="flex-none space-x-6">
-        <router-link to="/" class="hover:underline">Home</router-link>
-        <router-link to="/profile" class="hover:underline">Profile</router-link>
-        <router-link to="/logout" class="hover:underline">Logout</router-link>
-      </div>
-    </div> -->
+  <div class="w-full min-h-screen bg-gray-100" v-if="profile">
 
     <!-- Cover image -->
     <div class="relative">
@@ -29,9 +15,9 @@
 
     <!-- Profile Info -->
     <div
-      class="w-11/12 md:w-8/12 mx-auto bg-white rounded-xl shadow-md -mt-16 p-6 relative"
+      class="w-full mx-auto bg-white rounded-xl shadow-md -mt-16 p-6 relative"
     >
-      <div class="flex items-center space-x-6">
+      <div class="flex items-center px-48 space-x-6">
         <!-- Profile avatar -->
         <div class="avatar">
           <div
@@ -43,7 +29,7 @@
 
         <!-- User Info -->
         <div>
-          <h1 class="text-2xl font-bold text-gray-800">
+          <h1 class="text-5xl font-bold text-gray-800">
             {{ profile.firstName }} {{ profile.lastName }}
           </h1>
           <div class="flex items-center space-x-4 mt-1 text-xl text-primary">
@@ -60,9 +46,15 @@
       </div>
     </div>
 
+        <!-- Full-width green bar -->
+    <section class="w-full bg-[#0a3b1f] py-5">
+      <!-- optional content -->
+    </section>
+
+
     <!-- Details Section -->
     <div
-      class="w-11/12 md:w-8/12 mx-auto mt-6 bg-white rounded-xl shadow-md p-6"
+      class="w-full mx-auto bg-white rounded-xl shadow-md p-6 px-80"
     >
       <div class="divide-y divide-gray-300">
         <div class="py-3">

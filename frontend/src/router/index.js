@@ -5,15 +5,15 @@ import AppLogin from "../views/AppLogin.vue"
 import AppHR from "../views/AppHR.vue";
 import AppApplicants from "../views/AppApplicants.vue";
 import AppAdmin from "../views/AppAdmin.vue";
-import AuthPage from '../components/auth/AuthPage.vue';
-import LoginForm from '../components/auth/LoginForm.vue';
-import RegisterForm from '../components/auth/RegisterForm.vue';
-import StudentProfilePage from '../components/StudentProfilePage.vue';
+import AuthPage from '../views/auth/AuthPage.vue';
+import LoginForm from '../views/auth/LoginForm.vue';
+import RegisterForm from '../views/auth/RegisterForm.vue';
+import StudentProfilePage from '../views/StudentProfile.vue';
 
 const routes = [
   { path: '/', component: AppHome },
   { path: '/profile', component: AppProfile },
-  { path: '/sign-in', component: AppLogin },
+  // { path: '/sign-in', component: AppLogin },
   { path: '/hr-dashboard', component: AppHR },
   { path: '/applicants', component: AppApplicants },
   { path: '/admin', component: AppAdmin },
