@@ -1,5 +1,5 @@
 <template>
-  <div class="flex bg-[#F2F6FC] justify-between items-center top-0 w-full h-18 p-4 text-black px-42 text-xl">
+  <div class="flex bg-[#F2F6FC] justify-between items-center top-0 w-full min-h-18 p-4 text-black px-42 text-xl flex-wrap">
     <ul class="flex space-x-4 items-center">
       <li>
         <router-link to="/">
@@ -7,10 +7,13 @@
         </router-link>
       </li>
       <li class="font-[righteous] text-3xl"><router-link to="/">Com-Seek</router-link></li>
+      <li class="flex ml-4 box-shadow text-xl bg-[#56A45C] rounded-4xl w-48 h-9 text-center items-center justify-center">Admin User</li>
     </ul>
     <ul class="flex space-x-15 items-center">
       <li><router-link to="/">Home</router-link></li>
       <li><router-link to="/hr-dashboard">HR TEST</router-link></li>
+      <li><router-link to="/applicants">Applicants TEST</router-link></li>
+      <li><router-link to="/admin">Admin Test</router-link></li>
       <!-- Grouped links inside one li -->
       <li class="flex space-x-3 items-center">
         <router-link to="/login">Login</router-link>
