@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import axios from 'axios'
 import ConfirmBoxGeneral from "@/components/ConfirmBoxGeneral.vue";
+import {marked} from "marked";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
@@ -16,6 +17,19 @@ const expMin = ref('')
 const expMax = ref('')
 const jobType = ref('')
 const jobDesc = ref('')
+let desc_html = ref('There is no description yet')
+
+watch(jobDesc, async (newVal) => {
+  if (newVal == "") {
+    desc_html.value = "There is no description yet"
+    return
+  }
+  desc_html.value = await marked(newVal)
+})
+
+const preview = ref(false)
+
+
 
 const submitJob = async () => {
   try {
@@ -126,14 +140,45 @@ const submitJob = async () => {
 
       <div id="desc" class="mt-10">
         <div class="job-input-box">
-          <div class="space-x-5">
+          <div class="flex space-x-5">
             <span class="text-xl">Full Job Description</span>
             <span class="text-lg text-gray-400">*support markdown</span>
+            <div id="preview-slider" class="flex justify-center">
+              <div class="bg-base-200 rounded-full p-1 flex w-64 border-gray-300 border-2">
+                <!-- Student -->
+                <button
+                    type="button"
+                    @click="preview=false"
+                    :class="[
+                  'flex-1 py-2 rounded-full font-medium transition',
+                  !preview ? 'bg-lighter text-white shadow' : 'text-gray-600'
+                ]"
+                >
+                  Raw
+                </button>
+
+                <!-- Alumni -->
+                <button
+                    type="button"
+                    @click="preview=true"
+                    :class="[
+                  'flex-1 py-2 rounded-full font-medium transition',
+                  preview ? 'bg-lighter text-white shadow' : 'text-gray-600'
+                ]"
+                >
+                  Preview
+                </button>
+              </div>
+            </div>
           </div>
           <label>
-            <textarea v-model="jobDesc" type="search" class="bg-white rounded-2xl border border-gray-300 placeholder-gray-300 grow pl-3 xl:w-5/6 w-full h-70 py-2" placeholder="E.g. Account Manager (Sales Engineer)" />
+            <textarea v-model="jobDesc" type="search" v-if="!preview" class="bg-white rounded-2xl border border-gray-300 placeholder-gray-300 grow pl-3 xl:w-5/6 w-full h-70 py-2" placeholder="E.g. Account Manager (Sales Engineer)" />
           </label>
         </div>
+      </div>
+
+      <div v-if="preview" class="prose">
+        <div v-html="desc_html"></div>
       </div>
 
       <div class="flex flex-row space-x-10 mt-10">
