@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import axios from 'axios'
+
+const API_BASE_URL = import.meta.env.API_BASE_URL
 
 const jobName = ref('')
 const employmentStatus = ref('')
@@ -11,6 +13,31 @@ const expMin = ref('')
 const expMax = ref('')
 const jobType = ref('')
 const jobDesc = ref('')
+
+const submitJob = async () => {
+  try {
+    const payload = {
+      Title: jobName.value,
+      Location: location.value,
+      JobType: jobType.value,
+      EmploymentStatus: employmentStatus.value,
+      MinSalary: salaryMin.value,
+      MaxSalary: salaryMax.value,
+      MinExperience: expMin.value,
+      MaxExperience: expMax.value,
+      Description: jobDesc.value
+    }
+
+    const res = await axios.post(`${API_BASE_URL}/job`, payload)
+
+    console.log("Job Created: ", res.data)
+    alert('Job created successfully!')
+
+  } catch (err) {
+    console.error(err)
+    alert('Something went wrong in Job Creation')
+  }
+}
 
 </script>
 
@@ -107,7 +134,7 @@ const jobDesc = ref('')
       </div>
 
       <div class="flex flex-row space-x-10 mt-10">
-        <button class="btn shadow-none border-0 h-15 rounded-3xl text-white text-lg font-extralight px-7 bg-[#44B15B]" >Confirm</button>
+        <button class="btn shadow-none border-0 h-15 rounded-3xl text-white text-lg font-extralight px-7 bg-[#44B15B]" @click="submitJob">Confirm</button>
         <button class="btn shadow-none  border-0 h-15 rounded-3xl text-white text-lg font-extralight px-7 bg-gray-300" >Cancel</button>
       </div>
 
