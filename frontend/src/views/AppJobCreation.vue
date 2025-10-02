@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import axios from 'axios'
+import ConfirmBoxGeneral from "@/components/ConfirmBoxGeneral.vue";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+
+const confirmBox = ref(null)
 
 const jobName = ref('')
 const employmentStatus = ref('')
@@ -135,8 +138,14 @@ const submitJob = async () => {
 
       <div class="flex flex-row space-x-10 mt-10">
         <button class="btn shadow-none border-0 h-15 rounded-3xl text-white text-lg font-extralight px-7 bg-[#44B15B]" @click="submitJob">Confirm</button>
-        <button class="btn shadow-none  border-0 h-15 rounded-3xl text-white text-lg font-extralight px-7 bg-gray-300" >Cancel</button>
+        <button class="btn shadow-none  border-0 h-15 rounded-3xl text-white text-lg font-extralight px-7 bg-gray-300" @click="confirmBox.open()">Cancel</button>
       </div>
+
+      <confirm-box-general
+          ref="confirmBox"
+          :message="'The data on this page will be lost'"
+      ></confirm-box-general>
+<!--      TODO: THEN GO BACK TO THE PREVIOUS PAGE-->
 
     </div>
   </div>
