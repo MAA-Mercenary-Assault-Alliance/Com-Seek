@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"com-seek/backend/models"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -47,9 +48,12 @@ func (sc *AdminController) ReviewCompany(c *gin.Context) {
 	}
 
 	// Check for Company
-	var company models.Company
-	if err := sc.DB.Where("user_id = ?", idStr).First(&company).Error; err != nil {
-		c.JSON(404, gin.H{"error": "Company not found"})
+	company := models.Company{
+		UserID: userID,
+	}
+
+	if err := sc.DB.First(&company).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -86,10 +90,12 @@ func (sc *AdminController) ReviewStudent(c *gin.Context) {
 		return
 	}
 
-	// Check for Student
-	var student models.Student
-	if err := sc.DB.Where("user_id = ?", idStr).First(&student).Error; err != nil {
-		c.JSON(404, gin.H{"error": "Student not found"})
+	student := models.Student{
+		UserID: userID,
+	}
+
+	if err := sc.DB.First(&student).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -108,5 +114,43 @@ func (sc *AdminController) ReviewStudent(c *gin.Context) {
 		}
 		c.JSON(200, gin.H{"message": "Student deleted"})
 	}
+
+}
+
+func (sc *AdminController) ReviewJob(c *gin.Context) {
+	userID := c.MustGet("userID").(uint)
+	idStr := c.Param("id") // Job ID
+
+	// Check for Admin Status
+	if !IsAdmin(sc.DB, userID) {
+		c.JSON(403, gin.H{"error": "Unauthorized: For Admin only"})
+		return
+	}
+
+	var payload ReviewPayload
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		c.JSON(400, gin.H{"error": "Invalid payload"})
+		return
+	}
+
+	// Check for Job
+	var job models.Job
+	if err := sc.DB.Where("id = ?", idStr).First(&job).Error; err != nil {
+		c.JSON(404, gin.H{"error": "Job not found"})
+		return
+	}
+
+	if payload.Accepted {
+		job.CheckNeeded = false
+		job.Approved = true
+	} else {
+		job.Approved = false
+	}
+
+	if err := sc.DB.Save(&job).Error; err != nil {
+		c.JSON(500, gin.H{"error": "Failed to review job"})
+		return
+	}
+	c.JSON(200, gin.H{"message": "Job Reviewed"})
 
 }

@@ -42,6 +42,7 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 	admin := requiredLogin.Group("/admin")
 	admin.PATCH("review-company/:id", adminController.ReviewCompany)
 	admin.PATCH("review-student/:id", adminController.ReviewStudent)
+	admin.PATCH("review-job/:id", adminController.ReviewJob)
 
 	return router
 }
