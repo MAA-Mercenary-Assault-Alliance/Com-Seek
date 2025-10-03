@@ -1,0 +1,112 @@
+package controllers
+
+import (
+	"com-seek/backend/models"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
+)
+
+type AdminController struct {
+	DB *gorm.DB
+}
+
+func NewAdminController(db *gorm.DB) *AdminController {
+	return &AdminController{
+		DB: db,
+	}
+}
+
+type ReviewPayload struct {
+	Accepted bool `json:"accepted" binding:"required"`
+}
+
+func IsAdmin(db *gorm.DB, userID uint) bool {
+	var admin models.Admin
+
+	if err := db.Where("user_id = ?", userID).First(&admin).Error; err != nil {
+		return false
+	}
+	return true
+}
+
+func (sc *AdminController) ReviewCompany(c *gin.Context) {
+	userID := c.MustGet("userID").(uint)
+	idStr := c.Param("id") // Company UserID
+
+	// Check for Admin Status
+	if !IsAdmin(sc.DB, userID) {
+		c.JSON(403, gin.H{"error": "Unauthorized: For Admin only"})
+		return
+	}
+
+	var payload ReviewPayload
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		c.JSON(400, gin.H{"error": "Invalid payload"})
+		return
+	}
+
+	// Check for Company
+	var company models.Company
+	if err := sc.DB.Where("user_id = ?", idStr).First(&company).Error; err != nil {
+		c.JSON(404, gin.H{"error": "Company not found"})
+		return
+	}
+
+	if payload.Accepted {
+		company.Approved = true
+		if err := sc.DB.Save(&company).Error; err != nil {
+			c.JSON(500, gin.H{"error": "Failed to approve company"})
+			return
+		}
+		c.JSON(200, gin.H{"message": "Company approved"})
+	} else {
+		// Just delete the company
+		if err := sc.DB.Where("user_id = ?", idStr).Delete(&company).Error; err != nil {
+			c.JSON(500, gin.H{"error": "Failed to reject and delete company"})
+			return
+		}
+		c.JSON(200, gin.H{"message": "Company deleted"})
+	}
+}
+
+func (sc *AdminController) ReviewStudent(c *gin.Context) {
+	userID := c.MustGet("userID").(uint)
+	idStr := c.Param("id") // Student UserID
+
+	// Check for Admin Status
+	if !IsAdmin(sc.DB, userID) {
+		c.JSON(403, gin.H{"error": "Unauthorized: For Admin only"})
+		return
+	}
+
+	var payload ReviewPayload
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		c.JSON(400, gin.H{"error": "Invalid payload"})
+		return
+	}
+
+	// Check for Student
+	var student models.Student
+	if err := sc.DB.Where("user_id = ?", idStr).First(&student).Error; err != nil {
+		c.JSON(404, gin.H{"error": "Student not found"})
+		return
+	}
+
+	if payload.Accepted {
+		student.Approved = true
+		if err := sc.DB.Save(&student).Error; err != nil {
+			c.JSON(500, gin.H{"error": "Failed to approve student"})
+			return
+		}
+		c.JSON(200, gin.H{"message": "Student approved"})
+	} else {
+		// Just delete the student
+		if err := sc.DB.Where("user_id = ?", idStr).Delete(&student).Error; err != nil {
+			c.JSON(500, gin.H{"error": "Failed to reject and delete student"})
+			return
+		}
+		c.JSON(200, gin.H{"message": "Student deleted"})
+	}
+
+}
