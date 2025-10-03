@@ -19,7 +19,7 @@ func NewAdminController(db *gorm.DB) *AdminController {
 }
 
 type ReviewPayload struct {
-	Accepted bool `json:"accepted" binding:"required"`
+	Approved bool `json:"approved" binding:"required"`
 }
 
 func IsAdmin(db *gorm.DB, userID uint) bool {
@@ -57,7 +57,7 @@ func (sc *AdminController) ReviewCompany(c *gin.Context) {
 		return
 	}
 
-	if payload.Accepted {
+	if payload.Approved {
 		company.Approved = true
 		if err := sc.DB.Save(&company).Error; err != nil {
 			c.JSON(500, gin.H{"error": "Failed to approve company"})
@@ -99,7 +99,7 @@ func (sc *AdminController) ReviewStudent(c *gin.Context) {
 		return
 	}
 
-	if payload.Accepted {
+	if payload.Approved {
 		student.Approved = true
 		if err := sc.DB.Save(&student).Error; err != nil {
 			c.JSON(500, gin.H{"error": "Failed to approve student"})
@@ -140,7 +140,12 @@ func (sc *AdminController) ReviewJob(c *gin.Context) {
 		return
 	}
 
-	if payload.Accepted {
+	if !job.CheckNeeded {
+		c.JSON(304, gin.H{"message": "Job already reviewed"})
+		return
+	}
+
+	if payload.Approved {
 		job.CheckNeeded = false
 		job.Approved = true
 	} else {
