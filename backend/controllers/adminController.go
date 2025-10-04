@@ -31,6 +31,24 @@ func IsAdmin(db *gorm.DB, userID uint) bool {
 	return true
 }
 
+func (sc *AdminController) GetPendingCompanies(c *gin.Context) {
+	userID := c.MustGet("userID").(uint)
+
+	// Check for Admin Status
+	if !IsAdmin(sc.DB, userID) {
+		c.JSON(403, gin.H{"error": "Unauthorized: For Admin only"})
+		return
+	}
+
+	var companies []models.Company
+	if err := sc.DB.Where("approved = ?", false).Preload("User").Find(&companies).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"companies": companies})
+}
+
 func (sc *AdminController) ReviewCompany(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 	idStr := c.Param("id") // Company UserID
@@ -74,6 +92,23 @@ func (sc *AdminController) ReviewCompany(c *gin.Context) {
 	}
 }
 
+func (sc *AdminController) GetPendingStudents(c *gin.Context) {
+	userID := c.MustGet("userID").(uint)
+
+	// Check for Admin Status
+	if !IsAdmin(sc.DB, userID) {
+		c.JSON(403, gin.H{"error": "Unauthorized: For Admin only"})
+		return
+	}
+
+	var students []models.Student
+	if err := sc.DB.Where("approved = ?", false).Preload("User").Find(&students).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"students": students})
+}
+
 func (sc *AdminController) ReviewStudent(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 	idStr := c.Param("id") // Student UserID
@@ -115,6 +150,22 @@ func (sc *AdminController) ReviewStudent(c *gin.Context) {
 		c.JSON(200, gin.H{"message": "Student deleted"})
 	}
 
+}
+
+func (sc *AdminController) GetPendingJobs(c *gin.Context) {
+	userID := c.MustGet("userID").(uint)
+
+	if !IsAdmin(sc.DB, userID) {
+		c.JSON(403, gin.H{"error": "Unauthorized: For Admin only"})
+		return
+	}
+
+	var jobs []models.Job
+	if err := sc.DB.Where("check_needed = ?", true).Preload("Company.User").Find(&jobs).Error; err != nil {
+		c.JSON(500, gin.H{"error": "Failed to fetch pending jobs"})
+		return
+	}
+	c.JSON(200, gin.H{"jobs": jobs})
 }
 
 func (sc *AdminController) ReviewJob(c *gin.Context) {
