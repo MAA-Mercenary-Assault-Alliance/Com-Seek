@@ -8,6 +8,7 @@ import AppAdmin from "../views/AppAdmin.vue";
 import AuthPage from '../components/auth/AuthPage.vue';
 import LoginForm from '../components/auth/LoginForm.vue';
 import RegisterForm from '../components/auth/RegisterForm.vue';
+import LandingPage from '../views/LandingPage.vue';
 
 const routes = [
   { path: '/', component: AppHome },
@@ -20,6 +21,7 @@ const routes = [
   { path: '/auth', component: AuthPage},
   { path: '/login', component: LoginForm},
   { path: '/register', component: RegisterForm},
+  { path: '/landing', component: LandingPage, meta: { layout: 'blank' } },
   
 ]
 
