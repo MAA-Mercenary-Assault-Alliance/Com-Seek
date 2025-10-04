@@ -56,6 +56,17 @@ A web application for Computer Engineering students and alumni at Kasetsart Univ
     ```
     npm install
     ```
+3. Set up environment variables
+
+    ```
+    # Windows
+    copy sample.env .env
+
+    # Linux/Unix/MacOS
+    cp sample.env .env
+    ```
+
+    Change the values in .env to match your configuration
 
 ## Running the Application
 
