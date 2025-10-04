@@ -92,3 +92,35 @@ A web application for Computer Engineering students and alumni at Kasetsart Univ
     ```
     npm run dev
     ```
+
+## Interacting with docker databases
+
+1. go in your running docker container
+2. go to "exec" tab
+3. type the command
+
+    ```
+    mysql -u root -p
+    ```
+4. type your password which is in your .env file 
+```
+(DB_ROOT_PASSWORD=???)
+default is "mysqlrootpass"
+```
+5. type the command to use your database
+```
+show databases; # you should see "mysqldb" or your custom database name in .env file
+(DB_NAME=mysqldb)
+```
+
+```
+use mysqldb; 
+```
+6. now you can interact with your database
+```
+show tables;
+
+for example
+select * from companies;
+insert into users (email, password) values ('test@email', 'password');
+```
