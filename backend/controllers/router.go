@@ -11,7 +11,9 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 	router := gin.Default()
 
 	authController := NewAuthController(db)
-	StudentController := NewStudentController(db)
+	studentController := NewStudentController(db)
+	companyController := NewCompanyController(db)
+	jobController := NewJobController(db)
 
 	authGroup := router.Group("/auth")
 	authGroup.POST("/register", authController.CreateUser)
@@ -19,8 +21,22 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 
 	requiredLogin := router.Group("/", middlewares.CheckAuth)
 
-	student := requiredLogin.Group("/students")
-	student.GET("/", StudentController.GetStudentProfile)
+	student := requiredLogin.Group("/student")
+	student.GET("/", studentController.GetStudentProfile)
+	student.GET("/:id", studentController.GetStudentProfile)
+	student.PATCH("/", studentController.UpdateStudentProfile)
+
+	company := requiredLogin.Group("/company")
+	company.GET("/", companyController.GetCompanyProfile)
+	company.GET("/:id", companyController.GetCompanyProfile)
+	company.PATCH("/", companyController.UpdateCompanyProfile)
+
+	job := requiredLogin.Group("/job")
+	job.GET("/", jobController.GetJobs)
+	job.GET("/:id", jobController.GetJobs)
+	job.POST("/", jobController.CreateJob)
+	job.PATCH("/:id", jobController.UpdateJob)
+	job.DELETE("/:id", jobController.DeleteJob)
 
 	return router
 }
