@@ -43,6 +43,9 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 	admin.PATCH("review-company/:id", adminController.ReviewCompany)
 	admin.PATCH("review-student/:id", adminController.ReviewStudent)
 	admin.PATCH("review-job/:id", adminController.ReviewJob)
+	admin.GET("/companies", adminController.GetPendingCompanies)
+	admin.GET("/students", adminController.GetPendingStudents)
+	admin.GET("/jobs", adminController.GetPendingJobs)
 
 	return router
 }
