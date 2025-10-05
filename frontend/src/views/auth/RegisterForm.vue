@@ -56,33 +56,25 @@
         </div>
 
         <div class="form-control flex flex-col">
-          <label class="label" for="password"><span class="label-text">Password</span></label>
-          <input
-            type="password"
-            id="password"
-            v-model="form.password"
-            placeholder="Enter a strong password"
-            class="input input-bordered w-full"
-            :class="{ 'input-error': errors.password }"
-          />
-          <label v-if="errors.password" class="label">
-            <span class="label-text-alt text-error">{{ errors.password }}</span>
-          </label>
+        <PasswordField
+          id="reg-password"
+          label="Password"
+          v-model="form.password"
+          :error="errors.password"
+          autocomplete="new-password"
+          required
+        />
         </div>
-
+        
         <div class="form-control flex flex-col">
-          <label class="label" for="confirmPassword"><span class="label-text">Confirm Password</span></label>
-          <input
-            type="password"
-            id="confirmPassword"
-            v-model="form.confirmPassword"
-            placeholder="Confirm your password"
-            class="input input-bordered w-full"
-            :class="{ 'input-error': errors.confirmPassword }"
-          />
-          <label v-if="errors.confirmPassword" class="label">
-            <span class="label-text-alt text-error">{{ errors.confirmPassword }}</span>
-          </label>
+        <PasswordField
+          id="reg-confirm"
+          label="Confirm Password"
+          v-model="form.confirmPassword"
+          :error="errors.confirmPassword"
+          autocomplete="new-password"
+          required
+        />
         </div>
 
         <!-- Common Fields -->
@@ -149,9 +141,13 @@
 
 <script>
 import { api } from '../../../api/client';
+import { defineAsyncComponent } from 'vue';
 
 export default {
   name: "RegisterForm",
+  components: {
+    PasswordField: defineAsyncComponent(() => import('@/components/PasswordField.vue')),
+  },
   emits: ["switch-to-login"],
   data() {
     return {

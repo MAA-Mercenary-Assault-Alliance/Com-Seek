@@ -30,23 +30,19 @@
       </div>
 
       <!-- Password -->
-      <div class="form-control">
-        <label for="password" class="label">
-          <span class="label-text">Password</span>
-        </label>
-        <input
-          type="password"
-          id="password"
-          v-model="form.password"
-          placeholder="Enter your password"
-          class="input input-bordered w-full"
-          :class="{ 'input-error': errors.password }"
-          required
-        />
+      <PasswordField
+        id="login-password"
+        label="Password"
+        v-model="form.password"
+        :error="errors.password"
+        autocomplete="current-password"
+        required
+      />
+
+
         <label v-if="errors.password" class="label text-error text-sm">
           {{ errors.password }}
         </label>
-      </div>
 
       <!-- Submit button -->
       <button
@@ -74,9 +70,13 @@
 
 <script>
 import { api } from '../../../api/client';
+import { defineAsyncComponent } from 'vue';
 
 export default {
   name: "LoginForm",
+  components: {
+    PasswordField: defineAsyncComponent(() => import('@/components/PasswordField.vue')), // ✅
+  },
   emits: ["switch-to-register"],
   data() {
     return {
@@ -89,10 +89,15 @@ export default {
         message: "",
         type: ""
       },
-      loading: false
+      loading: false,
+      showPassword: false,
     };
   },
   methods: {
+    toggleShowPassword() {
+      this.showPassword = !this.showPassword;
+    },
+    
     validateEmail(email) {
       const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return re.test(email);
@@ -119,13 +124,13 @@ export default {
       this.alert = { message: "Logging in...", type: "success" };
 
       try {
-        // 1) Call backend login -> sets HttpOnly cookie
+        // Call backend login -> sets HttpOnly cookie
         await api.post("/auth/login", {
           email: this.form.email,
           password: this.form.password,
         });
 
-        // 2) Decide where to redirect by probing a protected endpoint
+        // Decide where to redirect by probing a protected endpoint
         // Try student first
         try {
           await api.get("/student/");
