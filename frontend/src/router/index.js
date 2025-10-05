@@ -5,7 +5,6 @@ import AppLogin from "../views/AppLogin.vue"
 import AppHR from "../views/AppHR.vue";
 import AppApplicants from "../views/AppApplicants.vue";
 import AppAdmin from "../views/AppAdmin.vue";
-import AuthPage from '../views/auth/AuthPage.vue';
 import LoginForm from '../views/auth/LoginForm.vue';
 import RegisterForm from '../views/auth/RegisterForm.vue';
 import StudentProfilePage from '../views/StudentProfile.vue';
@@ -18,7 +17,6 @@ const routes = [
   { path: '/applicants', component: AppApplicants },
   { path: '/admin', component: AppAdmin },
   { path: '/applicants/:id', name: 'Applicants', component: AppApplicants },
-  { path: '/auth', component: AuthPage},
   { path: '/login', component: LoginForm},
   { path: '/register', component: RegisterForm},
   { path: '/student-profile', component: StudentProfilePage},

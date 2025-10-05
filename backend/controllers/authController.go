@@ -168,13 +168,18 @@ func (ac *AuthController) Login(c *gin.Context) {
 
 	maxAge := int((time.Minute * 30) / time.Second)
 
+	c.SetSameSite(http.SameSiteNoneMode)
+	secure := true
+	if os.Getenv("ENV") == "dev" {
+		secure = false
+	}
 	c.SetCookie(
 		"token",
 		token,
 		maxAge,
 		"/",
 		"",
-		true,
+		secure,
 		true,
 	)
 
