@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"com-seek/backend/models"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -131,6 +132,10 @@ func (jc *JobController) GetJobs(c *gin.Context) {
 	}
 	if visibility := c.Query("visibility"); visibility != "" {
 		query = query.Where("visibility = ?", visibility)
+	}
+	if keyword := c.Query("keyword"); keyword != "" {
+		keywordPattern := fmt.Sprintf("%%%s%%", keyword)
+		query = query.Where("title LIKE ? OR description LIKE ?", keywordPattern, keywordPattern)
 	}
 
 	limit, err := strconv.Atoi(c.DefaultQuery("limit", "30"))
