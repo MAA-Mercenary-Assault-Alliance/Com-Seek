@@ -133,6 +133,18 @@ func (jc *JobController) GetJobs(c *gin.Context) {
 		query = query.Where("visibility = ?", visibility)
 	}
 
+	limit, err := strconv.Atoi(c.DefaultQuery("limit", "30"))
+	if err != nil || limit <= 0 {
+		limit = 30
+	}
+
+	offset, err := strconv.Atoi(c.DefaultQuery("offset", "0"))
+	if err != nil || offset < 0 {
+		offset = 0
+	}
+
+	query = query.Limit(limit).Offset(offset)
+
 	if err := query.Find(&jobs).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
