@@ -148,58 +148,55 @@
 </template>
 
 <script>
+import { api } from '../../../api/client';
+
 export default {
-  name: 'RegisterForm',
-  emits: ['switch-to-login'],
+  name: "RegisterForm",
+  emits: ["switch-to-login"],
   data() {
     return {
-      userType: 'student',
+      userType: "student", // or 'alumni'
       form: {
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        transcript: null
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        transcript: null,
       },
       errors: {},
-      alert: { message: '', type: '' },
+      alert: { message: "", type: "" },
       loading: false,
-      transcriptFileName: ''
-    }
+      transcriptFileName: "",
+    };
   },
   methods: {
-    // Set user type (student/alumni)
-    setUserType(type) { 
-      this.userType = type; 
-      this.errors = {}; 
+    // Toggle student/alumni
+    setUserType(type) {
+      this.userType = type;
+      this.errors = {};
     },
 
-    // Email validation
-    validateEmail(email) { 
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); 
+    validateEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    },
+    validatePassword(password) {
+      return password.length >= 8;
     },
 
-    // Password validation (min 8 characters)
-    validatePassword(password) { 
-      return password.length >= 8; 
-    },
-
-    // File upload handler
     handleFileUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
 
-      if (file.type !== 'application/pdf') { 
-        this.errors.transcript = 'Only PDF allowed'; 
-        this.$refs.transcriptInput.value = ''; 
-        return; 
+      if (file.type !== "application/pdf") {
+        this.errors.transcript = "Only PDF files are allowed.";
+        this.$refs.transcriptInput.value = "";
+        return;
       }
-
-      if (file.size > 10 * 1024 * 1024) { 
-        this.errors.transcript = 'Max 10MB'; 
-        this.$refs.transcriptInput.value = ''; 
-        return; 
+      if (file.size > 10 * 1024 * 1024) {
+        this.errors.transcript = "File must be under 10MB.";
+        this.$refs.transcriptInput.value = "";
+        return;
       }
 
       this.form.transcript = file;
@@ -207,70 +204,80 @@ export default {
       delete this.errors.transcript;
     },
 
-    // Form validation
     validateForm() {
       this.errors = {};
+      if (!this.form.firstName.trim()) this.errors.firstName = "Required";
+      if (!this.form.lastName.trim()) this.errors.lastName = "Required";
+      if (!this.validateEmail(this.form.email))
+        this.errors.email = "Invalid email";
+      if (!this.validatePassword(this.form.password))
+        this.errors.password = "Minimum 8 characters";
+      if (this.form.password !== this.form.confirmPassword)
+        this.errors.confirmPassword = "Passwords do not match";
 
-      if (!this.form.firstName.trim()) this.errors.firstName = 'Required';
-      if (!this.form.lastName.trim()) this.errors.lastName = 'Required';
-      if (!this.validateEmail(this.form.email)) this.errors.email = 'Invalid email';
-      if (!this.validatePassword(this.form.password)) this.errors.password = 'Min 8 chars';
-      if (this.form.password !== this.form.confirmPassword) this.errors.confirmPassword = 'Passwords do not match';
-
-      // Transcript validation for alumni (optional for students)
-      if (this.userType === 'alumni' && !this.form.transcript) {
-        this.errors.transcript = 'Upload transcript';
+      if (this.userType === "alumni" && !this.form.transcript) {
+        this.errors.transcript = "Transcript required for alumni.";
       }
 
       return Object.keys(this.errors).length === 0;
     },
 
-    // Handle registration
     async handleRegister() {
       if (!this.validateForm()) return;
-
       this.loading = true;
-      this.alert = { message: 'Creating account...', type: 'success' };
+      this.alert = { message: "Creating account...", type: "success" };
 
       try {
-        await new Promise(r => setTimeout(r, 2000)); // simulate API call
-
-        // All users now require admin approval
-        this.alert = { 
-          message: 'Registration successful! Pending admin approval.', 
-          type: 'success' 
+        // prepare payload
+        const isAlum = this.userType === "alumni";
+        const body = {
+          email: this.form.email,
+          password: this.form.password,
+          user_type: "student", // backend expects 'student' or 'company'
+          student_profile: {
+            first_name: this.form.firstName,
+            last_name: this.form.lastName,
+            is_alum: isAlum,
+          },
         };
 
-        setTimeout(() => { 
-          this.resetForm(); 
-          this.$emit('switch-to-login'); 
-        }, 2000);
+        // Send request
+        const { data } = await api.post("/auth/register", body);
+        console.log("Registered:", data);
 
-      } catch {
-        this.alert = { message: 'Registration failed', type: 'error' };
+        this.alert = {
+          message: "Registration successful! Pending admin approval.",
+          type: "success",
+        };
+
+        setTimeout(() => {
+          this.resetForm();
+          this.$router.push("/login");
+        }, 2000);
+      } catch (error) {
+        const msg =
+          error?.response?.data?.error ||
+          error?.message ||
+          "Registration failed.";
+        this.alert = { message: msg, type: "error" };
       } finally {
         this.loading = false;
       }
     },
 
-    // Reset form to initial state
     resetForm() {
-      this.form = { 
-        firstName: '', 
-        lastName: '', 
-        email: '', 
-        password: '', 
-        confirmPassword: '', 
-        transcript: null 
+      this.form = {
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        transcript: null,
       };
-      this.transcriptFileName = '';
+      this.transcriptFileName = "";
       this.errors = {};
-      this.alert = { message: '', type: '' };
-    }
-  }
-}
+      this.alert = { message: "", type: "" };
+    },
+  },
+};
 </script>
-
-<style>
-.form-control { transition: all 0.3s ease; }
-</style>

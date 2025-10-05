@@ -73,6 +73,8 @@
 </template>
 
 <script>
+import { api } from '../../../api/client';
+
 export default {
   name: "LoginForm",
   emits: ["switch-to-register"],
@@ -117,16 +119,38 @@ export default {
       this.alert = { message: "Logging in...", type: "success" };
 
       try {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        // 1) Call backend login -> sets HttpOnly cookie
+        await api.post("/auth/login", {
+          email: this.form.email,
+          password: this.form.password,
+        });
 
-        this.alert = { message: "Login successful! Redirecting...", type: "success" };
+        // 2) Decide where to redirect by probing a protected endpoint
+        // Try student first
+        try {
+          await api.get("/student/");
+          this.alert = { message: "Login successful! Redirecting...", type: "success" };
+          this.$router.push({ name: "StudentProfile" }); // or "/student"
+          return;
+        } catch (_) {}
 
-        setTimeout(() => {
-          this.$router.push("/dashboard");
-        }, 1000);
+        // Then try company
+        try {
+          await api.get("/company/");
+          this.alert = { message: "Login successful! Redirecting...", type: "success" };
+          this.$router.push({ name: "CompanyProfile" }); // or "/company"
+          return;
+        } catch (_) {}
+
+        // Fallback if neither profile exists yet
+        this.$router.push("/");
+
       } catch (error) {
-        this.alert = { message: "Invalid credentials. Please try again.", type: "error" };
+        const msg =
+          error?.response?.data?.error ||
+          error?.message ||
+          "Invalid credentials. Please try again.";
+        this.alert = { message: msg, type: "error" };
       } finally {
         this.loading = false;
       }
@@ -134,3 +158,4 @@ export default {
   }
 };
 </script>
+
