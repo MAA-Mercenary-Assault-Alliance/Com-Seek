@@ -30,17 +30,17 @@ func IsAdmin(db *gorm.DB, userID uint) bool {
 	return true
 }
 
-func (sc *AdminController) GetPendingCompanies(c *gin.Context) {
+func (ac *AdminController) GetPendingCompanies(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 
 	// Check for Admin Status
-	if !IsAdmin(sc.DB, userID) {
+	if !IsAdmin(ac.DB, userID) {
 		c.JSON(403, gin.H{"error": "Unauthorized: For Admin only"})
 		return
 	}
 
 	var companies []models.Company
-	if err := sc.DB.Where("approved = ?", false).Preload("User").Find(&companies).Error; err != nil {
+	if err := ac.DB.Where("approved = ?", false).Preload("User").Find(&companies).Error; err != nil {
 		c.JSON(500, gin.H{"error": "Error fetching pending companies"})
 		return
 	}
@@ -48,14 +48,14 @@ func (sc *AdminController) GetPendingCompanies(c *gin.Context) {
 	c.JSON(200, gin.H{"companies": companies})
 }
 
-func (sc *AdminController) ReviewCompany(c *gin.Context) {
+func (ac *AdminController) ReviewCompany(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 	idStr := c.Param("id") // Company UserID
 
 	var id uint
 
 	// Check for Admin Status
-	if !IsAdmin(sc.DB, userID) {
+	if !IsAdmin(ac.DB, userID) {
 		c.JSON(403, gin.H{"error": "Unauthorized: For Admin only"})
 		return
 	}
@@ -71,21 +71,21 @@ func (sc *AdminController) ReviewCompany(c *gin.Context) {
 		UserID: id,
 	}
 
-	if err := sc.DB.Preload("User").Where("UserID = ?", idStr).First(&company).Error; err != nil {
+	if err := ac.DB.Preload("User").Where("UserID = ?", idStr).First(&company).Error; err != nil {
 		c.JSON(500, gin.H{"error": "Error fetching company"})
 		return
 	}
 
 	if payload.Approved {
 		company.Approved = true
-		if err := sc.DB.Save(&company).Error; err != nil {
+		if err := ac.DB.Save(&company).Error; err != nil {
 			c.JSON(500, gin.H{"error": "Failed to approve company"})
 			return
 		}
 		c.JSON(200, gin.H{"message": "Company approved"})
 	} else {
 		// Just delete the user
-		if err := sc.DB.Delete(&company.User).Error; err != nil {
+		if err := ac.DB.Delete(&company.User).Error; err != nil {
 			c.JSON(500, gin.H{"error": "Failed to delete company's user"})
 			return
 		}
@@ -93,31 +93,31 @@ func (sc *AdminController) ReviewCompany(c *gin.Context) {
 	}
 }
 
-func (sc *AdminController) GetPendingStudents(c *gin.Context) {
+func (ac *AdminController) GetPendingStudents(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 
 	// Check for Admin Status
-	if !IsAdmin(sc.DB, userID) {
+	if !IsAdmin(ac.DB, userID) {
 		c.JSON(403, gin.H{"error": "Unauthorized: For Admin only"})
 		return
 	}
 
 	var students []models.Student
-	if err := sc.DB.Where("approved = ?", false).Preload("User").Find(&students).Error; err != nil {
+	if err := ac.DB.Where("approved = ?", false).Preload("User").Find(&students).Error; err != nil {
 		c.JSON(500, gin.H{"error": "Error fetching pending students"})
 		return
 	}
 	c.JSON(200, gin.H{"students": students})
 }
 
-func (sc *AdminController) ReviewStudent(c *gin.Context) {
+func (ac *AdminController) ReviewStudent(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 	idStr := c.Param("id") // Student UserID
 
 	var id uint
 
 	// Check for Admin Status
-	if !IsAdmin(sc.DB, userID) {
+	if !IsAdmin(ac.DB, userID) {
 		c.JSON(403, gin.H{"error": "Unauthorized: For Admin only"})
 		return
 	}
@@ -132,21 +132,21 @@ func (sc *AdminController) ReviewStudent(c *gin.Context) {
 		UserID: id,
 	}
 
-	if err := sc.DB.Preload("User").Where("UserID = ?", idStr).First(&student).Error; err != nil {
+	if err := ac.DB.Preload("User").Where("UserID = ?", idStr).First(&student).Error; err != nil {
 		c.JSON(500, gin.H{"error": "Error fetching pending students"})
 		return
 	}
 
 	if payload.Approved {
 		student.Approved = true
-		if err := sc.DB.Save(&student).Error; err != nil {
+		if err := ac.DB.Save(&student).Error; err != nil {
 			c.JSON(500, gin.H{"error": "Failed to approve student"})
 			return
 		}
 		c.JSON(200, gin.H{"message": "Student approved"})
 	} else {
 		// Just delete the student
-		if err := sc.DB.Delete(&student.User).Error; err != nil {
+		if err := ac.DB.Delete(&student.User).Error; err != nil {
 			c.JSON(500, gin.H{"error": "Failed to reject and delete student"})
 			return
 		}
@@ -155,28 +155,28 @@ func (sc *AdminController) ReviewStudent(c *gin.Context) {
 
 }
 
-func (sc *AdminController) GetPendingJobs(c *gin.Context) {
+func (ac *AdminController) GetPendingJobs(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 
-	if !IsAdmin(sc.DB, userID) {
+	if !IsAdmin(ac.DB, userID) {
 		c.JSON(403, gin.H{"error": "Unauthorized: For Admin only"})
 		return
 	}
 
 	var jobs []models.Job
-	if err := sc.DB.Where("check_needed = ?", true).Preload("Company.User").Find(&jobs).Error; err != nil {
+	if err := ac.DB.Where("check_needed = ?", true).Preload("Company.User").Find(&jobs).Error; err != nil {
 		c.JSON(500, gin.H{"error": "Failed to fetch pending jobs"})
 		return
 	}
 	c.JSON(200, gin.H{"jobs": jobs})
 }
 
-func (sc *AdminController) ReviewJob(c *gin.Context) {
+func (ac *AdminController) ReviewJob(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 	idStr := c.Param("id") // Job ID
 
 	// Check for Admin Status
-	if !IsAdmin(sc.DB, userID) {
+	if !IsAdmin(ac.DB, userID) {
 		c.JSON(403, gin.H{"error": "Unauthorized: For Admin only"})
 		return
 	}
@@ -189,7 +189,7 @@ func (sc *AdminController) ReviewJob(c *gin.Context) {
 
 	// Check for Job
 	var job models.Job
-	if err := sc.DB.Where("id = ?", idStr).First(&job).Error; err != nil {
+	if err := ac.DB.Where("id = ?", idStr).First(&job).Error; err != nil {
 		c.JSON(404, gin.H{"error": "Job not found"})
 		return
 	}
@@ -207,7 +207,7 @@ func (sc *AdminController) ReviewJob(c *gin.Context) {
 		job.Approved = false
 	}
 
-	if err := sc.DB.Save(&job).Error; err != nil {
+	if err := ac.DB.Save(&job).Error; err != nil {
 		c.JSON(500, gin.H{"error": "Failed to review job"})
 		return
 	}
