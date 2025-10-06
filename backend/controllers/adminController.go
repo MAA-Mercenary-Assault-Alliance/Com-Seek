@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"com-seek/backend/models"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -18,7 +19,7 @@ func NewAdminController(db *gorm.DB) *AdminController {
 }
 
 type ReviewPayload struct {
-	Approved bool `json:"approved" binding:"required"`
+	Approved *bool `json:"approved" binding:"required"`
 }
 
 func IsAdmin(db *gorm.DB, userID uint) bool {
@@ -28,6 +29,17 @@ func IsAdmin(db *gorm.DB, userID uint) bool {
 		return false
 	}
 	return true
+}
+
+func ConvertIDtoUint(idStr string, c *gin.Context) (uint, error) {
+	u, err := strconv.ParseUint(idStr, 10, strconv.IntSize)
+	if err != nil {
+		c.JSON(400, gin.H{"error": "Invalid ID"})
+		return 0, err
+	}
+	var unitID = uint(u)
+
+	return unitID, err
 }
 
 func (ac *AdminController) GetPendingCompanies(c *gin.Context) {
@@ -52,8 +64,6 @@ func (ac *AdminController) ReviewCompany(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 	idStr := c.Param("id") // Company UserID
 
-	var id uint
-
 	// Check for Admin Status
 	if !IsAdmin(ac.DB, userID) {
 		c.JSON(403, gin.H{"error": "Unauthorized: For Admin only"})
@@ -66,17 +76,22 @@ func (ac *AdminController) ReviewCompany(c *gin.Context) {
 		return
 	}
 
-	// Check for Company
-	company := models.Company{
-		UserID: id,
+	unitID, convertError := ConvertIDtoUint(idStr, c)
+	if convertError != nil {
+		return
 	}
 
-	if err := ac.DB.Preload("User").Where("UserID = ?", idStr).First(&company).Error; err != nil {
+	// Check for Company
+	company := models.Company{
+		UserID: unitID,
+	}
+
+	if err := ac.DB.Preload("User").First(&company).Error; err != nil {
 		c.JSON(500, gin.H{"error": "Error fetching company"})
 		return
 	}
 
-	if payload.Approved {
+	if *payload.Approved {
 		company.Approved = true
 		if err := ac.DB.Save(&company).Error; err != nil {
 			c.JSON(500, gin.H{"error": "Failed to approve company"})
@@ -85,7 +100,7 @@ func (ac *AdminController) ReviewCompany(c *gin.Context) {
 		c.JSON(200, gin.H{"message": "Company approved"})
 	} else {
 		// Just delete the user
-		if err := ac.DB.Delete(&company.User).Error; err != nil {
+		if err := ac.DB.Unscoped().Delete(&company.User).Error; err != nil {
 			c.JSON(500, gin.H{"error": "Failed to delete company's user"})
 			return
 		}
@@ -114,8 +129,6 @@ func (ac *AdminController) ReviewStudent(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 	idStr := c.Param("id") // Student UserID
 
-	var id uint
-
 	// Check for Admin Status
 	if !IsAdmin(ac.DB, userID) {
 		c.JSON(403, gin.H{"error": "Unauthorized: For Admin only"})
@@ -128,16 +141,21 @@ func (ac *AdminController) ReviewStudent(c *gin.Context) {
 		return
 	}
 
-	student := models.Student{
-		UserID: id,
+	unitID, convertError := ConvertIDtoUint(idStr, c)
+	if convertError != nil {
+		return
 	}
 
-	if err := ac.DB.Preload("User").Where("UserID = ?", idStr).First(&student).Error; err != nil {
+	student := models.Student{
+		UserID: unitID,
+	}
+
+	if err := ac.DB.Preload("User").Where("user_id = ?", idStr).First(&student).Error; err != nil {
 		c.JSON(500, gin.H{"error": "Error fetching pending students"})
 		return
 	}
 
-	if payload.Approved {
+	if *payload.Approved {
 		student.Approved = true
 		if err := ac.DB.Save(&student).Error; err != nil {
 			c.JSON(500, gin.H{"error": "Failed to approve student"})
@@ -146,7 +164,7 @@ func (ac *AdminController) ReviewStudent(c *gin.Context) {
 		c.JSON(200, gin.H{"message": "Student approved"})
 	} else {
 		// Just delete the student
-		if err := ac.DB.Delete(&student.User).Error; err != nil {
+		if err := ac.DB.Unscoped().Delete(&student.User).Error; err != nil {
 			c.JSON(500, gin.H{"error": "Failed to reject and delete student"})
 			return
 		}
@@ -187,9 +205,16 @@ func (ac *AdminController) ReviewJob(c *gin.Context) {
 		return
 	}
 
+	unitID, convertError := ConvertIDtoUint(idStr, c)
+	if convertError != nil {
+		return
+	}
+
 	// Check for Job
-	var job models.Job
-	if err := ac.DB.Where("id = ?", idStr).First(&job).Error; err != nil {
+	job := models.Job{
+		ID: unitID,
+	}
+	if err := ac.DB.First(&job).Error; err != nil {
 		c.JSON(404, gin.H{"error": "Job not found"})
 		return
 	}
@@ -199,9 +224,10 @@ func (ac *AdminController) ReviewJob(c *gin.Context) {
 		return
 	}
 
-	if payload.Approved {
+	if *payload.Approved {
 		job.CheckNeeded = false
 		job.Approved = true
+		job.Visibility = true
 	} else {
 		job.CheckNeeded = false
 		job.Approved = false
