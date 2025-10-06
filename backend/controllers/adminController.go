@@ -37,9 +37,9 @@ func ConvertIDtoUint(idStr string, c *gin.Context) (uint, error) {
 		c.JSON(400, gin.H{"error": "Invalid ID"})
 		return 0, err
 	}
-	var unitID = uint(u)
+	var uintID = uint(u)
 
-	return unitID, err
+	return uintID, err
 }
 
 func (ac *AdminController) GetPendingCompanies(c *gin.Context) {
@@ -76,14 +76,14 @@ func (ac *AdminController) ReviewCompany(c *gin.Context) {
 		return
 	}
 
-	unitID, convertError := ConvertIDtoUint(idStr, c)
+	uintID, convertError := ConvertIDtoUint(idStr, c)
 	if convertError != nil {
 		return
 	}
 
 	// Check for Company
 	company := models.Company{
-		UserID: unitID,
+		UserID: uintID,
 	}
 
 	if err := ac.DB.Preload("User").First(&company).Error; err != nil {
@@ -141,13 +141,13 @@ func (ac *AdminController) ReviewStudent(c *gin.Context) {
 		return
 	}
 
-	unitID, convertError := ConvertIDtoUint(idStr, c)
+	uintID, convertError := ConvertIDtoUint(idStr, c)
 	if convertError != nil {
 		return
 	}
 
 	student := models.Student{
-		UserID: unitID,
+		UserID: uintID,
 	}
 
 	if err := ac.DB.Preload("User").Where("user_id = ?", idStr).First(&student).Error; err != nil {
@@ -205,14 +205,14 @@ func (ac *AdminController) ReviewJob(c *gin.Context) {
 		return
 	}
 
-	unitID, convertError := ConvertIDtoUint(idStr, c)
+	uintID, convertError := ConvertIDtoUint(idStr, c)
 	if convertError != nil {
 		return
 	}
 
 	// Check for Job
 	job := models.Job{
-		ID: unitID,
+		ID: uintID,
 	}
 	if err := ac.DB.First(&job).Error; err != nil {
 		c.JSON(404, gin.H{"error": "Job not found"})
