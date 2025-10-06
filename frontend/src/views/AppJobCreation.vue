@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, reactive} from 'vue'
 import axios from 'axios'
 import ConfirmBoxGeneral from "@/components/ConfirmBoxGeneral.vue";
 import {marked} from "marked";
@@ -29,10 +29,112 @@ watch(jobDesc, async (newVal) => {
 
 const preview = ref(false)
 
+const errors = reactive({
+  jobName: '',
+  employmentStatus: '',
+  location: '',
+  salaryMin: '',
+  salaryMax: '',
+  expMin: '',
+  expMax: '',
+  jobType: '',
+  jobDesc: ''
+})
 
+const validateForm = () => {
+  let valid = true
+
+  // Reset errors
+  Object.keys(errors).forEach(key => errors[key] = '')
+
+  if (!jobName.value.trim()) {
+    errors.jobName = 'Job Name is required'
+    valid = false
+  }
+
+  if (!employmentStatus.value) {
+    errors.employmentStatus = 'Employment Status is required'
+    valid = false
+  }
+
+  if (!location.value) {
+    errors.location = 'Location is required'
+    valid = false
+  }
+
+  if (!jobType.value) {
+    errors.jobType = 'Job Type is required'
+    valid = false
+  }
+
+  if (!jobDesc.value.trim()) {
+    errors.jobDesc = 'Job description is required'
+    valid = false
+  }
+
+// Salary validation
+  if (!salaryMin.value) {
+    errors.salaryMin = 'Minimum salary is required'
+    valid = false
+  } else if (isNaN(Number(salaryMin.value))) {
+    errors.salaryMin = 'Minimum salary must be a number'
+    valid = false
+  }
+
+  if (!salaryMax.value) {
+    errors.salaryMax = 'Maximum salary is required'
+    valid = false
+  } else if (isNaN(Number(salaryMax.value))) {
+    errors.salaryMax = 'Maximum salary must be a number'
+    valid = false
+  }
+
+// Experience validation
+  if (!expMin.value) {
+    errors.expMin = 'Minimum experience is required'
+    valid = false
+  } else if (isNaN(Number(expMin.value))) {
+    errors.expMin = 'Minimum experience must be a number'
+    valid = false
+  }
+
+  if (!expMax.value) {
+    errors.expMax = 'Maximum experience is required'
+    valid = false
+  } else if (isNaN(Number(expMax.value))) {
+    errors.expMax = 'Maximum experience must be a number'
+    valid = false
+  }
+
+// Optional: check if min > max
+  if (
+      salaryMin.value && salaryMax.value &&
+      Number(salaryMin.value) > Number(salaryMax.value)
+  ) {
+    errors.salaryMin = 'Min salary cannot be greater than max'
+    valid = false
+  }
+
+  if (
+      expMin.value && expMax.value &&
+      Number(expMin.value) > Number(expMax.value)
+  ) {
+    errors.expMin = 'Min experience cannot be greater than max'
+    valid = false
+  }
+
+
+  return valid
+}
 
 const submitJob = async () => {
   try {
+
+    if (!validateForm()) {
+      alert("Please fix the errors in the form")
+      return
+    }
+
     const payload = {
       Title: jobName.value,
       Location: location.value,
@@ -68,14 +170,20 @@ const submitJob = async () => {
       <div class="grid grid-cols-2 space-y-5">
 
         <div class="job-input-box">
-          <span class="text-xl">Job Name</span>
+          <div class="title-and-error-box">
+            <span class="text-xl">Job Name</span>
+            <label v-if="errors.jobName" class="text-red-500 text-sm">{{ errors.jobName }}</label>
+          </div>
           <label class="input-box-gray">
             <input v-model="jobName" type="search" class="grow pl-3" placeholder="E.g. Account Manager (Sales Engineer)" />
           </label>
         </div>
 
         <div class="job-input-box">
-          <span class="text-xl">Employment Status</span>
+          <div class="title-and-error-box">
+            <span class="text-xl">Employment Status</span>
+            <label v-if="errors.employmentStatus" class="text-red-500 text-sm">{{ errors.employmentStatus }}</label>
+          </div>
           <select v-model="employmentStatus" class="input-select">
             <option disabled value="">Employment Status</option>
             <option>Full-Time</option>
@@ -84,7 +192,10 @@ const submitJob = async () => {
         </div>
 
         <div class="job-input-box">
-          <span class="text-xl">Location</span>
+          <div class="title-and-error-box">
+            <span class="text-xl">Location</span>
+            <label v-if="errors.location" class="text-red-500 text-sm">{{ errors.location }}</label>
+          </div>
           <select v-model="location" class="input-select">
             <option disabled value="">Location</option>
             <option>กรุงเทพมหานคร</option>
@@ -96,7 +207,11 @@ const submitJob = async () => {
         </div>
 
         <div class="job-input-box">
-          <span class="text-xl">Salary Range</span>
+          <div class="title-and-error-box">
+            <span class="text-xl">Salary Range</span>
+            <span v-if="errors.salaryMin" class="text-red-500 text-sm">{{ errors.salaryMin }}</span>
+            <span v-if="errors.salaryMax" class="text-red-500 text-sm">{{ errors.salaryMax }}</span>
+          </div>
           <div class="flex flex-row justify-start">
             <label class="input-box-half">
               <input v-model="salaryMin" type="search" class="grow pl-3" placeholder="E.g. 20000฿" />
@@ -109,7 +224,10 @@ const submitJob = async () => {
         </div>
 
         <div class="job-input-box">
-          <span class="text-xl">Job Type</span>
+          <div class="title-and-error-box">
+            <span class="text-xl">Employment Status</span>
+            <label v-if="errors.jobType" class="text-red-500 text-sm">{{ errors.jobType }}</label>
+          </div>
           <select v-model="jobType" class="input-select">
             <option disabled value="">Job Type</option>
             <option>Full-Stack Developer</option>
@@ -122,8 +240,14 @@ const submitJob = async () => {
 
         <div class="job-input-box">
           <div>
-            <span class="text-xl">Experience Range</span>
-            <span class="text-xl text-gray-400"> [Year] *leave empty if require no experience</span>
+            <div class="title-and-error-box">
+              <span class="text-xl">Experience Range</span>
+              <span class="text-xl text-gray-400"> [Year] *leave empty if require no experience</span>
+            </div>
+            <div v-if="errors.expMin || errors.expMax" class="flex space-x-5 mt-3">
+              <span v-if="errors.expMin" class="text-red-500 text-sm">{{ errors.expMin }}</span>
+              <span v-if="errors.expMax" class="text-red-500 text-sm">{{ errors.expMax }}</span>
+            </div>
           </div>
           <div class="flex flex-row justify-start">
             <label class="input-box-half">
@@ -171,6 +295,7 @@ const submitJob = async () => {
               </div>
             </div>
           </div>
+          <span v-if="errors.jobDesc" class="text-red-500 text-sm">{{ errors.jobDesc }}</span>
           <label>
             <textarea v-model="jobDesc" type="search" v-if="!preview" class="bg-white rounded-2xl border border-gray-300 placeholder-gray-300 grow pl-3 xl:w-5/6 w-full h-70 py-2" placeholder="E.g. Account Manager (Sales Engineer)" />
           </label>
@@ -182,7 +307,7 @@ const submitJob = async () => {
       </div>
 
       <div class="flex flex-row space-x-10 mt-10">
-        <button class="btn shadow-none border-0 h-15 rounded-3xl text-white text-lg font-extralight px-7 bg-[#44B15B]" @click="submitJob">Confirm</button>
+        <button class="btn shadow-none border-0 h-15 rounded-3xl text-white text-lg font-extralight px-7 bg-[#44B15B]" @click="submitJob ">Confirm</button>
         <button class="btn shadow-none  border-0 h-15 rounded-3xl text-white text-lg font-extralight px-7 bg-gray-300" @click="confirmBox.open()">Cancel</button>
       </div>
 

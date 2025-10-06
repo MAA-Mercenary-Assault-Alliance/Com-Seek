@@ -81,3 +81,7 @@ dialog:not([open]) {
 .job-input-box {
     @apply flex flex-col space-y-5
 }
+
+.title-and-error-box {
+    @apply flex space-x-5 items-center
+}
