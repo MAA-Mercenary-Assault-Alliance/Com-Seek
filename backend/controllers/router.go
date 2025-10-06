@@ -33,7 +33,6 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 
 	job := requiredLogin.Group("/job")
 	job.GET("/", jobController.GetJobs)
-	job.GET("/:id", jobController.GetJobs)
 	job.POST("/", jobController.CreateJob)
 	job.PATCH("/:id", jobController.UpdateJob)
 	job.DELETE("/:id", jobController.DeleteJob)
