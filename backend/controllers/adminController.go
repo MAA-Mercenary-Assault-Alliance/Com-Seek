@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"com-seek/backend/models"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -42,7 +41,7 @@ func (sc *AdminController) GetPendingCompanies(c *gin.Context) {
 
 	var companies []models.Company
 	if err := sc.DB.Where("approved = ?", false).Preload("User").Find(&companies).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(500, gin.H{"error": "Error fetching pending companies"})
 		return
 	}
 
@@ -52,6 +51,8 @@ func (sc *AdminController) GetPendingCompanies(c *gin.Context) {
 func (sc *AdminController) ReviewCompany(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 	idStr := c.Param("id") // Company UserID
+
+	var id uint
 
 	// Check for Admin Status
 	if !IsAdmin(sc.DB, userID) {
@@ -67,11 +68,11 @@ func (sc *AdminController) ReviewCompany(c *gin.Context) {
 
 	// Check for Company
 	company := models.Company{
-		UserID: userID,
+		UserID: id,
 	}
 
-	if err := sc.DB.First(&company).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	if err := sc.DB.Preload("User").Where("UserID = ?", idStr).First(&company).Error; err != nil {
+		c.JSON(500, gin.H{"error": "Error fetching company"})
 		return
 	}
 
@@ -83,12 +84,12 @@ func (sc *AdminController) ReviewCompany(c *gin.Context) {
 		}
 		c.JSON(200, gin.H{"message": "Company approved"})
 	} else {
-		// Just delete the company
-		if err := sc.DB.Where("user_id = ?", idStr).Delete(&company).Error; err != nil {
-			c.JSON(500, gin.H{"error": "Failed to reject and delete company"})
+		// Just delete the user
+		if err := sc.DB.Delete(&company.User).Error; err != nil {
+			c.JSON(500, gin.H{"error": "Failed to delete company's user"})
 			return
 		}
-		c.JSON(200, gin.H{"message": "Company deleted"})
+		c.JSON(200, gin.H{"message": "Company's user deleted"})
 	}
 }
 
@@ -103,7 +104,7 @@ func (sc *AdminController) GetPendingStudents(c *gin.Context) {
 
 	var students []models.Student
 	if err := sc.DB.Where("approved = ?", false).Preload("User").Find(&students).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(500, gin.H{"error": "Error fetching pending students"})
 		return
 	}
 	c.JSON(200, gin.H{"students": students})
@@ -112,6 +113,8 @@ func (sc *AdminController) GetPendingStudents(c *gin.Context) {
 func (sc *AdminController) ReviewStudent(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 	idStr := c.Param("id") // Student UserID
+
+	var id uint
 
 	// Check for Admin Status
 	if !IsAdmin(sc.DB, userID) {
@@ -126,11 +129,11 @@ func (sc *AdminController) ReviewStudent(c *gin.Context) {
 	}
 
 	student := models.Student{
-		UserID: userID,
+		UserID: id,
 	}
 
-	if err := sc.DB.First(&student).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	if err := sc.DB.Preload("User").Where("UserID = ?", idStr).First(&student).Error; err != nil {
+		c.JSON(500, gin.H{"error": "Error fetching pending students"})
 		return
 	}
 
@@ -143,11 +146,11 @@ func (sc *AdminController) ReviewStudent(c *gin.Context) {
 		c.JSON(200, gin.H{"message": "Student approved"})
 	} else {
 		// Just delete the student
-		if err := sc.DB.Where("user_id = ?", idStr).Delete(&student).Error; err != nil {
+		if err := sc.DB.Delete(&student.User).Error; err != nil {
 			c.JSON(500, gin.H{"error": "Failed to reject and delete student"})
 			return
 		}
-		c.JSON(200, gin.H{"message": "Student deleted"})
+		c.JSON(200, gin.H{"message": "Student's user deleted"})
 	}
 
 }
@@ -200,6 +203,7 @@ func (sc *AdminController) ReviewJob(c *gin.Context) {
 		job.CheckNeeded = false
 		job.Approved = true
 	} else {
+		job.CheckNeeded = false
 		job.Approved = false
 	}
 
