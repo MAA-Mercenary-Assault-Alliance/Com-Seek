@@ -2,7 +2,7 @@
   <!-- Google Material Icons (for the gear & close icons) -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 
-  <div class="w-full bg-gray-100" v-if="profile">
+  <div class="flex flex-col w-full bg-gray-100 overflow-hidden" v-if="profile">
     <!-- Cover image -->
     <div class="relative">
       <img :src="profile.cover" alt="cover" class="w-full h-60 object-cover" />
@@ -22,7 +22,7 @@
     <section class="w-full bg-[#0a3b1f] py-5"></section>
 
     <!-- Details -->
-    <div class="w-full h-full mx-auto bg-white rounded-xl shadow-md p-3 px-80">
+    <div class="w-full h-full mx-auto bg-white rounded-xl shadow-md p-3 px-80 flex-grow">
       <ProfileDetails :profile="profile" />
     </div>
 
