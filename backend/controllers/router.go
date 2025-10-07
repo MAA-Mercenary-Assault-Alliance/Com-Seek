@@ -4,14 +4,11 @@ import (
 	"com-seek/backend/middlewares"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gin-contrib/cors"
 	"gorm.io/gorm"
 )
 
 func NewRouter(db *gorm.DB) *gin.Engine {
 	router := gin.Default()
-
-	router.Use(cors.New(middlewares.SetupCors()))
 
 	authController := NewAuthController(db)
 	studentController := NewStudentController(db)

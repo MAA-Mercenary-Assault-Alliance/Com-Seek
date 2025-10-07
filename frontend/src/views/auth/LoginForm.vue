@@ -39,11 +39,6 @@
         required
       />
 
-
-        <label v-if="errors.password" class="label text-error text-sm">
-          {{ errors.password }}
-        </label>
-
       <!-- Submit button -->
       <button
         type="submit"
@@ -124,14 +119,11 @@ export default {
       this.alert = { message: "Logging in...", type: "success" };
 
       try {
-        // Call backend login -> sets HttpOnly cookie
         await api.post("/auth/login", {
           email: this.form.email,
           password: this.form.password,
         });
 
-        // Decide where to redirect by probing a protected endpoint
-        // Try student first
         try {
           await api.get("/student/");
           this.alert = { message: "Login successful! Redirecting...", type: "success" };
@@ -139,7 +131,6 @@ export default {
           return;
         } catch (_) {}
 
-        // Then try company
         try {
           await api.get("/company/");
           this.alert = { message: "Login successful! Redirecting...", type: "success" };
@@ -147,7 +138,6 @@ export default {
           return;
         } catch (_) {}
 
-        // Fallback if neither profile exists yet
         this.$router.push("/");
 
       } catch (error) {

@@ -177,7 +177,8 @@
             :disabled="!scrolledToBottom"
           />
           <label for="agree" class="text-sm">
-            I agree to the Terms of Service.
+            I have read and agree to the Terms of Service.
+            <br>
             <span v-if="!scrolledToBottom" class="text-gray-500">
               (scroll to the end to enable)
             </span>
