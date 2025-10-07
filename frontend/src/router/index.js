@@ -21,7 +21,7 @@ const routes = [
     path: '/student-profile',
     component: StudentProfilePage,
     name: 'StudentProfile',
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, role: 'student' },
   },
 ]
 
@@ -31,13 +31,15 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = !!localStorage.getItem('token') // adjust based on your auth logic
+  const email = localStorage.getItem('email');
+  const role = localStorage.getItem('role');
+  const isAuthenticated = !!(email && role);
 
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/login')
+    next('/login');
   } else {
-    next()
+    next();
   }
-})
+});
 
 export default router

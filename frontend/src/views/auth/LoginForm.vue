@@ -119,29 +119,25 @@ export default {
       this.alert = { message: "Logging in...", type: "success" };
 
       try {
-        await api.post("/auth/login", {
+        const response = await api.post("/auth/login", {
           email: this.form.email,
           password: this.form.password,
         });
 
-        localStorage.setItem('token', 'cookie');
+        localStorage.setItem('email', response.data.email);
+        localStorage.setItem('role', response.data.role);
+
         this.alert = { message: "Login successful! Redirecting...", type: "success" };
-        
-        try {
-          await api.get("/student/");
-          this.alert = { message: "Login successful! Redirecting...", type: "success" };
-          this.$router.push({ name: "StudentProfile" }); // or "/student"
-          return;
-        } catch (_) {}
 
-        try {
-          await api.get("/company/");
-          this.alert = { message: "Login successful! Redirecting...", type: "success" };
-          this.$router.push({ name: "CompanyProfile" }); // or "/company"
-          return;
-        } catch (_) {}
-
-        this.$router.push("/");
+        if (response.data.role === "student") {
+          this.$router.push({ name: "StudentProfile" });
+        } else if (response.data.role === "company") {
+          this.$router.push({ name: "CompanyProfile" });
+        } else if (response.data.role === "admin") {
+          this.$router.push({ name: "AppAdmin" });
+        } else {
+          this.$router.push("/");
+        }
 
       } catch (error) {
         const msg =
