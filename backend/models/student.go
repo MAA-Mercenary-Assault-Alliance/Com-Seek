@@ -13,5 +13,5 @@ type Student struct {
 	Facebook       string
 	Instragram     string
 	Twitter        string
-	JobApplication []JobApplication `gorm:"foreignKey:ID"`
+	JobApplication []JobApplication
 }

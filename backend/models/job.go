@@ -45,5 +45,5 @@ type Job struct {
 	Approved         bool
 	Visibility       bool
 	CheckNeeded      bool
-	JobApplication   []JobApplication `gorm:"foreignKey:ID"`
+	JobApplication   []JobApplication
 }
