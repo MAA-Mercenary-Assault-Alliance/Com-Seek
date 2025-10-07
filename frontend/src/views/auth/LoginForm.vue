@@ -124,6 +124,9 @@ export default {
           password: this.form.password,
         });
 
+        localStorage.setItem('token', 'cookie');
+        this.alert = { message: "Login successful! Redirecting...", type: "success" };
+        
         try {
           await api.get("/student/");
           this.alert = { message: "Login successful! Redirecting...", type: "success" };

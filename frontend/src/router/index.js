@@ -20,6 +20,7 @@ const routes = [
   {
     path: '/student-profile',
     component: StudentProfilePage,
+    name: 'StudentProfile',
     meta: { requiresAuth: true },
   },
 ]

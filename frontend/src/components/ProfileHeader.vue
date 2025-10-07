@@ -2,7 +2,7 @@
   <div class="flex items-center space-x-6">
     <!-- Avatar -->
     <div class="avatar">
-      <div class="w-28 h-28 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden">
+      <div class="w-40 h-40 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden">
         <img :src="profile.avatar" alt="avatar" class="object-cover w-28 h-28" />
       </div>
     </div>
