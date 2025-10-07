@@ -154,6 +154,8 @@ func (ac *AuthController) Login(c *gin.Context) {
 		return
 	}
 
+	role := GetUserRole(ac.DB, userFound.ID)
+
 	generateToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":  userFound.ID,
 		"exp": time.Now().Add((time.Minute * 30)).Unix(),
@@ -179,7 +181,23 @@ func (ac *AuthController) Login(c *gin.Context) {
 	)
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "login successful",
-		"email":   userFound.Email,
+		"email": userFound.Email,
+		"role":  role,
 	})
+}
+
+func GetUserRole(DB *gorm.DB, userID uint) string {
+	var result struct{ UserID uint }
+
+	if err := DB.Table("students").Where("user_id = ?", userID).First(&result).Error; err == nil {
+		return "student"
+	}
+	if err := DB.Table("companies").Where("user_id = ?", userID).First(&result).Error; err == nil {
+		return "company"
+	}
+	if err := DB.Table("admins").Where("user_id = ?", userID).First(&result).Error; err == nil {
+		return "admin"
+	}
+
+	return ""
 }
