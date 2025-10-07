@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"com-seek/backend/models"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -88,35 +89,74 @@ func (jc *JobController) CreateJob(c *gin.Context) {
 }
 
 func (jc *JobController) GetJobs(c *gin.Context) {
-	jobIDStr := c.Param("id")
+	var jobs []models.Job
+	query := jc.DB.Preload("Company")
 
-	if jobIDStr != "" {
-		u, err := strconv.ParseUint(jobIDStr, 10, strconv.IntSize)
-
-		if err != nil {
+	if idStr := c.Query("id"); idStr != "" {
+		if id, err := strconv.Atoi(idStr); err == nil {
+			query = query.Where("id = ?", id)
+		} else {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 			return
 		}
+	}
 
-		jobID := uint(u)
-
-		job := models.Job{
-			ID: jobID,
+	if location := c.Query("location"); location != "" {
+		query = query.Where("location = ?", location)
+	}
+	if jobType := c.Query("job_type"); jobType != "" {
+		query = query.Where("job_type = ?", jobType)
+	}
+	if employmentStatus := c.Query("employment_status"); employmentStatus != "" {
+		query = query.Where("employment_status = ?", employmentStatus)
+	}
+	if minSalary := c.Query("min_salary"); minSalary != "" {
+		if minSal, err := strconv.Atoi(minSalary); err == nil {
+			query = query.Where("min_salary >= ?", minSal)
 		}
-
-		if err := jc.DB.Preload("Company.User").First(&job).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
+	}
+	if maxSalary := c.Query("max_salary"); maxSalary != "" {
+		if maxSal, err := strconv.Atoi(maxSalary); err == nil {
+			query = query.Where("max_salary <= ?", maxSal)
 		}
+	}
+	if minExperience := c.Query("min_experience"); minExperience != "" {
+		if minExp, err := strconv.Atoi(minExperience); err == nil {
+			query = query.Where("min_experience >= ?", minExp)
+		}
+	}
+	if maxExperience := c.Query("max_experience"); maxExperience != "" {
+		if maxExp, err := strconv.Atoi(maxExperience); err == nil {
+			query = query.Where("max_experience <= ?", maxExp)
+		}
+	}
+	if visibility := c.Query("visibility"); visibility != "" {
+		query = query.Where("visibility = ?", visibility)
+	}
+	if keyword := c.Query("keyword"); keyword != "" {
+		keywordPattern := fmt.Sprintf("%%%s%%", keyword)
+		query = query.Where("title LIKE ? OR description LIKE ?", keywordPattern, keywordPattern)
+	}
 
-		c.JSON(http.StatusOK, gin.H{"job": job})
+	limit, err := strconv.Atoi(c.DefaultQuery("limit", "30"))
+	if err != nil || limit <= 0 {
+		limit = 30
+	}
+
+	offset, err := strconv.Atoi(c.DefaultQuery("offset", "0"))
+	if err != nil || offset < 0 {
+		offset = 0
+	}
+
+	query = query.Limit(limit).Offset(offset)
+
+	if err := query.Find(&jobs).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	var jobs []models.Job
-
-	if err := jc.DB.Preload("Company.User").Find(&jobs).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	if len(jobs) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "no jobs found"})
 		return
 	}
 

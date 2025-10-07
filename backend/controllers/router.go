@@ -14,6 +14,7 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 	studentController := NewStudentController(db)
 	companyController := NewCompanyController(db)
 	jobController := NewJobController(db)
+	adminController := NewAdminController(db)
 
 	authGroup := router.Group("/auth")
 	authGroup.POST("/register", authController.CreateUser)
@@ -33,10 +34,17 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 
 	job := requiredLogin.Group("/job")
 	job.GET("/", jobController.GetJobs)
-	job.GET("/:id", jobController.GetJobs)
 	job.POST("/", jobController.CreateJob)
 	job.PATCH("/:id", jobController.UpdateJob)
 	job.DELETE("/:id", jobController.DeleteJob)
+
+	admin := requiredLogin.Group("/admin")
+	admin.PATCH("review-company/:id", adminController.ReviewCompany)
+	admin.PATCH("review-student/:id", adminController.ReviewStudent)
+	admin.PATCH("review-job/:id", adminController.ReviewJob)
+	admin.GET("/companies", adminController.GetPendingCompanies)
+	admin.GET("/students", adminController.GetPendingStudents)
+	admin.GET("/jobs", adminController.GetPendingJobs)
 
 	return router
 }
