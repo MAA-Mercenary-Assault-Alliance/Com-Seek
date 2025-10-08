@@ -32,6 +32,7 @@ onMounted(() => {
       </li>
       <li v-if="role==null"><router-link to="/for-company">For Company</router-link></li>
       <li v-if="role=='student' || role=='company'"><router-link to="/student-profile">Profile</router-link></li>
+      <li v-if="role"><router-link to="/logout">Logout</router-link></li>
     </ul>
 
   </div>

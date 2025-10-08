@@ -16,6 +16,7 @@ const routes = [
   { path: '/admin', component: AppAdmin },
   { path: '/applicants/:id', name: 'Applicants', component: AppApplicants },
   { path: '/login', component: LoginForm },
+  { path: '/logout', component: LogoutForm },
   { path: '/register', component: RegisterForm },
   {
     path: '/student-profile',
