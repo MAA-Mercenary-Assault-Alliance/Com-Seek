@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import AppHome from '../views/AppHome.vue'
-import AppProfile from '../views/AppProfile.vue'
 import AppHR from "../views/AppHR.vue"
 import AppApplicants from "../views/AppApplicants.vue"
 import AppAdmin from "../views/AppAdmin.vue"
@@ -10,7 +9,6 @@ import StudentProfilePage from '../views/StudentProfile.vue'
 
 const routes = [
   { path: '/', component: AppHome },
-  { path: '/profile', component: AppProfile },
   { path: '/hr-dashboard', component: AppHR },
   { path: '/applicants', component: AppApplicants },
   { path: '/admin', component: AppAdmin },
