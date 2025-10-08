@@ -36,10 +36,21 @@ router.beforeEach((to, from, next) => {
   const isAuthenticated = !!(email && role);
 
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/login');
-  } else {
-    next();
+    return next('/login');
   }
+
+  if (to.meta.role && isAuthenticated) {
+    const required = to.meta.role; // can be string or array
+    const allowed =
+      Array.isArray(required) ? required.includes(role) : role === required;
+
+    if (!allowed) {
+      return next('/');
+    }
+  }
+
+  next();
 });
+
 
 export default router

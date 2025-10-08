@@ -132,9 +132,9 @@ export default {
         if (response.data.role === "student") {
           this.$router.push({ name: "StudentProfile" });
         } else if (response.data.role === "company") {
-          this.$router.push({ name: "CompanyProfile" });
+          this.$router.push({ path: '/' });
         } else if (response.data.role === "admin") {
-          this.$router.push({ name: "AppAdmin" });
+          this.$router.push({ path: '/' });
         } else {
           this.$router.push("/");
         }
