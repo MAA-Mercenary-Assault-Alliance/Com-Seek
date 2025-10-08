@@ -9,7 +9,7 @@
     </div>
 
     <!-- Header (avatar + identity + socials + gear) -->
-    <div class="w-full mx-auto bg-white rounded-xl shadow-md -mt-16 p-6 relative">
+    <div class="w-full mx-auto bg-white shadow-md -mt-16 p-6 relative">
       <div class="px-48">
         <ProfileHeader
           :profile="profile"
@@ -22,7 +22,7 @@
     <section class="w-full bg-[#0a3b1f] py-5"></section>
 
     <!-- Details -->
-    <div class="w-full h-full mx-auto bg-white rounded-xl shadow-md p-3 px-80 flex-grow">
+    <div class="w-full h-full mx-auto bg-white shadow-md p-3 px-80 pb-50 flex-grow">
       <ProfileDetails :profile="profile" />
     </div>
 
