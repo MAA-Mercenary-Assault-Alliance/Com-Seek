@@ -1,5 +1,12 @@
 <script setup lang="ts">
-const role = localStorage.getItem('role');
+import { ref, onMounted } from "vue";
+
+const role = ref(localStorage.getItem('role'));
+onMounted(() => {
+  window.addEventListener('storage', () => {
+    role.value = localStorage.getItem('role');
+  });
+});
 </script>
 
 <template>
@@ -18,12 +25,12 @@ const role = localStorage.getItem('role');
       <li v-if="role=='company'"><router-link to="/hr-dashboard">HR Dashboard</router-link></li>
       <li v-if="role=='admin'"><router-link to="/admin">Admin Dashboard</router-link></li>
       <!-- Grouped links inside one li -->
-      <li v-if="role==''" class="flex space-x-3 items-center">
+      <li v-if="role==null" class="flex space-x-3 items-center">
         <router-link to="/login">Login</router-link>
         <img src="../assets/vertical-line.png" alt="vertical line" class="block h-12 w-15 -ml-6 -mr-4"/>
         <router-link to="/register">Register</router-link>
       </li>
-      <li v-if="role==''"><router-link to="/for-company">For Company</router-link></li>
+      <li v-if="role==null"><router-link to="/for-company">For Company</router-link></li>
       <li v-if="role=='student' || role=='company'"><router-link to="/student-profile">Profile</router-link></li>
     </ul>
 
