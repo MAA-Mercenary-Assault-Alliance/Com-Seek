@@ -16,7 +16,7 @@ const routes = [
   { path: '/admin', component: AppAdmin },
   { path: '/applicants/:id', name: 'Applicants', component: AppApplicants },
   { path: '/login', component: LoginForm },
-  { path: '/logout', component: LogoutForm },
+  { path: '/logout', component: LoginForm }, //TODO: Implement logout functionality
   { path: '/register', component: RegisterForm },
   {
     path: '/student-profile',
