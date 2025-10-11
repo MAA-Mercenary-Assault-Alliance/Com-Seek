@@ -2,11 +2,26 @@
 import { ref } from 'vue'
 import {CompanyTemplate} from './temp_template'
 import ConfirmBox from "./ComfirmBox.vue";
+import { api } from "../../api/client.js";
+
 const props = defineProps<{
   companyInfo: CompanyTemplate,
 }>();
 
-const testBox = ref(null);
+const confirmBox = ref(null);
+
+async function rejectCompany() {
+  try {
+    await api.patch(`/admin/review-company/${props.companyInfo.id}`, {
+      approved: false
+    });
+    console.log("Company rejected successfully");
+  } catch (error) {
+    console.error("Error rejecting company:", error);
+  }
+  console.log("COMPANY REJECTED");
+}
+
 </script>
 
 <template>
@@ -40,13 +55,14 @@ const testBox = ref(null);
       <img src="../assets/newTab.svg" class="w-5 h-5" alt="new-tab-icon"/>
       <div class="flex flex-row mt-auto space-x-6">
         <button class="btn shadow-none bg-[#1F7AB9] border-0 h-8 rounded-4xl text-white text-md font-extralight px-7" >Accept</button>
-        <button class="btn shadow-none bg-[#9A0000] border-0 h-8 rounded-4xl text-white text-md font-extralight px-7" @click="testBox.open()">Reject</button>
+        <button class="btn shadow-none bg-[#9A0000] border-0 h-8 rounded-4xl text-white text-md font-extralight px-7" @click="confirmBox.open()">Reject</button>
       </div>
     </div>
 
     <confirm-box
-        ref="testBox"
+        ref="confirmBox"
         :company-name="companyInfo.name"
+        @reject="rejectCompany"
     ></confirm-box>
 
   </div>

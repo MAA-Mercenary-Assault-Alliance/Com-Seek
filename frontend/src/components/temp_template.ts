@@ -50,15 +50,19 @@ export const TE_Info_Company = {
 }
 
 export interface CompanyTemplate {
-    name: string;
-    website: string;
-    location: string;
-    description: string;
-    createdAt: string;
-    approved: boolean;
-    number: string;
-    email: string;
+    userId: number;           // "UserID": 8
+    id: number;               // "User.ID": 8 (or company ID if needed)
+    name: string;             // "Name": "EA-SPORTS"
+    website: string;          // "Website": ""
+    location: string;         // "Location": "bangkok"
+    description: string;      // "Description": ""
+    createdAt: string;        // "User.CreatedAt": "2025-10-08T21:50:28.069+07:00"
+    updatedAt: string;        // "User.UpdatedAt"
+    approved: boolean;        // "Approved": false
+    contactNumber: string;    // "ContactNumber": "67"
+    contactEmail: string;     // "ContactEmail": "EA@gmail.com"
 }
+
 
 export const Student_Info = {
     id: "11",
