@@ -29,14 +29,44 @@ export const TE_Info = {
 }
 
 export interface JobTemplate {
-    name: string;
-    company: string;
-    location: string;
-    salary_range: string;
-    type: string;
-    experience: string;
-    desc: string;
+    ID: number;
+    Title: string;
+    CompanyID: number;
+    Company: {
+        UserID: number;
+        User: {
+            ID: number;
+            CreatedAt: string;
+            UpdatedAt: string;
+            DeletedAt: string | null;
+            email: string;
+            password: string;
+        };
+        Name: string;
+        Website: string;
+        ContactEmail: string;
+        ContactNumber: string;
+        Location: string;
+        Description: string;
+        Approved: boolean;
+        Jobs: JobTemplate[] | null;
+    };
+    Location: string;
+    JobType: string;
+    EmploymentStatus: string;
+    MinSalary: number;
+    MaxSalary: number;
+    MinExperience: number;
+    MaxExperience: number;
+    Description: string;
+    CreatedAt: string;
+    UpdatedAt: string;
+    Approved: boolean;
+    Visibility: boolean;
+    CheckNeeded: boolean;
 }
+
+
 
 export const TE_Info_Company = {
     name: "TE Connectivity",
