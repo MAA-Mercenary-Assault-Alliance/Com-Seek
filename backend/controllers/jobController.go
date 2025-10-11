@@ -92,15 +92,6 @@ func (jc *JobController) GetJobs(c *gin.Context) {
 	var jobs []models.Job
 	query := jc.DB.Preload("Company").Preload("JobApplication.Student")
 
-	if idStr := c.Query("id"); idStr != "" {
-		if id, err := strconv.Atoi(idStr); err == nil {
-			query = query.Where("id = ?", id)
-		} else {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
-			return
-		}
-	}
-
 	if location := c.Query("location"); location != "" {
 		query = query.Where("location = ?", location)
 	}
@@ -161,6 +152,31 @@ func (jc *JobController) GetJobs(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"jobs": jobs})
+}
+
+func (jc *JobController) GetJob(c *gin.Context) {
+	idStr := c.Param("id")
+
+	bitSize := strconv.IntSize
+	u, err := strconv.ParseUint(idStr, 10, bitSize)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
+	}
+
+	id := uint(u)
+
+	job := models.Job{
+		ID: id,
+	}
+
+	if err := jc.DB.Preload("Company").First(&job).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"job": job})
 }
 
 func (jc *JobController) UpdateJob(c *gin.Context) {
