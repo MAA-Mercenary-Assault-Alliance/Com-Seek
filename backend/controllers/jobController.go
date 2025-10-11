@@ -155,6 +155,7 @@ func (jc *JobController) GetJobs(c *gin.Context) {
 }
 
 func (jc *JobController) GetJob(c *gin.Context) {
+	userID := c.MustGet("userID").(uint)
 	idStr := c.Param("id")
 
 	bitSize := strconv.IntSize
@@ -173,6 +174,29 @@ func (jc *JobController) GetJob(c *gin.Context) {
 
 	if err := jc.DB.Preload("Company").First(&job).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	type JobApplicantResponse struct {
+		ID        uint           `json:"id"`
+		StudentID uint           `json:"student_id"`
+		Student   models.Student `json:"student"`
+		CreatedAt string         `json:"created_at"`
+	}
+
+	if job.CompanyID == userID {
+		var applicants []JobApplicantResponse
+		if err := jc.DB.Table("job_applications").Preload("Student").
+			Where("job_applications.job_id = ?", job.ID).
+			Scan(&applicants).
+			Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"job":        job,
+			"applicants": applicants,
+		})
 		return
 	}
 
