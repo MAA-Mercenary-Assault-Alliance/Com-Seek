@@ -7,9 +7,11 @@ import AppAdmin from "../views/AppAdmin.vue"
 import LoginForm from '../views/auth/LoginForm.vue'
 import RegisterForm from '../views/auth/RegisterForm.vue'
 import StudentProfilePage from '../views/StudentProfile.vue'
+import LandingPage from '../views/LandingPage.vue'
 
 const routes = [
   { path: '/', component: AppHome },
+  { path: '/landing-page', component: LandingPage, meta: { layout: 'blank' } },
   { path: '/profile', component: AppProfile },
   { path: '/hr-dashboard', component: AppHR },
   { path: '/applicants', component: AppApplicants },
