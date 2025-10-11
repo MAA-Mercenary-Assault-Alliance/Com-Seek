@@ -93,7 +93,8 @@ func (jc *JobController) GetJobs(c *gin.Context) {
 	query := jc.DB.Preload("Company").Preload("JobApplication.Student")
 
 	if location := c.Query("location"); location != "" {
-		query = query.Where("location = ?", location)
+		locationPattern := fmt.Sprintf("%%%s%%", location)
+		query = query.Where("location LIKE ?", locationPattern)
 	}
 	if jobType := c.Query("job_type"); jobType != "" {
 		query = query.Where("job_type = ?", jobType)
