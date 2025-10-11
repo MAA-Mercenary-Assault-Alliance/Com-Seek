@@ -29,12 +29,12 @@ watch(location, (newVal) => {
 async function findJobs() {
   try {
     isLoading.value = true;
+    const params = {};
+    if (keyword.value) params.keyword = keyword.value
+    if (jobType.value) params.job_type = jobType.value
+    if (location.value) params.location = location.value
     const res = await api.get("/job", {
-      params: {
-        keyword: keyword.value,
-        jobType: jobType.value,
-        location: location.value
-      }
+      params
     })
 
     jobs.value = res.data.jobs
@@ -64,13 +64,14 @@ console.log("SelectedJob: ", selectedJob)
           Search for your jobs now
         </div>
         <div class="flex flex-row space-x-10 min-w-300 w-1/2">
-          <label class="input-box">
+          <label class="input-box w-2/7">
             <input v-model="keyword" type="search" class="grow pl-3 placeholder-black" placeholder="Keywords" />
           </label>
-          <div class="relative">
+          <div class="relative w-2/7">
             <img src="../assets/case.svg" class="absolute px-2 w-12 left-3 top-2 z-10" alt="case"/>
             <select v-model="jobType" class="select rounded-2xl select-lg pl-18 z-0">
               <option disabled value="">Job Type</option>
+              <option value="">Any</option>
               <option>Software & Application Development</option>
               <option>Data & AI</option>
               <option>Cloud & Infrastructure</option>
@@ -82,10 +83,11 @@ console.log("SelectedJob: ", selectedJob)
               <option>IT Support & Operations</option>
             </select>
           </div>
-          <div class="relative">
+          <div class="relative w-2/7 mr-0">
             <img src="../assets/location.svg" class="absolute px-2 w-12 left-3 top-2 z-10" alt="case"/>
             <select v-model="location" class="select rounded-2xl select-lg pl-18 z-0 w-70">
-              <option disabled value="">Job Type</option>
+              <option disabled value="">Location</option>
+              <option value="">Any</option>
               <option>กรุงเทพมหานคร</option>
               <option>สมุทรสาคร</option>
               <option>นครปฐม</option>
@@ -93,13 +95,17 @@ console.log("SelectedJob: ", selectedJob)
               <option>นนทบุรี</option>
             </select>
           </div>
-          <button @click="findJobs" class="btn shadow-none bg-lighter border-0 h-12 rounded-2xl text-white text-xl font-extralight">Find Now</button>
+          <button @click="findJobs" class="btn shadow-none bg-lighter border-0 h-12 rounded-2xl text-white text-xl font-extralight w-1/7">Find Now</button>
         </div>
       </div>
 
     </div>
 
-    <div v-if="!isLoading" class="flex w-full flex-row px-42 py-10 bg-[#f2f6fc] space-x-20">
+    <div v-if="jobs.length==0" class="flex w-full justify-center items-center h-60 text-2xl text-gray-500">
+      Jobs not Found
+    </div>
+
+    <div v-if="!isLoading && jobs.length>0" class="flex w-full flex-row px-42 py-10 bg-[#f2f6fc] space-x-20">
 
       <div id="job-box-column" class="flex w-1/3 flex-col space-y-10 mr-10">
         <JobBox v-for="job in jobs" :key=job.ID :jobInfo=job :h-r="false" @click="selectedJob=job"/>
