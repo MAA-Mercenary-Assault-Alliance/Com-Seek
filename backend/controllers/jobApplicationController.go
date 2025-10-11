@@ -65,8 +65,15 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 		JobID:     job.ID,
 	}
 
-	if err := jc.DB.Create(&jobApplication).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	result := jc.DB.FirstOrCreate(&jobApplication)
+
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	if result.RowsAffected == 0 {
+		c.JSON(http.StatusConflict, gin.H{"error": "job application already exists"})
 		return
 	}
 
