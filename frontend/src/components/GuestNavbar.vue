@@ -21,6 +21,7 @@
         <router-link to="/register">Register</router-link>
       </li>
       <li><router-link to="/for-company">For Company</router-link></li>
+      <li><router-link to="/student-profile">Student Profile Test</router-link></li>
     </ul>
 
   </div>
