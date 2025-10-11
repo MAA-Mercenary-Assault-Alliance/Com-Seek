@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import JobFull from "../components/JobFull.vue";
 import JobBox from "../components/JobBox.vue";
-import { api } from '../../../api/client';
+import { api } from '../../api/client.js';
 
-import { ref, watch } from 'vue'
+import {onMounted, ref, watch} from 'vue'
+import JobFullEmpty from "../components/JobFullEmpty.vue";
 
 const jobs = ref([])
 
 const keyword = ref('')
 const jobType = ref('')
 const location = ref('')
+const isLoading = ref(true)
+const selectedJob = ref(null) // need to pass this value to JobBoard
 
 watch(keyword, (newVal) => {
   console.log('keyword changed:', newVal)
@@ -25,23 +28,32 @@ watch(location, (newVal) => {
 
 async function findJobs() {
   try {
+    isLoading.value = true;
     const res = await api.get("/job", {
       params: {
-        keyword: keyword,
-        jobType: jobType,
-        location: location
+        keyword: keyword.value,
+        jobType: jobType.value,
+        location: location.value
       }
     })
 
-    jobs.value = res.data
+    jobs.value = res.data.jobs
     console.log("Fetched jobs:", jobs.value)
+    selectedJob.value = jobs.value[0] || null; // Select the first job by default or null if no jobs
     return;
   } catch (error) {
     console.error("Error fetching jobs:", error)
+  } finally {
+    isLoading.value = false;
   }
 }
 
-const selectedJob = ref() // need to pass this value to JobBoard
+onMounted(() => {
+  findJobs();
+});
+
+console.log("SelectedJob: ", selectedJob)
+
 </script>
 
 <template>
@@ -87,13 +99,14 @@ const selectedJob = ref() // need to pass this value to JobBoard
 
     </div>
 
-    <div class="flex w-full flex-row px-42 py-10 bg-[#f2f6fc] space-x-20">
+    <div v-if="!isLoading" class="flex w-full flex-row px-42 py-10 bg-[#f2f6fc] space-x-20">
 
       <div id="job-box-column" class="flex w-1/3 flex-col space-y-10 mr-10">
-        <JobBox v-for="job in jobs" :key=job.id :jobInfo=job :h-r="false" @click="selectedJob=job"/>
+        <JobBox v-for="job in jobs" :key=job.ID :jobInfo=job :h-r="false" @click="selectedJob=job"/>
       </div>
 
-      <JobFull :job-info="selectedJob" class="ml-7"/>
+      <JobFull v-if="selectedJob" :job-info="selectedJob" class="ml-7"/>
+      <JobFullEmpty v-if="!selectedJob" class="ml-7"/>
 
     </div>
   </div>
