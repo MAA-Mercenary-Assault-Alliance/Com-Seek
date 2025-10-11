@@ -18,6 +18,7 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 	studentController := NewStudentController(db)
 	companyController := NewCompanyController(db)
 	jobController := NewJobController(db)
+	JobApplicationController := NewJobApplicationController(db)
 	adminController := NewAdminController(db)
 
 	authGroup := router.Group("/auth")
@@ -27,20 +28,21 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 	requiredLogin := router.Group("/", middlewares.CheckAuth)
 
 	student := requiredLogin.Group("/student")
-	student.GET("/", studentController.GetStudentProfile)
+	student.GET("", studentController.GetStudentProfile)
 	student.GET("/:id", studentController.GetStudentProfile)
-	student.PATCH("/", studentController.UpdateStudentProfile)
+	student.PATCH("", studentController.UpdateStudentProfile)
 
 	company := requiredLogin.Group("/company")
-	company.GET("/", companyController.GetCompanyProfile)
+	company.GET("", companyController.GetCompanyProfile)
 	company.GET("/:id", companyController.GetCompanyProfile)
-	company.PATCH("/", companyController.UpdateCompanyProfile)
+	company.PATCH("", companyController.UpdateCompanyProfile)
 
 	job := requiredLogin.Group("/job")
-	job.GET("/", jobController.GetJobs)
-	job.POST("/", jobController.CreateJob)
+	job.GET("", jobController.GetJobs)
+	job.POST("", jobController.CreateJob)
 	job.PATCH("/:id", jobController.UpdateJob)
 	job.DELETE("/:id", jobController.DeleteJob)
+	job.POST("/apply", JobApplicationController.CreateJobApplication)
 
 	admin := requiredLogin.Group("/admin")
 	admin.PATCH("review-company/:id", adminController.ReviewCompany)

@@ -90,7 +90,7 @@ func (jc *JobController) CreateJob(c *gin.Context) {
 
 func (jc *JobController) GetJobs(c *gin.Context) {
 	var jobs []models.Job
-	query := jc.DB.Preload("Company")
+	query := jc.DB.Preload("Company").Preload("JobApplication.Student")
 
 	if idStr := c.Query("id"); idStr != "" {
 		if id, err := strconv.Atoi(idStr); err == nil {
