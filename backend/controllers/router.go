@@ -3,12 +3,16 @@ package controllers
 import (
 	"com-seek/backend/middlewares"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 func NewRouter(db *gorm.DB) *gin.Engine {
 	router := gin.Default()
+
+	corsConfig := middlewares.SetupCors()
+	router.Use(cors.New(corsConfig))
 
 	authController := NewAuthController(db)
 	studentController := NewStudentController(db)
