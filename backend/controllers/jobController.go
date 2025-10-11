@@ -92,17 +92,9 @@ func (jc *JobController) GetJobs(c *gin.Context) {
 	var jobs []models.Job
 	query := jc.DB.Preload("Company").Preload("JobApplication.Student")
 
-	if idStr := c.Query("id"); idStr != "" {
-		if id, err := strconv.Atoi(idStr); err == nil {
-			query = query.Where("id = ?", id)
-		} else {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
-			return
-		}
-	}
-
 	if location := c.Query("location"); location != "" {
-		query = query.Where("location = ?", location)
+		locationPattern := fmt.Sprintf("%%%s%%", location)
+		query = query.Where("location LIKE ?", locationPattern)
 	}
 	if jobType := c.Query("job_type"); jobType != "" {
 		query = query.Where("job_type = ?", jobType)
@@ -161,6 +153,55 @@ func (jc *JobController) GetJobs(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"jobs": jobs})
+}
+
+func (jc *JobController) GetJob(c *gin.Context) {
+	userID := c.MustGet("userID").(uint)
+	idStr := c.Param("id")
+
+	bitSize := strconv.IntSize
+	u, err := strconv.ParseUint(idStr, 10, bitSize)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
+	}
+
+	id := uint(u)
+
+	job := models.Job{
+		ID: id,
+	}
+
+	if err := jc.DB.Preload("Company").First(&job).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	type JobApplicantResponse struct {
+		ID        uint           `json:"id"`
+		StudentID uint           `json:"student_id"`
+		Student   models.Student `json:"student"`
+		CreatedAt string         `json:"created_at"`
+	}
+
+	if job.CompanyID == userID {
+		var applicants []JobApplicantResponse
+		if err := jc.DB.Table("job_applications").Preload("Student").
+			Where("job_applications.job_id = ?", job.ID).
+			Scan(&applicants).
+			Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"job":        job,
+			"applicants": applicants,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"job": job})
 }
 
 func (jc *JobController) UpdateJob(c *gin.Context) {
