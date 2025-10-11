@@ -28,8 +28,8 @@ const isBlankLayout = computed(() => route.meta?.layout === "blank")
     <div id="all" class="flex flex-col bg-[#F2F6FC] w-full flex-grow text-black">
       <div id="main" class="flex justify-center">
         <router-view />
-        <!-- <LandingSiteFooter /> -->
       </div>
     </div>
   </div>
+  <LandingSiteFooter />
 </template>

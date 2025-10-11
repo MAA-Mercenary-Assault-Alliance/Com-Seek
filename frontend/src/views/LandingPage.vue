@@ -14,11 +14,9 @@ function scrollToId(id: string) {
     <LandingStats />
     <LandingFeatures />
     <LandingHowItWorks />
-    <LandingPricing />
     <LandingFAQ />
     <LandingCTA />
-
-    <LandingSiteFooter />
+    
   </div>
 </template>
 
@@ -28,7 +26,6 @@ import LandingHero from '../components/landing/Hero.vue'
 import LandingStats from '../components/landing/Stats.vue'
 import LandingFeatures from '../components/landing/Features.vue'
 import LandingHowItWorks from '../components/landing/HowItWorks.vue'
-import LandingPricing from '../components/landing/Pricing.vue'
 import LandingFAQ from '../components/landing/FAQ.vue'
 import LandingCTA from '../components/landing/CTA.vue'
 import LandingSiteFooter from '../components/landing/SiteFooter.vue'

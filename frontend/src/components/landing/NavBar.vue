@@ -24,7 +24,7 @@ const emit = defineEmits<{ (e:'goto', id:string): void }>()
         <button class="btn btn-ghost" @click="emit('goto','faq')">FAQ</button>
         <div class="divider divider-horizontal mx-1"></div>
         <router-link to="/login" class="btn btn-ghost">Log in</router-link>
-        <router-link to="/register" class="btn btn-primary">Get Started</router-link>
+        <router-link to="/register" class="btn border-none text-white bg-[#56A45C] hover:bg-[#44B15B]">Get Started</router-link>
       </nav>
 
       <!-- Mobile toggle -->
