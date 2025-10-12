@@ -8,6 +8,9 @@ import LoginForm from '../views/auth/LoginForm.vue'
 import RegisterForm from '../views/auth/RegisterForm.vue'
 import StudentProfilePage from '../views/StudentProfile.vue'
 import LandingPage from '../views/LandingPage.vue'
+import TermsPage from '../views/docs/Terms.vue'
+import PrivacyPage from '../views/docs/Privacy.vue'
+import CookiesPage from '../views/docs/Cookies.vue'
 
 const routes = [
   { path: '/', redirect: '/landing-page' },
@@ -27,6 +30,10 @@ const routes = [
     name: 'StudentProfile',
     meta: { requiresAuth: true, role: 'student' },
   },
+
+  { path: '/docs/terms', component: TermsPage, meta: { layout: 'blank' } },
+  { path: '/docs/privacy', component: PrivacyPage, meta: { layout: 'blank' } },
+  { path: '/docs/cookies', component: CookiesPage, meta: { layout: 'blank' } },
 ]
 
 const router = createRouter({

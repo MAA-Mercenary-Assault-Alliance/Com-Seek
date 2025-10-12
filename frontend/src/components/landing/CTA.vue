@@ -7,7 +7,6 @@
           <p class="py-4 text-base-content/70">Get started in minutes, customize endlessly.</p>
           <div class="flex flex-wrap gap-3 justify-center">
             <router-link to="/register" class="btn btn-lg bg-[#56A45C] text-white hover:bg-[#44B15B] ">Create account</router-link>
-            <router-link to="/docs" class="btn btn-ghost btn-lg">View docs</router-link>
           </div>
         </div>
       </div>

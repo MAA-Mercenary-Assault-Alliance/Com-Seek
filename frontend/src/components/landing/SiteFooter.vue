@@ -6,10 +6,15 @@
         <p>Com-Seek<br/>Connecting talent with opportunity.</p>
       </aside>
       <nav>
-        <h6 class="footer-title">Legal</h6>
-        <a class="link link-hover">Terms</a>
-        <a class="link link-hover">Privacy</a>
-        <a class="link link-hover">Cookies</a>
+        <router-link to="/docs/terms" class="link link-hover text-[#0A3B1F] hover:text-[#56A45C]">
+          Terms
+        </router-link>
+        <router-link to="/docs/privacy" class="link link-hover text-[#0A3B1F] hover:text-[#56A45C]">
+          Privacy
+        </router-link>
+        <router-link to="/docs/cookies" class="link link-hover text-[#0A3B1F] hover:text-[#56A45C]">
+          Cookies
+        </router-link>
       </nav>
     </div>
     <div class="container mx-auto px-4 pb-8 text-sm text-base-content/60">

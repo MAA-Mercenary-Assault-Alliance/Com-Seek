@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// Page-only helpers (sections self-handle their internal state)
 function scrollToId(id: string) {
   const el = document.getElementById(id)
   if (el) el.scrollIntoView({ behavior: "smooth", block: "start" })

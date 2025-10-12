@@ -103,14 +103,6 @@ const emit = defineEmits<{ (e: 'goto', id: string): void }>()
                 </div>
               </div>
             </div>
-
-            <div class="mt-6">
-              <input
-                type="text"
-                placeholder="Search roles, skills, or companies…"
-                class="input input-bordered w-full border-[#0A3B1F]/20 focus:border-[#56A45C] focus:ring-[#56A45C]/30"
-              />
-            </div>
           </div>
         </div>
       </div>
