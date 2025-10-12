@@ -85,7 +85,6 @@ async function selectTab(tab: string) {
         </div>
       </div>
       <div v-if="!isLoading" id="boxes" class="flex relative flex-col mt-10 space-y-6 w-4/5 xl:pr-42 pb-10">
-        <PureSearchBar></PureSearchBar>
         <template v-if="activeTab === 'companies'">
           <CompanyBox v-if="company_list.length > 0" v-for="company in company_list" :key="company.UserID" :company-info="company" @refresh="getCompanies"/>
           <span v-else class="text-2xl text-gray-500 mt-10 ml-10">No companies pending approval</span>
