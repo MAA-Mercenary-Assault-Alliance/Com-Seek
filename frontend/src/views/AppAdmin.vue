@@ -6,7 +6,7 @@ import { api } from '../../api/client.js';
 import StudentBox from "../components/StudentBox.vue";
 import JobBoxAdmin from "../components/JobBoxAdmin.vue";
 import PureSearchBar from "../components/PureSearchBar.vue";
-const activeTab = ref('company')
+const activeTab = ref('companies')
 
 const company_list = ref([])
 const student_list = ref([])
@@ -17,7 +17,6 @@ async function getCompanies() {
   try {
     const res = await api.get("/admin/companies")
     company_list.value = res.data.companies
-    console.log("RES", res.data)
     console.log("Fetched companies:", company_list.value)
     isLoading.value = false
     return company_list.value
@@ -88,13 +87,16 @@ async function selectTab(tab: string) {
       <div v-if="!isLoading" id="boxes" class="flex relative flex-col mt-10 space-y-6 w-4/5 xl:pr-42 pb-10">
         <PureSearchBar></PureSearchBar>
         <template v-if="activeTab === 'companies'">
-          <CompanyBox v-for="company in company_list" :key="company.id" :company-info="company"/>
+          <CompanyBox v-if="company_list.length > 0" v-for="company in company_list" :key="company.UserID" :company-info="company" @refresh="getCompanies"/>
+          <span v-else class="text-2xl text-gray-500 mt-10 ml-10">No companies pending approval</span>
         </template>
         <template v-if="activeTab === 'students'">
-          <StudentBox v-for="student in student_list" :key="student.id" :student-info="student"/>
+          <StudentBox v-if="student_list.length > 0" v-for="student in student_list" :key="student.UserID" :student-info="student" @refresh="getStudents"/>
+          <span v-else class="text-2xl text-gray-500 mt-10 ml-10">No students pending approval</span>
         </template>
         <template v-if="activeTab === 'jobs'">
-          <JobBoxAdmin v-for="job in job_list" :key="job.id" :job-info="job"/>
+          <JobBoxAdmin v-if="job_list.length > 0" v-for="job in job_list" :key="job.UserID" :job-info="job" @refresh="getJobs"/>
+          <span v-else class="text-2xl text-gray-500 mt-10 ml-10">No jobs pending approval</span>
         </template>
       </div>
     </div>
