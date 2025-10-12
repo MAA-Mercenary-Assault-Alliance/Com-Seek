@@ -10,7 +10,9 @@ import StudentProfilePage from '../views/StudentProfile.vue'
 import LandingPage from '../views/LandingPage.vue'
 
 const routes = [
-  { path: '/', component: AppHome },
+  { path: '/', redirect: '/landing-page' },
+
+  { path: '/home', component: AppHome },
   { path: '/landing-page', component: LandingPage, meta: { layout: 'blank' } },
   { path: '/profile', component: AppProfile },
   { path: '/hr-dashboard', component: AppHR },

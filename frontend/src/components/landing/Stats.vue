@@ -1,5 +1,5 @@
 <template>
-  <section class="container mx-auto px-4 pb-12">
+  <section class="container mx-auto px-4 pb-12 mt-10">
     <div
       class="stats stats-vertical lg:stats-horizontal shadow-lg w-full rounded-xl bg-white border border-[#0A3B1F]/10 text-[#0A3B1F]"
     >

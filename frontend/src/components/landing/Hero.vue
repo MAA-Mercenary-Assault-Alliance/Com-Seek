@@ -113,10 +113,6 @@ const emit = defineEmits<{ (e: 'goto', id: string): void }>()
             </div>
           </div>
         </div>
-
-        <!-- Glow effects -->
-        <div class="absolute -bottom-6 -left-6 blur-2xl opacity-30 w-56 h-56 bg-[#56A45C] rounded-full"></div>
-        <div class="absolute -top-8 -right-8 blur-2xl opacity-25 w-56 h-56 bg-[#44B15B] rounded-full"></div>
       </div>
     </div>
   </section>
