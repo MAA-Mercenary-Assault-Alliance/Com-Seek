@@ -11,7 +11,7 @@ type Student struct {
 	GitHub         string
 	LinkedIn       string
 	Facebook       string
-	Instragram     string
+	Instagram      string
 	Twitter        string
 	JobApplication []JobApplication `json:"-"`
 }

@@ -179,16 +179,19 @@ func (jc *JobController) GetJob(c *gin.Context) {
 	}
 
 	type JobApplicantResponse struct {
-		ID        uint           `json:"id"`
-		StudentID uint           `json:"student_id"`
-		Student   models.Student `json:"student"`
-		CreatedAt string         `json:"created_at"`
+		ID        uint   `json:"id"`
+		StudentID uint   `json:"student_id"`
+		FirstName string `json:"first_name"`
+		LastName  string `json:"last_name"`
+		IsAlum    bool   `json:"is_alum"`
+		CreatedAt string `json:"created_at"`
 	}
 
 	if job.CompanyID == userID {
 		var applicants []JobApplicantResponse
-		if err := jc.DB.Table("job_applications").Preload("Student").
-			Where("job_applications.job_id = ?", job.ID).
+		if err := jc.DB.Debug().Table("job_applications").
+			Joins("LEFT JOIN students ON students.user_id = job_applications.student_id").
+			Where("job_id = ?", job.ID).
 			Scan(&applicants).
 			Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
