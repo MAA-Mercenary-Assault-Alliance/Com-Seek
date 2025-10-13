@@ -11,6 +11,7 @@ import LandingPage from '../views/LandingPage.vue'
 import TermsPage from '../views/docs/Terms.vue'
 import PrivacyPage from '../views/docs/Privacy.vue'
 import CookiesPage from '../views/docs/Cookies.vue'
+import NotFound from '../views/NotFound.vue'
 
 const routes = [
   { path: '/', redirect: '/landing-page' },
@@ -34,6 +35,8 @@ const routes = [
   { path: '/docs/terms', component: TermsPage, meta: { layout: 'blank' } },
   { path: '/docs/privacy', component: PrivacyPage, meta: { layout: 'blank' } },
   { path: '/docs/cookies', component: CookiesPage, meta: { layout: 'blank' } },
+
+  { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound, meta: { layout: 'blank' } },
 ]
 
 const router = createRouter({
