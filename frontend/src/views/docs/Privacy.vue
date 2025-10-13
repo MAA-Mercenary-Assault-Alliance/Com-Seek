@@ -4,8 +4,7 @@ import GuestNavbar from '../../components/GuestNavbar.vue'
 
 <template>
     <GuestNavbar />
-    <hr class="border-t border-gray-300 my-1">
-  <section class="container mx-auto px-6 py-8 text-[#0A3B1F] bg-gradient-to-b from-[#F2F6FC] via-white to-[#F2F6FC]">
+  <section class="container mx-auto px-6 py-8 text-[#0A3B1F]  my-5">
     <h1 class="text-4xl font-bold mb-6">Privacy Policy</h1>
     <p class="mb-6 text-[#0A3B1F]/70">
       Last updated: August 27, 2025  
