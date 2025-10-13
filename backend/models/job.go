@@ -44,6 +44,6 @@ type Job struct {
 	UpdatedAt        time.Time
 	Approved         bool
 	Visibility       bool
-	CheckNeeded      bool
-	JobApplication   []JobApplication
+	CheckNeeded      bool             `json:"-"`
+	JobApplication   []JobApplication `json:"-"`
 }
