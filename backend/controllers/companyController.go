@@ -48,7 +48,19 @@ func (cc *CompanyController) GetCompanyProfile(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"profile": company})
+	var jobs []models.Job
+
+	if err := cc.DB.Debug().Table("jobs").Preload("Company").
+		Where("jobs.company_id = ? AND jobs.visibility = 1", company.UserID).Find(&jobs).
+		Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"profile": company,
+		"jobs":    jobs,
+	})
 }
 
 func (cc *CompanyController) UpdateCompanyProfile(c *gin.Context) {
