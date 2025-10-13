@@ -54,6 +54,7 @@ func InitDB() (*gorm.DB, error) {
 		&models.Student{},
 		&models.Company{},
 		&models.Job{},
+		&models.JobApplication{},
 	}
 
 	if err := db.AutoMigrate(allModels...); err != nil {

@@ -87,3 +87,27 @@ func (cc *CompanyController) UpdateCompanyProfile(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "successfully updated the profile"})
 }
+
+func (cc *CompanyController) GetCompanyJobs(c *gin.Context) {
+	userID := c.MustGet("userID").(uint)
+
+	company := models.Company{
+		UserID: userID,
+	}
+
+	if err := cc.DB.First(&company).Error; err != nil {
+		c.JSON(http.StatusForbidden, gin.H{"error": "not a company account"})
+		return
+	}
+
+	var jobs []models.Job
+
+	if err := cc.DB.Table("jobs").Preload("Company").
+		Where("jobs.company_id = ?", company.UserID).Find(&jobs).
+		Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"jobs": jobs})
+}
