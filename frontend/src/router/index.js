@@ -9,10 +9,19 @@ import StudentProfilePage from '../views/StudentProfile.vue'
 
 const routes = [
   { path: '/', component: AppHome },
-  { path: '/hr-dashboard', component: AppHR },
-  { path: '/applicants', component: AppApplicants },
-  { path: '/admin', component: AppAdmin },
-  { path: '/applicants/:id', name: 'Applicants', component: AppApplicants },
+  { path: '/hr-dashboard',
+    component: AppHR,
+    meta: { requiresAuth: true, role: 'company' }
+  },
+  { path: '/admin',
+    component: AppAdmin,
+    meta: { requiresAuth: true, role: 'admin' }
+  },
+  { path: '/applicants/:id',
+    name: 'Applicants',
+    component: AppApplicants,
+    meta: { requiresAuth: true, role: 'company' }
+  },
   { path: '/login', component: LoginForm },
   { path: '/logout', component: LoginForm }, //TODO: Implement logout functionality
   { path: '/register', component: RegisterForm },
