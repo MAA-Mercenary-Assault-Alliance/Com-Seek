@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import JobBox from "../components/JobBox.vue";
-import {TE_Info} from "../components/temp_template";
 import {useRouter} from 'vue-router'
 import {onMounted, ref} from "vue";
 import { api } from '../../api/client.js';
@@ -12,7 +11,7 @@ const jobs = ref([])
 async function findMyJobs() {
   try {
     isLoading.value = true;
-    const res = await api.get("/my-job", {
+    const res = await api.get("/company/jobs", {
     })
 
     jobs.value = res.data.jobs
