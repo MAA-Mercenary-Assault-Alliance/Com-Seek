@@ -129,15 +129,19 @@ export default {
 
         this.alert = { message: "Login successful! Redirecting...", type: "success" };
 
-        if (response.data.role === "student") {
-          this.$router.push({ name: "StudentProfile" });
-        } else if (response.data.role === "company") {
-          this.$router.push({ path: '/' });
-        } else if (response.data.role === "admin") {
-          this.$router.push({ path: '/' });
-        } else {
-          this.$router.push("/");
-        }
+        // if (response.data.role === "student") {
+        //   this.$router.push({ name: "StudentProfile" });
+        // } else if (response.data.role === "company") {
+        //   this.$router.push({ path: '/' });
+        // } else if (response.data.role === "admin") {
+        //   this.$router.push({ path: '/' });
+        // } else {
+        //   this.$router.push("/");
+        // }
+
+        this.$router.push("/").then(() => {
+          window.location.reload();
+        });
 
       } catch (error) {
         const msg =
