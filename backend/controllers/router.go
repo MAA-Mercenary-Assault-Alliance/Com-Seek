@@ -24,6 +24,7 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 	authGroup := router.Group("/auth")
 	authGroup.POST("/register", authController.CreateUser)
 	authGroup.POST("/login", authController.Login)
+	authGroup.POST("/logout", middlewares.CheckAuth, authController.Logout)
 
 	requiredLogin := router.Group("/", middlewares.CheckAuth)
 
