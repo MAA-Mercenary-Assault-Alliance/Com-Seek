@@ -1,16 +1,8 @@
 <script setup>
-import { ref, computed } from "vue"
+import { computed } from "vue"
 import { useRoute } from "vue-router"
-import GuestNavbar from "./components/GuestNavbar.vue"
 import LandingSiteFooter from "./components/landing/SiteFooter.vue"
-
-const message = ref("")
-
-async function callBackend() {
-  const res = await fetch("http://localhost:8080/api/hello")
-  const data = await res.json()
-  message.value = data.message
-}
+import FullNavBar from "./components/FullNavBar.vue";
 
 const route = useRoute()
 const isBlankLayout = computed(() => route.meta?.layout === "blank")
@@ -24,8 +16,8 @@ const isBlankLayout = computed(() => route.meta?.layout === "blank")
 
   <!-- DEFAULT LAYOUT -->
   <div v-else class="flex flex-col relative min-h-screen">
-    <GuestNavbar />
-    <div id="all" class="flex flex-col bg-[#F2F6FC] w-full flex-grow text-black">
+    <FullNavBar></FullNavBar>
+    <div id="all" class="flex flex-col bg-[#F2F6FC] w-full flex-grow text-black"> <!--Default Text set to black right here -->
       <div id="main" class="flex justify-center">
         <router-view />
       </div>

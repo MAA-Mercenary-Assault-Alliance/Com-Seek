@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import AppHome from '../views/AppHome.vue'
-import AppProfile from '../views/AppProfile.vue'
 import AppHR from "../views/AppHR.vue"
 import AppApplicants from "../views/AppApplicants.vue"
 import AppAdmin from "../views/AppAdmin.vue"
@@ -19,11 +18,21 @@ const routes = [
   { path: '/home', component: AppHome },
   { path: '/landing-page', component: LandingPage, meta: { layout: 'blank' } },
   { path: '/profile', component: AppProfile },
-  { path: '/hr-dashboard', component: AppHR },
-  { path: '/applicants', component: AppApplicants },
-  { path: '/admin', component: AppAdmin },
-  { path: '/applicants/:id', name: 'Applicants', component: AppApplicants },
+  { path: '/hr-dashboard',
+    component: AppHR,
+    meta: { requiresAuth: true, role: 'company' }
+  },
+  { path: '/admin',
+    component: AppAdmin,
+    meta: { requiresAuth: true, role: 'admin' }
+  },
+  { path: '/applicants/:id',
+    name: 'Applicants',
+    component: AppApplicants,
+    meta: { requiresAuth: true, role: 'company' }
+  },
   { path: '/login', component: LoginForm },
+  { path: '/logout', component: LoginForm }, //TODO: Implement logout functionality
   { path: '/register', component: RegisterForm },
   {
     path: '/student-profile',
