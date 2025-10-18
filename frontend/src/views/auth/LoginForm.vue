@@ -139,7 +139,7 @@ export default {
         //   this.$router.push("/");
         // }
 
-        this.$router.push("/").then(() => {
+        this.$router.push("/home").then(() => {
           window.location.reload();
         });
 
