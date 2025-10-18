@@ -30,23 +30,14 @@
       </div>
 
       <!-- Password -->
-      <div class="form-control">
-        <label for="password" class="label">
-          <span class="label-text">Password</span>
-        </label>
-        <input
-          type="password"
-          id="password"
-          v-model="form.password"
-          placeholder="Enter your password"
-          class="input input-bordered w-full"
-          :class="{ 'input-error': errors.password }"
-          required
-        />
-        <label v-if="errors.password" class="label text-error text-sm">
-          {{ errors.password }}
-        </label>
-      </div>
+      <PasswordField
+        id="login-password"
+        label="Password"
+        v-model="form.password"
+        :error="errors.password"
+        autocomplete="current-password"
+        required
+      />
 
       <!-- Submit button -->
       <button
@@ -73,8 +64,14 @@
 </template>
 
 <script>
+import { api } from '../../../api/client';
+import { defineAsyncComponent } from 'vue';
+
 export default {
   name: "LoginForm",
+  components: {
+    PasswordField: defineAsyncComponent(() => import('@/components/PasswordField.vue')), // ✅
+  },
   emits: ["switch-to-register"],
   data() {
     return {
@@ -87,10 +84,15 @@ export default {
         message: "",
         type: ""
       },
-      loading: false
+      loading: false,
+      showPassword: false,
     };
   },
   methods: {
+    toggleShowPassword() {
+      this.showPassword = !this.showPassword;
+    },
+    
     validateEmail(email) {
       const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return re.test(email);
@@ -117,16 +119,36 @@ export default {
       this.alert = { message: "Logging in...", type: "success" };
 
       try {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        const response = await api.post("/auth/login", {
+          email: this.form.email,
+          password: this.form.password,
+        });
+
+        localStorage.setItem('email', response.data.email);
+        localStorage.setItem('role', response.data.role);
 
         this.alert = { message: "Login successful! Redirecting...", type: "success" };
 
-        setTimeout(() => {
-          this.$router.push("/dashboard");
-        }, 1000);
+        // if (response.data.role === "student") {
+        //   this.$router.push({ name: "StudentProfile" });
+        // } else if (response.data.role === "company") {
+        //   this.$router.push({ path: '/' });
+        // } else if (response.data.role === "admin") {
+        //   this.$router.push({ path: '/' });
+        // } else {
+        //   this.$router.push("/");
+        // }
+
+        this.$router.push("/").then(() => {
+          window.location.reload();
+        });
+
       } catch (error) {
-        this.alert = { message: "Invalid credentials. Please try again.", type: "error" };
+        const msg =
+          error?.response?.data?.error ||
+          error?.message ||
+          "Invalid credentials. Please try again.";
+        this.alert = { message: msg, type: "error" };
       } finally {
         this.loading = false;
       }
@@ -134,3 +156,4 @@ export default {
   }
 };
 </script>
+
