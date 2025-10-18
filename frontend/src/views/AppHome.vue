@@ -63,7 +63,7 @@ console.log("SelectedJob: ", selectedJob)
         <div class="text-white min-w-300 w-1/2">
           Search for your jobs now
         </div>
-        <div class="flex flex-row space-x-10 min-w-300 w-1/2">
+        <div class="relative flex flex-row space-x-10 min-w-300 w-1/2">
           <label class="input-box w-2/7">
             <input v-model="keyword" type="search" class="grow pl-3 placeholder-black" placeholder="Keywords" />
           </label>
@@ -83,17 +83,11 @@ console.log("SelectedJob: ", selectedJob)
               <option>IT Support & Operations</option>
             </select>
           </div>
-          <div class="relative w-2/7 mr-0">
+          <div class="relative w-2/7 mr-10">
             <img src="../assets/location.svg" class="absolute px-2 w-12 left-3 top-2 z-10" alt="case"/>
-            <select v-model="location" class="select rounded-2xl select-lg pl-18 z-0 w-70">
-              <option disabled value="">Location</option>
-              <option value="">Any</option>
-              <option>กรุงเทพมหานคร</option>
-              <option>สมุทรสาคร</option>
-              <option>นครปฐม</option>
-              <option>ปทุมธานี</option>
-              <option>นนทบุรี</option>
-            </select>
+            <label class="input-box w-2/7">
+              <input v-model="location" type="search" class="grow pl-13 placeholder-black" placeholder="Location" />
+            </label>
           </div>
           <button @click="findJobs" class="btn shadow-none bg-lighter border-0 h-12 rounded-2xl text-white text-xl font-extralight w-1/7">Find Now</button>
         </div>
