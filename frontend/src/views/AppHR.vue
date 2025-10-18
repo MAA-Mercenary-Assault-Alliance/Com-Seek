@@ -41,7 +41,7 @@ function goToJob(id) {
       <span class="text-white text-5xl font-bold">Your Job Offer</span>
     </div>
 
-    <div v-if="!isLoading" class="grid grid-cols-2 xl:px-42 gap-x-5 md:gap-x-20 gap-y-10">
+    <div v-if="!isLoading" class="grid grid-cols-2 xl:px-42 gap-x-5 md:gap-x-20 gap-y-10 pb-20">
       <job-box v-for="job in jobs" :key="job" :job-info=job :h-r="true" @click="goToJob(job.ID)"/>
     </div>
   </div>
