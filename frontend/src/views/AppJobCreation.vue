@@ -8,6 +8,7 @@ import SuccessBox from "@/components/SuccessBox.vue";
 
 const router = useRouter()
 const confirmBox = ref(null)
+const successBox = ref(null)
 
 const jobName = ref('')
 const employmentStatus = ref('')
@@ -153,8 +154,11 @@ const submitJob = async () => {
     const res = await api.post(`/job`, payload)
 
     console.log("Job Created: ", res.data)
-    alert('Job created successfully!')
-    goBack()
+    successBox.value.open()
+
+    setTimeout(() => {
+      router.back();
+    }, 2000);
 
   } catch (err) {
     if (err.response) {
@@ -336,7 +340,8 @@ const submitJob = async () => {
 <!--      TODO: There's still error when trying to cancel sometimes-->
 
       <success-box
-      :message="'The job has been created successfully!'"
+          ref="successBox"
+          :message="'The job has been created successfully!'"
       ></success-box>
 
     </div>

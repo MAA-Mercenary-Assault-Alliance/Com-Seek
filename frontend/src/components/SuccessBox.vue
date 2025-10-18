@@ -7,9 +7,6 @@ const dialog = ref(null)
 
 function open() {
   dialog.value.showModal();
-  setTimeout(() => {
-    dialog.value.close();
-  }, 2000);
 }
 
 defineExpose({ open });
@@ -18,9 +15,10 @@ defineExpose({ open });
 <template>
   <dialog ref="dialog" class="modal">
     <div class="modal-box">
-      <img src="../assets/checkmark.svg"/>
-      <h3 class="text-lg font-bold">Are you sure?</h3>
-      <p class="py-4">{{ props.message }}</p>
+      <div class="flex flex-col justify-center items-center p-10">
+        <img src="../assets/checkmark.svg" class="w-30"/>
+        <p class="py-4 text-xl">{{ props.message }}</p>
+      </div>
 
     </div>
     <form method="dialog" class="modal-backdrop">
