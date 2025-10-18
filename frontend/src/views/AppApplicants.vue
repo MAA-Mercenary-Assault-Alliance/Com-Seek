@@ -37,10 +37,12 @@ onMounted(() => {
     <div class="flex bg-title w-full h-40 px-42 items-center">
       <span class="text-white text-5xl font-bold">Applicants</span>
     </div>
-    <div v-if="!isLoading && job && applicants" class="flex flex-row w-full xl:px-42 bg-[#f2f6fc] space-x-5 xl:space-x-20 pb-20">
+    <div v-if="!isLoading && job" class="flex flex-row w-full xl:px-42 bg-[#f2f6fc] space-x-5 xl:space-x-20 pb-20">
       <JobFull :job-info="job" />
-      <ApplicantsColumn :applicants="applicants" @refresh="findThisJob"/>
-<!--      TODO: pass applicants not job-->
+      <ApplicantsColumn v-if="applicants" :applicants="applicants" @refresh="findThisJob"/>
+      <div v-else class="flex justify-center w-1/3 mt-20">
+        <span class="text-2xl text-gray-500 italic">No applicants yet.</span>
+      </div>
     </div>
   </div>
 </template>
