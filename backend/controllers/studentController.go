@@ -54,12 +54,26 @@ func (sc *StudentController) GetStudentProfile(c *gin.Context) {
 	idStr := c.Param("id")
 
 	var id uint
+	var studentRes StudentResponse
 
 	if idStr == "" {
+		result := sc.DB.Table("students").
+			Joins("LEFT JOIN users ON users.id = students.user_id").
+			Where("user_id = ?", userID).Scan(&studentRes)
+
+		if result.Error != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+			return
+		}
+
+		if result.RowsAffected == 0 {
+			c.JSON(http.StatusForbidden, gin.H{"error": "not a student account"})
+			return
+		}
+
 		id = userID
 	} else {
-		bitSize := strconv.IntSize
-		u, err := strconv.ParseUint(c.Param("id"), 10, bitSize)
+		u, err := strconv.ParseUint(c.Param("id"), 10, strconv.IntSize)
 
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
@@ -67,14 +81,20 @@ func (sc *StudentController) GetStudentProfile(c *gin.Context) {
 		}
 
 		id = uint(u)
-	}
 
-	var studentRes StudentResponse
+		result := sc.DB.Table("students").
+			Joins("LEFT JOIN users ON users.id = students.user_id").
+			Where("user_id = ?", id).Scan(&studentRes)
 
-	if err := sc.DB.Table("students").Joins("LEFT JOIN users ON users.id = students.user_id").
-		Where("user_id = ?", id).Scan(&studentRes).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		if result.Error != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+			return
+		}
+
+		if result.RowsAffected == 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "record not found"})
+			return
+		}
 	}
 
 	if userID == id {
@@ -82,7 +102,7 @@ func (sc *StudentController) GetStudentProfile(c *gin.Context) {
 		if err := sc.DB.Table("job_applications").
 			Joins("LEFT JOIN jobs ON jobs.id = job_applications.job_id").
 			Joins("LEFT JOIN companies ON jobs.company_id = companies.user_id").
-			Where("student_id = ?", id).
+			Where("student_id = ?", studentRes.UserID).
 			Select("job_applications.*, jobs.*, companies.name").
 			Scan(&jobApplications).
 			Error; err != nil {
