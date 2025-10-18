@@ -3,7 +3,9 @@ import { ref, watch, reactive} from 'vue'
 import ConfirmBoxGeneral from "@/components/ConfirmBoxGeneral.vue";
 import {marked} from "marked";
 import { api } from "../../api/client.js"
+import {useRouter} from "vue-router";
 
+const router = useRouter()
 const confirmBox = ref(null)
 
 const jobName = ref('')
@@ -136,10 +138,10 @@ const submitJob = async () => {
       location: location.value,
       job_type: jobType.value,
       employment_status: employmentStatus.value,
-      min_salary: salaryMin.value,
-      max_salary: salaryMax.value,
-      min_experience: expMin.value,
-      max_experience: expMax.value,
+      min_salary: Number(salaryMin.value),
+      max_salary: Number(salaryMax.value),
+      min_experience: Number(expMin.value),
+      max_experience: Number(expMax.value),
       description: jobDesc.value
     }
 
@@ -147,6 +149,7 @@ const submitJob = async () => {
 
     console.log("Job Created: ", res.data)
     alert('Job created successfully!')
+    router.back()
 
   } catch (err) {
     if (err.response) {
@@ -193,9 +196,10 @@ const submitJob = async () => {
           </div>
           <select v-model="employmentStatus" class="input-select">
             <option disabled value="">Employment Status</option>
-            <option>Full-Time</option>
-            <option>Part-Time</option>
-            <option>Intern</option>
+            <option>full-time</option>
+            <option>part-time</option>
+            <option>contract</option>
+            <option>internship</option>
           </select>
         </div>
 
@@ -233,11 +237,16 @@ const submitJob = async () => {
           </div>
           <select v-model="jobType" class="input-select">
             <option disabled value="">Job Type</option>
-            <option>Full-Stack Developer</option>
-            <option>Front-End Developer</option>
-            <option>Back-End Developer</option>
-            <option>DevOps Engineer</option>
-            <option>Add more later</option>
+            <option>Software & Application Development</option>
+            <option>Data & AI</option>
+            <option>Cloud & Infrastructure</option>
+            <option>Cybersecurity</option>
+            <option>Product & Design</option>
+            <option>Testing & Quality</option>
+            <option>Hardware & Electronics</option>
+            <option>Management & Leadership</option>
+            <option>IT Support & Operations</option>
+
           </select>
         </div>
 
@@ -309,7 +318,7 @@ const submitJob = async () => {
         <div v-html="desc_html"></div>
       </div>
 
-      <div class="flex flex-row space-x-10 mt-10">
+      <div class="flex flex-row space-x-10 mt-10 pb-20">
         <button class="btn shadow-none border-0 h-15 rounded-3xl text-white text-lg font-extralight px-7 bg-[#44B15B]" @click="submitJob ">Confirm</button>
         <button class="btn shadow-none  border-0 h-15 rounded-3xl text-white text-lg font-extralight px-7 bg-gray-300" @click="confirmBox.open()">Cancel</button>
       </div>
@@ -317,8 +326,8 @@ const submitJob = async () => {
       <confirm-box-general
           ref="confirmBox"
           :message="'The data on this page will be lost'"
+          @accept="router.back"
       ></confirm-box-general>
-<!--      TODO: THEN GO BACK TO THE PREVIOUS PAGE-->
 
     </div>
   </div>
