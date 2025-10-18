@@ -19,17 +19,61 @@ func NewStudentController(db *gorm.DB) *StudentController {
 	}
 }
 
+type StudentResponse struct {
+	UserID      uint   `json:"user_id"`
+	FirstName   string `json:"first_name"`
+	LastName    string `json:"last_name"`
+	Email       string `json:"email"`
+	Description string `json:"description"`
+	IsAlum      bool   `json:"is_alum"`
+	Approved    bool   `json:"approved"`
+	GitHub      string `json:"github"`
+	LinkedIn    string `json:"linkedin"`
+	Facebook    string `json:"facebook"`
+	Instagram   string `json:"instagram"`
+	Twitter     string `json:"twitter"`
+}
+
+type JobApplicationResponse struct {
+	ID               uint                    `json:"id"`
+	JobID            uint                    `json:"job_id"`
+	Title            string                  `json:"job_title"`
+	Name             string                  `json:"company_name"`
+	Location         string                  `json:"job_location"`
+	JobType          models.JobType          `json:"job_type"`
+	EmploymentStatus models.EmploymentStatus `json:"job_employment_status"`
+	MinSalary        uint                    `json:"job_min_salary"`
+	MaxSalary        uint                    `json:"job_max_salary"`
+	MinExperience    uint                    `json:"job_min_experience"`
+	MaxExperience    uint                    `json:"job_max_experience"`
+	CreatedAt        string                  `json:"created_at"`
+}
+
 func (sc *StudentController) GetStudentProfile(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 	idStr := c.Param("id")
 
 	var id uint
+	var studentRes StudentResponse
 
 	if idStr == "" {
+		result := sc.DB.Table("students").
+			Joins("LEFT JOIN users ON users.id = students.user_id").
+			Where("user_id = ?", userID).Scan(&studentRes)
+
+		if result.Error != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+			return
+		}
+
+		if result.RowsAffected == 0 {
+			c.JSON(http.StatusForbidden, gin.H{"error": "not a student account"})
+			return
+		}
+
 		id = userID
 	} else {
-		bitSize := strconv.IntSize
-		u, err := strconv.ParseUint(c.Param("id"), 10, bitSize)
+		u, err := strconv.ParseUint(c.Param("id"), 10, strconv.IntSize)
 
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
@@ -37,18 +81,43 @@ func (sc *StudentController) GetStudentProfile(c *gin.Context) {
 		}
 
 		id = uint(u)
+
+		result := sc.DB.Table("students").
+			Joins("LEFT JOIN users ON users.id = students.user_id").
+			Where("user_id = ?", id).Scan(&studentRes)
+
+		if result.Error != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+			return
+		}
+
+		if result.RowsAffected == 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "record not found"})
+			return
+		}
 	}
 
-	student := models.Student{
-		UserID: id,
-	}
+	if userID == id {
+		var jobApplications []JobApplicationResponse
+		if err := sc.DB.Table("job_applications").
+			Joins("LEFT JOIN jobs ON jobs.id = job_applications.job_id").
+			Joins("LEFT JOIN companies ON jobs.company_id = companies.user_id").
+			Where("student_id = ?", studentRes.UserID).
+			Select("job_applications.*, jobs.*, companies.name").
+			Scan(&jobApplications).
+			Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
 
-	if err := sc.DB.Preload("User").First(&student).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusOK, gin.H{
+			"profile":      studentRes,
+			"applications": jobApplications,
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"profile": student})
+	c.JSON(http.StatusOK, gin.H{"profile": studentRes})
 }
 
 func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
