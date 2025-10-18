@@ -6,9 +6,18 @@ import AppAdmin from "../views/AppAdmin.vue"
 import LoginForm from '../views/auth/LoginForm.vue'
 import RegisterForm from '../views/auth/RegisterForm.vue'
 import StudentProfilePage from '../views/StudentProfile.vue'
+import LandingPage from '../views/LandingPage.vue'
+import TermsPage from '../views/docs/Terms.vue'
+import PrivacyPage from '../views/docs/Privacy.vue'
+import CookiesPage from '../views/docs/Cookies.vue'
+import NotFound from '../views/NotFound.vue'
 
 const routes = [
-  { path: '/', component: AppHome },
+  { path: '/', redirect: '/landing-page' },
+
+  { path: '/home', component: AppHome },
+  { path: '/landing-page', component: LandingPage, meta: { layout: 'blank' } },
+  { path: '/profile', component: AppProfile },
   { path: '/hr-dashboard',
     component: AppHR,
     meta: { requiresAuth: true, role: 'company' }
@@ -31,6 +40,12 @@ const routes = [
     name: 'StudentProfile',
     meta: { requiresAuth: true, role: 'student' },
   },
+
+  { path: '/docs/terms', component: TermsPage, meta: { layout: 'blank' } },
+  { path: '/docs/privacy', component: PrivacyPage, meta: { layout: 'blank' } },
+  { path: '/docs/cookies', component: CookiesPage, meta: { layout: 'blank' } },
+
+  { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound, meta: { layout: 'blank' } },
 ]
 
 const router = createRouter({
