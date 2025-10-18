@@ -4,6 +4,7 @@ import ConfirmBoxGeneral from "@/components/ConfirmBoxGeneral.vue";
 import {marked} from "marked";
 import { api } from "../../api/client.js"
 import {useRouter} from "vue-router";
+import SuccessBox from "@/components/SuccessBox.vue";
 
 const router = useRouter()
 const confirmBox = ref(null)
@@ -28,6 +29,10 @@ watch(jobDesc, async (newVal) => {
 })
 
 const preview = ref(false)
+
+function goBack() {
+  router.back()
+}
 
 const errors = reactive({
   jobName: '',
@@ -149,7 +154,7 @@ const submitJob = async () => {
 
     console.log("Job Created: ", res.data)
     alert('Job created successfully!')
-    router.back()
+    goBack()
 
   } catch (err) {
     if (err.response) {
@@ -326,8 +331,13 @@ const submitJob = async () => {
       <confirm-box-general
           ref="confirmBox"
           :message="'The data on this page will be lost'"
-          @accept="router.back"
+          @accept="goBack"
       ></confirm-box-general>
+<!--      TODO: There's still error when trying to cancel sometimes-->
+
+      <success-box
+      :message="'The job has been created successfully!'"
+      ></success-box>
 
     </div>
   </div>
