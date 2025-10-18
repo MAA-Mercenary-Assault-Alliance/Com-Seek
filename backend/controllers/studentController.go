@@ -62,7 +62,7 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 		GitHub      *string `json:"github" binding:"omitempty,max=256"`
 		LinkedIn    *string `json:"linkedin" binding:"omitempty,max=256"`
 		Facebook    *string `json:"facebook" binding:"omitempty,max=256"`
-		Instragram  *string `json:"instragram" binding:"omitempty,max=256"`
+		Instagram   *string `json:"instagram" binding:"omitempty,max=256"`
 		Twitter     *string `json:"twitter" binding:"omitempty,max=256"`
 	}
 

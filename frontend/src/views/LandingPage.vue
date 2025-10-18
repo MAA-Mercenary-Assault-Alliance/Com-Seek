@@ -1,0 +1,36 @@
+<script setup lang="ts">
+function scrollToId(id: string) {
+  const el = document.getElementById(id)
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" })
+}
+</script>
+
+<template>
+  <div class="min-h-screen flex flex-col bg-base-100">
+    <LandingNavBar @goto="scrollToId" />
+
+    <LandingHero @goto="scrollToId" />
+    <LandingStats />
+    <LandingFeatures />
+    <LandingHowItWorks />
+    <LandingFAQ />
+    <LandingCTA />
+    
+  </div>
+</template>
+
+<script lang="ts">
+import LandingNavBar from '../components/landing/NavBar.vue'
+import LandingHero from '../components/landing/Hero.vue'
+import LandingStats from '../components/landing/Stats.vue'
+import LandingFeatures from '../components/landing/Features.vue'
+import LandingHowItWorks from '../components/landing/HowItWorks.vue'
+import LandingFAQ from '../components/landing/FAQ.vue'
+import LandingCTA from '../components/landing/CTA.vue'
+import LandingSiteFooter from '../components/landing/SiteFooter.vue'
+export default {}
+</script>
+
+<style scoped>
+html:has(#features) { scroll-behavior: smooth; }
+</style>
