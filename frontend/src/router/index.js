@@ -17,7 +17,6 @@ const routes = [
 
   { path: '/home', component: AppHome },
   { path: '/landing-page', component: LandingPage, meta: { layout: 'blank' } },
-  { path: '/profile', component: AppProfile },
   { path: '/hr-dashboard',
     component: AppHR,
     meta: { requiresAuth: true, role: 'company' }
