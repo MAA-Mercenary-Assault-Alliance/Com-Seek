@@ -1,4 +1,8 @@
 <script setup lang="ts">
+const prop = defineProps({
+  applicant: { type: Object, required: true }
+});
+// TODO: Change everything to use applicant
 </script>
 
 <template>

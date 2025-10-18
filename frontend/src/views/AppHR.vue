@@ -2,9 +2,32 @@
 import JobBox from "../components/JobBox.vue";
 import {TE_Info} from "../components/temp_template";
 import {useRouter} from 'vue-router'
+import {onMounted, ref} from "vue";
+import { api } from '../../api/client.js';
 
 const router = useRouter()
-const job_list = [1,2,3]
+let isLoading = ref(true)
+const jobs = ref([])
+
+async function findMyJobs() {
+  try {
+    isLoading.value = true;
+    const res = await api.get("/my-job", {
+    })
+
+    jobs.value = res.data.jobs
+    console.log("Fetched jobs:", jobs.value)
+    return;
+  } catch (error) {
+    console.error("Error fetching jobs:", error)
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+onMounted(() => {
+  findMyJobs();
+})
 
 function goToJob(id) {
   console.log('Clicked job ID:', id)
@@ -19,8 +42,8 @@ function goToJob(id) {
       <span class="text-white text-5xl font-bold">Your Job Offer</span>
     </div>
 
-    <div class="grid grid-cols-2 xl:px-42 gap-x-5 md:gap-x-20 gap-y-10">
-      <job-box v-for="job in job_list" :key="job" :job-info=TE_Info :h-r="true" @click="goToJob(TE_Info.id)"/>
+    <div v-if="!isLoading" class="grid grid-cols-2 xl:px-42 gap-x-5 md:gap-x-20 gap-y-10">
+      <job-box v-for="job in jobs" :key="job" :job-info=job :h-r="true" @click="goToJob(job.ID)"/>
     </div>
   </div>
 

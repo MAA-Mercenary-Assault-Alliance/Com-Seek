@@ -1,11 +1,18 @@
 <script setup lang="ts">
 import {JobTemplate} from './temp_template'
 import {marked} from "marked";
+import {watch} from "vue";
 const props = defineProps<{
   jobInfo: JobTemplate
 }>();
 
-const desc_html = marked(props.jobInfo.desc)
+let desc_html = marked(props.jobInfo?.Description || "")
+
+watch(() => props.jobInfo, (newJobInfo) => {
+  console.log('JobFull received jobInfo:', newJobInfo)
+  desc_html = marked(newJobInfo.Description || "")
+})
+
 </script>
 
 <template>
@@ -14,8 +21,8 @@ const desc_html = marked(props.jobInfo.desc)
     <div id="title-box" class="flex row items-center mt-3">
       <img src="../assets/company.jpg" class="w-20 h-20 rounded-2xl" alt="company-logo"/>
       <div id="title" class="flex flex-col ml-7 space-y-4">
-        <span class="text-2xl">{{ jobInfo.company }}</span>
-        <span class="underline">{{ jobInfo.name }}</span>
+        <span class="text-2xl">{{ jobInfo.Company?.Name }}</span>
+        <span class="underline">{{ jobInfo.Title }}</span>
       </div>
       <button class="btn shadow-none bg-[#44b15b] border-0 h-12 rounded-2xl text-white text-xl font-extralight ml-auto mt-6">Apply Now</button>
     </div>
@@ -25,19 +32,19 @@ const desc_html = marked(props.jobInfo.desc)
     <div id="requirements-box" class="grid grid-cols-2 gap-4 w-full max-w-4xl mt-6 space-y-2">
       <div class="requirements-div">
         <img src="../assets/location.svg" class="requirements-icon" alt="location-icon"/>
-        <span>{{ jobInfo.location }}</span>
+        <span>{{ jobInfo.Location }}</span>
       </div>
       <div class="requirements-div">
         <img src="../assets/money.svg" class="requirements-icon" alt="money-icon"/>
-        <span>{{ jobInfo.salary_range }}</span>
+        <span>฿{{ jobInfo.MinSalary }}-{{ jobInfo.MaxSalary}}</span>
       </div>
       <div class="requirements-div">
         <img src="../assets/time.svg" class="requirements-icon" alt="time-icon"/>
-        <span>{{ jobInfo.type }}</span>
+        <span>{{ jobInfo.JobType }}</span>
       </div>
       <div class="requirements-div">
         <img src="../assets/cap.svg" class="requirements-icon" alt="cap-icon"/>
-        <span>{{ jobInfo.experience }}</span>
+        <span>{{ jobInfo.MinExperience }}-{{ jobInfo.MaxExperience }} years</span>
       </div>
     </div>
 
