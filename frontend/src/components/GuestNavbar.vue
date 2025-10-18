@@ -10,7 +10,7 @@
       <li class="flex ml-4 box-shadow text-xl bg-[#56A45C] rounded-4xl w-48 h-9 text-center items-center justify-center">Admin User</li>
     </ul>
     <ul class="flex space-x-15 items-center">
-      <li><router-link to="/">Home</router-link></li>
+      <li><router-link to="/home">Home</router-link></li>
       <li><router-link to="/hr-dashboard">HR TEST</router-link></li>
       <li><router-link to="/applicants">Applicants TEST</router-link></li>
       <li><router-link to="/admin">Admin Test</router-link></li>
