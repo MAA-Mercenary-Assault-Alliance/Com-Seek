@@ -71,7 +71,7 @@ dialog:not([open]) {
 }
 
 .company-admin-logo {
-    @apply w-[120px] h-[120px] rounded-2xl ml-2
+    @apply w-[135px] h-[135px] rounded-2xl ml-2
 }
 
 .admin-box {

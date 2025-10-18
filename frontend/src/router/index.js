@@ -40,7 +40,7 @@ const routes = [
     name: 'StudentProfile',
     meta: { requiresAuth: true, role: 'student' },
   },
-  { path: '/create-job', component: AppJobCreation},
+  { path: '/create-job', name: "CreateJob", component: AppJobCreation},
 
   { path: '/docs/terms', component: TermsPage, meta: { layout: 'blank' } },
   { path: '/docs/privacy', component: PrivacyPage, meta: { layout: 'blank' } },
