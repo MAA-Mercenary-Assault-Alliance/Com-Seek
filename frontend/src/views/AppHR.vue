@@ -33,12 +33,17 @@ function goToJob(id) {
   router.push({ name: 'Applicants', params: {id}})
 }
 
+function goToCreateJob() {
+  router.push({ name: 'CreateJob'})
+}
+
 </script>
 
 <template>
   <div class="flex flex-col w-full space-y-10">
-    <div class="flex bg-title w-full h-40 px-42 items-center">
+    <div class="flex flew-row bg-title w-full h-40 px-42 items-center">
       <span class="text-white text-5xl font-bold">Your Job Offer</span>
+      <button @click="goToCreateJob" class="btn shadow-none bg-lighter border-0 h-12 rounded-2xl text-white text-xl font-extralight w-[150px] ml-auto">Create Job</button>
     </div>
 
     <div v-if="!isLoading" class="grid grid-cols-2 xl:px-42 gap-x-5 md:gap-x-20 gap-y-10 pb-20">
