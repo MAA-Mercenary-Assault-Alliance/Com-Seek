@@ -1,20 +1,18 @@
 <script setup lang="ts">
 import { ref, watch, reactive} from 'vue'
-import axios from 'axios'
 import ConfirmBoxGeneral from "@/components/ConfirmBoxGeneral.vue";
 import {marked} from "marked";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+import { api } from "../../api/client.js"
 
 const confirmBox = ref(null)
 
 const jobName = ref('')
 const employmentStatus = ref('')
 const location = ref('')
-const salaryMin = ref('')
-const salaryMax = ref('')
-const expMin = ref('')
-const expMax = ref('')
+const salaryMin = ref()
+const salaryMax = ref()
+const expMin = ref()
+const expMax = ref()
 const jobType = ref('')
 const jobDesc = ref('')
 let desc_html = ref('There is no description yet')
@@ -91,16 +89,14 @@ const validateForm = () => {
 
 // Experience validation
   if (!expMin.value) {
-    errors.expMin = 'Minimum experience is required'
-    valid = false
+    expMin.value = 0
   } else if (isNaN(Number(expMin.value))) {
     errors.expMin = 'Minimum experience must be a number'
     valid = false
   }
 
   if (!expMax.value) {
-    errors.expMax = 'Maximum experience is required'
-    valid = false
+    expMax.value = 0
   } else if (isNaN(Number(expMax.value))) {
     errors.expMax = 'Maximum experience must be a number'
     valid = false
@@ -136,25 +132,36 @@ const submitJob = async () => {
     }
 
     const payload = {
-      Title: jobName.value,
-      Location: location.value,
-      JobType: jobType.value,
-      EmploymentStatus: employmentStatus.value,
-      MinSalary: salaryMin.value,
-      MaxSalary: salaryMax.value,
-      MinExperience: expMin.value,
-      MaxExperience: expMax.value,
-      Description: jobDesc.value
+      title: jobName.value,
+      location: location.value,
+      job_type: jobType.value,
+      employment_status: employmentStatus.value,
+      min_salary: salaryMin.value,
+      max_salary: salaryMax.value,
+      min_experience: expMin.value,
+      max_experience: expMax.value,
+      description: jobDesc.value
     }
 
-    const res = await axios.post(`${API_BASE_URL}/job`, payload)
+    const res = await api.post(`/job`, payload)
 
     console.log("Job Created: ", res.data)
     alert('Job created successfully!')
 
   } catch (err) {
-    console.error(err)
-    alert('Something went wrong in Job Creation')
+    if (err.response) {
+      // Backend returned an error response (like 403)
+      console.error('Error:', err.response.data)
+      alert(err.response.data.error || 'Something went wrong')
+    } else if (err.request) {
+      // No response (maybe network/CORS issue)
+      console.error('No response from server:', err.request)
+      alert('No response from server')
+    } else {
+      // Something else happened before the request was sent
+      console.error('Axios error:', err.message)
+      alert('Request setup failed')
+    }
   }
 }
 
@@ -188,6 +195,7 @@ const submitJob = async () => {
             <option disabled value="">Employment Status</option>
             <option>Full-Time</option>
             <option>Part-Time</option>
+            <option>Intern</option>
           </select>
         </div>
 
@@ -196,14 +204,9 @@ const submitJob = async () => {
             <span class="text-xl">Location</span>
             <label v-if="errors.location" class="text-red-500 text-sm">{{ errors.location }}</label>
           </div>
-          <select v-model="location" class="input-select">
-            <option disabled value="">Location</option>
-            <option>กรุงเทพมหานคร</option>
-            <option>สมุทรสาคร</option>
-            <option>นครปฐม</option>
-            <option>ปทุมธานี</option>
-            <option>นนทบุรี</option>
-          </select>
+          <label class="input-box-gray">
+            <input v-model="location" type="search" class="grow pl-3" placeholder="E.g. กรุงเทพมหานคร" />
+          </label>
         </div>
 
         <div class="job-input-box">
