@@ -1,3 +1,6 @@
+import { parseISO, format } from 'date-fns';
+
 export default function DateConverter(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('en-GB'); // DD/MM/YYYY
+    const d = parseISO(dateString);
+    return format(d, 'dd/MM/yyyy');
 }

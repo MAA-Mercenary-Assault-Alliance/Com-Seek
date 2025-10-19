@@ -26,6 +26,18 @@ dialog:not([open]) {
     @apply input input-lg rounded-2xl placeholder-black
 }
 
+.input-box-gray {
+    @apply input input-lg rounded-2xl placeholder-gray-300 xl:w-2/3 w-4/5
+}
+
+.input-box-half {
+    @apply input input-lg rounded-2xl placeholder-gray-300 xl:w-1/4 w-4/5
+}
+
+.input-select {
+    @apply select rounded-2xl select-lg z-0 xl:w-2/3 w-4/5
+}
+
 .in-line-stat {
     @apply flex flex-row text-xs items-center
 }
@@ -64,4 +76,12 @@ dialog:not([open]) {
 
 .admin-box {
     @apply min-w-[168px]
+}
+
+.job-input-box {
+    @apply flex flex-col space-y-5
+}
+
+.title-and-error-box {
+    @apply flex space-x-5 items-center
 }
