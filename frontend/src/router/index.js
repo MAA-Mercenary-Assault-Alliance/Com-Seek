@@ -12,6 +12,7 @@ import TermsPage from '../views/docs/Terms.vue'
 import PrivacyPage from '../views/docs/Privacy.vue'
 import CookiesPage from '../views/docs/Cookies.vue'
 import NotFound from '../views/NotFound.vue'
+import CompanyRegisterForm from '../views/auth/CompanyRegisterForm.vue'
 
 const routes = [
   { path: '/', redirect: '/landing-page' },
@@ -25,6 +26,7 @@ const routes = [
   { path: '/applicants/:id', name: 'Applicants', component: AppApplicants },
   { path: '/login', component: LoginForm },
   { path: '/register', component: RegisterForm },
+  { path: '/register-company', component: CompanyRegisterForm },
   {
     path: '/student-profile',
     component: StudentProfilePage,
