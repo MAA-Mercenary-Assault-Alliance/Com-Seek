@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"com-seek/backend/models"
+	"com-seek/backend/services"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -65,7 +66,10 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 		JobID:     job.ID,
 	}
 
-	result := jc.DB.FirstOrCreate(&jobApplication)
+	tx := jc.DB.Begin()
+	defer tx.Rollback()
+
+	result := tx.FirstOrCreate(&jobApplication)
 
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
@@ -74,6 +78,27 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 
 	if result.RowsAffected == 0 {
 		c.JSON(http.StatusConflict, gin.H{"error": "job application already exists"})
+		return
+	}
+
+	tx.Preload("Job.Company").Preload("Student").First(&jobApplication)
+
+	subject := jobApplication.Job.Title + ": New applicant applied"
+	body := (jobApplication.Student.FirstName +
+		" " + jobApplication.Student.LastName +
+		" has applied to your job posting: " +
+		jobApplication.Job.Title)
+
+	if err := services.SendEmail(
+		jobApplication.Job.Company.ContactEmail,
+		subject,
+		body); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to submit the application"})
 		return
 	}
 
