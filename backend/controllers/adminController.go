@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"com-seek/backend/models"
+	"com-seek/backend/services"
+	"log"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -40,6 +42,15 @@ func ConvertIDtoUint(idStr string, c *gin.Context) (uint, error) {
 	var uintID = uint(u)
 
 	return uintID, err
+}
+
+func SendDeletionEmail(recipient string) {
+	if err := services.SendEmail(
+		recipient,
+		"Account Deletion Notification",
+		"We're sorry to inform you that your account has been deleted. If this was a mistake, please reach out to support. Otherwise, feel free to register again to continue using the site."); err != nil {
+		log.Println("Error: failed to send account deletion notification to", recipient, ":", err)
+	}
 }
 
 func (ac *AdminController) GetPendingCompanies(c *gin.Context) {
@@ -99,12 +110,16 @@ func (ac *AdminController) ReviewCompany(c *gin.Context) {
 		}
 		c.JSON(200, gin.H{"message": "Company approved"})
 	} else {
+		notificationEmail := company.User.Email
+
 		// Just delete the user
 		if err := ac.DB.Unscoped().Delete(&company.User).Error; err != nil {
 			c.JSON(500, gin.H{"error": "Failed to delete company's user"})
 			return
 		}
 		c.JSON(200, gin.H{"message": "Company's user deleted"})
+
+		go SendDeletionEmail(notificationEmail)
 	}
 }
 
@@ -163,14 +178,17 @@ func (ac *AdminController) ReviewStudent(c *gin.Context) {
 		}
 		c.JSON(200, gin.H{"message": "Student approved"})
 	} else {
+		notificationEmail := student.User.Email
+
 		// Just delete the student
 		if err := ac.DB.Unscoped().Delete(&student.User).Error; err != nil {
 			c.JSON(500, gin.H{"error": "Failed to reject and delete student"})
 			return
 		}
 		c.JSON(200, gin.H{"message": "Student's user deleted"})
-	}
 
+		go SendDeletionEmail(notificationEmail)
+	}
 }
 
 func (ac *AdminController) GetPendingJobs(c *gin.Context) {
