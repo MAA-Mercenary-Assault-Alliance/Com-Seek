@@ -180,8 +180,8 @@ import { defineAsyncComponent } from 'vue';
 export default {
   name: "RegisterForm",
   components: {
-    PasswordField: defineAsyncComponent(() => import('@/components/PasswordField.vue')),
-    TermsModal: defineAsyncComponent(() => import('@/components/TermsModal.vue')),
+    PasswordField: defineAsyncComponent(() => import('@/components/auth/PasswordField.vue')),
+    TermsModal: defineAsyncComponent(() => import('@/components/auth/TermsModal.vue')),
   },
   emits: ["switch-to-login"],
   data() {

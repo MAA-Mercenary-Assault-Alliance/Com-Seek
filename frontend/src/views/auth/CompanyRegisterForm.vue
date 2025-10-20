@@ -20,6 +20,44 @@
       </div>
 
       <form @submit.prevent="handleRegister" class="space-y-4">
+
+        <!-- Account Email -->
+        <div class="form-control">
+          <label class="label"><span class="label-text">Account Email</span></label>
+          <input
+            v-model.trim="form.email"
+            type="email"
+            placeholder="Login email"
+            class="input input-bordered w-full"
+            :class="{ 'input-error': errors.email }"
+            required
+          />
+          <label v-if="errors.email" class="label text-error text-sm">{{ errors.email }}</label>
+        </div>
+
+        <!-- Passwords (PasswordField component) -->
+        <div class="form-control">
+          <PasswordField
+            id="password"
+            label="Password"
+            placeholder="Create a password"
+            v-model="form.password"
+          />
+          <label v-if="errors.password" class="label text-error text-sm">{{ errors.password }}</label>
+        </div>
+
+        <div class="form-control">
+          <PasswordField
+            id="confirm"
+            label="Confirm Password"
+            placeholder="Repeat password"
+            v-model="form.confirmPassword"
+          />
+          <label v-if="errors.confirmPassword" class="label text-error text-sm">{{ errors.confirmPassword }}</label>
+        </div>
+
+        <div class="divider my-2"></div>
+
         <!-- Company Name -->
         <div class="form-control">
           <label class="label"><span class="label-text">Company Name</span></label>
@@ -76,43 +114,6 @@
           <label v-if="errors.contactNumber" class="label text-error text-sm">{{ errors.contactNumber }}</label>
         </div>
 
-        <div class="divider my-2"></div>
-
-        <!-- Account Email -->
-        <div class="form-control">
-          <label class="label"><span class="label-text">Account Email</span></label>
-          <input
-            v-model.trim="form.email"
-            type="email"
-            placeholder="Login email"
-            class="input input-bordered w-full"
-            :class="{ 'input-error': errors.email }"
-            required
-          />
-          <label v-if="errors.email" class="label text-error text-sm">{{ errors.email }}</label>
-        </div>
-
-        <!-- Passwords (PasswordField component) -->
-        <div class="form-control">
-          <PasswordField
-            id="password"
-            label="Password"
-            placeholder="Create a password"
-            v-model="form.password"
-          />
-          <label v-if="errors.password" class="label text-error text-sm">{{ errors.password }}</label>
-        </div>
-
-        <div class="form-control">
-          <PasswordField
-            id="confirm"
-            label="Confirm Password"
-            placeholder="Repeat password"
-            v-model="form.confirmPassword"
-          />
-          <label v-if="errors.confirmPassword" class="label text-error text-sm">{{ errors.confirmPassword }}</label>
-        </div>
-
         <!-- Submit -->
         <div class="form-control mt-4 flex justify-center">
           <button
@@ -163,8 +164,8 @@ import { defineAsyncComponent } from 'vue';
 export default {
   name: 'CompanyRegister',
   components: {
-    PasswordField: defineAsyncComponent(() => import('@/components/PasswordField.vue')),
-    TermsModal: defineAsyncComponent(() => import('@/components/TermsModal.vue')),
+    PasswordField: defineAsyncComponent(() => import('@/components/auth/PasswordField.vue')),
+    TermsModal: defineAsyncComponent(() => import('@/components/auth/TermsModal.vue')),
   },
   emits: ['switch-to-login'],
   data() {
