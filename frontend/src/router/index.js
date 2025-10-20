@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import AppHome from '../views/AppHome.vue'
-import AppProfile from '../views/AppProfile.vue'
 import AppHR from "../views/AppHR.vue"
 import AppApplicants from "../views/AppApplicants.vue"
 import AppAdmin from "../views/AppAdmin.vue"
@@ -8,6 +7,7 @@ import LoginForm from '../views/auth/LoginForm.vue'
 import RegisterForm from '../views/auth/RegisterForm.vue'
 import StudentProfilePage from '../views/StudentProfile.vue'
 import LandingPage from '../views/LandingPage.vue'
+import AppJobCreation from "../views/AppJobCreation.vue";
 import TermsPage from '../views/docs/Terms.vue'
 import PrivacyPage from '../views/docs/Privacy.vue'
 import CookiesPage from '../views/docs/Cookies.vue'
@@ -19,12 +19,21 @@ const routes = [
 
   { path: '/home', component: AppHome },
   { path: '/landing-page', component: LandingPage, meta: { layout: 'blank' } },
-  { path: '/profile', component: AppProfile },
-  { path: '/hr-dashboard', component: AppHR },
-  { path: '/applicants', component: AppApplicants },
-  { path: '/admin', component: AppAdmin },
-  { path: '/applicants/:id', name: 'Applicants', component: AppApplicants },
+  { path: '/hr-dashboard',
+    component: AppHR,
+    meta: { requiresAuth: true, role: 'company' }
+  },
+  { path: '/admin',
+    component: AppAdmin,
+    meta: { requiresAuth: true, role: 'admin' }
+  },
+  { path: '/applicants/:id',
+    name: 'Applicants',
+    component: AppApplicants,
+    meta: { requiresAuth: true, role: 'company' }
+  },
   { path: '/login', component: LoginForm },
+  { path: '/logout', component: LoginForm }, //TODO: Implement logout functionality
   { path: '/register', component: RegisterForm },
   { path: '/register-company', component: CompanyRegisterForm },
   {
@@ -33,6 +42,7 @@ const routes = [
     name: 'StudentProfile',
     meta: { requiresAuth: true, role: 'student' },
   },
+  { path: '/create-job', name: "CreateJob", component: AppJobCreation},
 
   { path: '/docs/terms', component: TermsPage, meta: { layout: 'blank' } },
   { path: '/docs/privacy', component: PrivacyPage, meta: { layout: 'blank' } },
@@ -43,7 +53,7 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(),
-  routes,
+  routes: routes,
 })
 
 router.beforeEach((to, from, next) => {

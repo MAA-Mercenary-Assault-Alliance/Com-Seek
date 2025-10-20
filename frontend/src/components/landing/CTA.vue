@@ -1,3 +1,10 @@
+<script setup lang="ts">
+
+function scrollToTop() {
+  window.scrollTo({top: 0, behavior: 'smooth'})
+}
+
+</script>
 <template>
   <section class="container mx-auto px-6 pb-20">
     <div class="hero rounded-2xl bg-base-200">
@@ -6,7 +13,7 @@
           <h2 class="text-3xl lg:text-4xl font-bold">Ready to launch your career hub?</h2>
           <p class="py-4 text-base-content/70">Get started in minutes, customize endlessly.</p>
           <div class="flex flex-wrap gap-3 justify-center">
-            <router-link to="/register" class="btn btn-lg bg-[#56A45C] text-white hover:bg-[#44B15B] ">Create account</router-link>
+            <router-link to="/register" class="btn btn-lg bg-[#56A45C] text-white hover:bg-[#44B15B]" @click="scrollToTop"> Create account</router-link>
           </div>
         </div>
       </div>

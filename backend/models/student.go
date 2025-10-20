@@ -2,7 +2,7 @@ package models
 
 type Student struct {
 	UserID         uint `gorm:"primaryKey"`
-	User           User `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignKey:UserID;references:ID"`
+	User           User `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignKey:UserID;references:ID" json:"-"`
 	FirstName      string
 	LastName       string
 	Description    string
@@ -11,7 +11,7 @@ type Student struct {
 	GitHub         string
 	LinkedIn       string
 	Facebook       string
-	Instragram     string
+	Instagram      string
 	Twitter        string
-	JobApplication []JobApplication
+	JobApplication []JobApplication `json:"-"`
 }
