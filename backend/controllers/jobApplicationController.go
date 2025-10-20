@@ -82,7 +82,7 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 		return
 	}
 
-	tx.Preload("Job.Company").Preload("Student").First(&jobApplication)
+	tx.Preload("Job.Company.User").Preload("Student").First(&jobApplication)
 
 	subject := jobApplication.Job.Title + ": New applicant applied"
 	body := (jobApplication.Student.FirstName +
@@ -91,7 +91,7 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 		jobApplication.Job.Title)
 
 	if err := services.SendEmail(
-		jobApplication.Job.Company.ContactEmail,
+		jobApplication.Job.Company.User.Email,
 		subject,
 		body); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
