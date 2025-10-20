@@ -1,7 +1,16 @@
 <template>
-  <div class="py-24">
-    <div class="max-w-md mx-auto p-6 bg-base-100 shadow-xl rounded-xl">
-      <h2 class="text-2xl font-bold text-center mb-6">Company Register</h2>
+  <div class="pt-10 pb-32">
+    <!-- Watermark Icon -->
+    <div
+      class="absolute bottom-4 right-6 text-green-900 opacity-10 pointer-events-none select-none"
+    >
+      <i class="fas fa-briefcase text-[15rem]"></i>
+    </div>
+
+    <div class="w-120 mx-auto p-6 bg-white rounded-xl shadow-md overflow-y-auto">
+      <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">
+        <span class="text-3xl text-green-700 font-black">Company</span> Register
+      </h2>
 
       <!-- Alert -->
       <div v-if="alert.message" class="mb-4">
@@ -117,12 +126,25 @@
               : (tosAccepted ? 'REGISTER' : 'READ & ACCEPT TERMS TO REGISTER') }}
           </button>
         </div>
-
-        <p class="text-sm text-center mt-3">
-          Already have an account?
-          <router-link to="/login" class="link link-primary">Login</router-link>
-        </p>
       </form>
+      <!-- Switch to Login -->
+      <p class="text-center text-sm mt-4 border-t pt-4">
+        Already have an account?
+        <router-link to="/login" class="text-blue-500 hover:underline">
+          Login here
+        </router-link>
+      </p>
+
+      <p class="text-center text-sm">
+        or
+      </p>
+
+      <p class="text-center text-sm">
+        Register as a student.
+        <router-link to="/register" class="text-blue-500 hover:underline">
+          Register here
+        </router-link>
+      </p>
     </div>
 
     <!-- Terms Modal: uses showTos flag and emits 'accept' / 'close' -->
