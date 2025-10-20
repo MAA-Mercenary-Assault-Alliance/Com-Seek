@@ -47,8 +47,8 @@ func ConvertIDtoUint(idStr string, c *gin.Context) (uint, error) {
 func SendDeletionEmail(recipient string) {
 	if err := services.SendEmail(
 		recipient,
-		"Account Deletion Notification",
-		"We're sorry to inform you that your account has been deleted. If this was a mistake, please reach out to support. Otherwise, feel free to register again to continue using the site."); err != nil {
+		"Account Disapproval and Deletion Notification",
+		"We're sorry to inform you that your account has been disapproved and subsequently deleted. If you believe this was done in error, please reach out to our support team. Otherwise, you are welcome to re-register if you'd like to use the site again in the future."); err != nil {
 		log.Println("Error: failed to send account deletion notification to", recipient, ":", err)
 	}
 }
