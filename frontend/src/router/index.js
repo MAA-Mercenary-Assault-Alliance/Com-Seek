@@ -1,13 +1,14 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
+
 import AppHome from '../views/AppHome.vue'
-import AppHR from "../views/AppHR.vue"
-import AppApplicants from "../views/AppApplicants.vue"
-import AppAdmin from "../views/AppAdmin.vue"
+import AppHR from '../views/AppHR.vue'
+import AppApplicants from '../views/AppApplicants.vue'
+import AppAdmin from '../views/AppAdmin.vue'
 import LoginForm from '../views/auth/LoginForm.vue'
 import RegisterForm from '../views/auth/RegisterForm.vue'
 import StudentProfilePage from '../views/StudentProfile.vue'
 import LandingPage from '../views/LandingPage.vue'
-import AppJobCreation from "../views/AppJobCreation.vue";
+import AppJobCreation from '../views/AppJobCreation.vue'
 import TermsPage from '../views/docs/Terms.vue'
 import PrivacyPage from '../views/docs/Privacy.vue'
 import CookiesPage from '../views/docs/Cookies.vue'
@@ -77,31 +78,32 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes: routes,
+  // ✅ Hash mode avoids server rewrite requirements (prevents 404 on refresh)
+  history: createWebHashHistory(),
+  routes,
+  scrollBehavior() {
+    return { top: 0 }
+  },
 })
 
 router.beforeEach((to, from, next) => {
-  const email = localStorage.getItem('email');
-  const role = localStorage.getItem('role');
-  const isAuthenticated = !!(email && role);
+  const email = localStorage.getItem('email')
+  const role = localStorage.getItem('role')
+  const isAuthenticated = !!(email && role)
 
   if (to.meta.requiresAuth && !isAuthenticated) {
-    return next('/login');
+    return next('/login')
   }
 
   if (to.meta.role && isAuthenticated) {
-    const required = to.meta.role; // can be string or array
-    const allowed =
-      Array.isArray(required) ? required.includes(role) : role === required;
-
+    const required = to.meta.role // can be string or array
+    const allowed = Array.isArray(required) ? required.includes(role) : role === required
     if (!allowed) {
-      return next('/');
+      return next('/')
     }
   }
 
-  next();
-});
-
+  next()
+})
 
 export default router
