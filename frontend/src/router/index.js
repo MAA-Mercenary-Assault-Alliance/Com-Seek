@@ -13,41 +13,66 @@ import PrivacyPage from '../views/docs/Privacy.vue'
 import CookiesPage from '../views/docs/Cookies.vue'
 import NotFound from '../views/NotFound.vue'
 import CompanyRegisterForm from '../views/auth/CompanyRegisterForm.vue'
+import CompanyProfilePage from '../views/CompanyProfile.vue'
 
 const routes = [
+  // Root & Landing
   { path: '/', redirect: '/landing-page' },
-
-  { path: '/home', component: AppHome },
   { path: '/landing-page', component: LandingPage, meta: { layout: 'blank' } },
-  { path: '/hr-dashboard',
-    component: AppHR,
-    meta: { requiresAuth: true, role: 'company' }
-  },
-  { path: '/admin',
-    component: AppAdmin,
-    meta: { requiresAuth: true, role: 'admin' }
-  },
-  { path: '/applicants/:id',
-    name: 'Applicants',
-    component: AppApplicants,
-    meta: { requiresAuth: true, role: 'company' }
-  },
+  { path: '/home', component: AppHome },
+
+  // Auth
   { path: '/login', component: LoginForm },
-  { path: '/logout', component: LoginForm }, //TODO: Implement logout functionality
+  { path: '/logout', component: LoginForm }, // TODO: wire logout handler
   { path: '/register', component: RegisterForm },
   { path: '/register-company', component: CompanyRegisterForm },
+
+  // Dashboards
+  {
+    path: '/hr-dashboard',
+    component: AppHR,
+    meta: { requiresAuth: true, role: 'company' },
+  },
+  {
+    path: '/admin',
+    component: AppAdmin,
+    meta: { requiresAuth: true, role: 'admin' },
+  },
+
+  // Profiles
   {
     path: '/student-profile',
-    component: StudentProfilePage,
     name: 'StudentProfile',
+    component: StudentProfilePage,
     meta: { requiresAuth: true, role: 'student' },
   },
-  { path: '/create-job', name: "CreateJob", component: AppJobCreation},
+  {
+    path: '/company-profile',
+    name: 'CompanyProfile',
+    component: CompanyProfilePage,
+    meta: { requiresAuth: true, role: 'company' },
+  },
 
+  // Jobs & Applicants
+  {
+    path: '/create-job',
+    name: 'CreateJob',
+    component: AppJobCreation,
+    meta: { requiresAuth: true, role: 'company' },
+  },
+  {
+    path: '/applicants/:id',
+    name: 'Applicants',
+    component: AppApplicants,
+    meta: { requiresAuth: true, role: 'company' },
+  },
+
+  // Docs (public)
   { path: '/docs/terms', component: TermsPage, meta: { layout: 'blank' } },
   { path: '/docs/privacy', component: PrivacyPage, meta: { layout: 'blank' } },
   { path: '/docs/cookies', component: CookiesPage, meta: { layout: 'blank' } },
 
+  // Not Found
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound, meta: { layout: 'blank' } },
 ]
 
