@@ -78,7 +78,6 @@ const routes = [
 ]
 
 const router = createRouter({
-  // ✅ Hash mode avoids server rewrite requirements (prevents 404 on refresh)
   history: createWebHashHistory(),
   routes,
   scrollBehavior() {
