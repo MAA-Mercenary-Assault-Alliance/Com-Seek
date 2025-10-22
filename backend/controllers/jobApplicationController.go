@@ -66,7 +66,7 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 		JobID:     job.ID,
 	}
 
-	result := jc.DB.FirstOrCreate(&jobApplication)
+	result := jc.DB.Where("student_id = ? AND job_id = ?", student.UserID, job.ID).FirstOrCreate(&jobApplication)
 
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
