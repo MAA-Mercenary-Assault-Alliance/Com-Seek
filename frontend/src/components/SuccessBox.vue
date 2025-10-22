@@ -9,7 +9,11 @@ function open() {
   dialog.value.showModal();
 }
 
-defineExpose({ open });
+function close() {
+  dialog.value.close();
+}
+
+defineExpose({ open, close });
 </script>
 
 <template>
