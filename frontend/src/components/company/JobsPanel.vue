@@ -90,7 +90,11 @@
             </div>
           </div>
 
-          <div class="mt-3 whitespace-pre-wrap text-gray-800">{{ modelValue.Description }}</div>
+          <!-- Markdown-rendered description -->
+          <div
+            class="prose prose-sm max-w-none mt-3 text-gray-800"
+            v-html="renderedMarkdown"
+          />
 
           <div class="mt-4 text-sm text-gray-700">
             <div>
@@ -119,6 +123,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { marked } from 'marked' // ← add this
 import JobFullEmpty from '@/components/JobFullEmpty.vue'
 
 const props = defineProps({
@@ -149,4 +154,9 @@ watch([keyword, jobType, location], () => {
 function applyFilter() {
   console.log('Applied local filters.')
 }
+
+const renderedMarkdown = computed(() => {
+  const md = props.modelValue?.Description || ''
+  return md ? marked.parse(md, { breaks: true }) : ''
+})
 </script>
