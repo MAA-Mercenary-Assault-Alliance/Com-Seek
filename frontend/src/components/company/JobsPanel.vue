@@ -1,12 +1,23 @@
 <template>
   <div class="bg-white rounded-xl shadow-md p-6">
     <div class="flex items-center justify-between mb-4">
-      <h2 class="text-xl font-semibold">Your Job Posts</h2>
+      <h2 class="text-xl font-semibold text-[#0A3B1F]">Your Job Posts</h2>
 
       <div class="flex gap-2">
-        <input class="input input-bordered input-sm w-48" placeholder="Keyword" v-model="keyword" />
-        <input class="input input-bordered input-sm w-40" placeholder="Location" v-model="location" />
-        <select v-model="jobType" class="select select-bordered select-sm w-48">
+        <input
+          class="input input-bordered input-sm w-48 focus:outline-none focus:border-[#44B15B] focus:ring-2 focus:ring-[#44B15B]/30"
+          placeholder="Keyword"
+          v-model="keyword"
+        />
+        <input
+          class="input input-bordered input-sm w-40 focus:outline-none focus:border-[#44B15B] focus:ring-2 focus:ring-[#44B15B]/30"
+          placeholder="Location"
+          v-model="location"
+        />
+        <select
+          v-model="jobType"
+          class="select select-bordered select-sm w-48 focus:outline-none focus:border-[#44B15B] focus:ring-2 focus:ring-[#44B15B]/30"
+        >
           <option value="">All Types</option>
           <option>Software & Application Development</option>
           <option>Data & AI</option>
@@ -18,7 +29,12 @@
           <option>Management & Leadership</option>
           <option>IT Support & Operations</option>
         </select>
-        <button class="btn btn-sm" @click="applyFilter">Filter</button>
+        <button
+          class="btn btn-sm bg-[#44B15B] border-[#44B15B] hover:bg-[#56A45C] hover:border-[#56A45C] text-white"
+          @click="applyFilter"
+        >
+          Filter
+        </button>
       </div>
     </div>
 
@@ -31,14 +47,16 @@
           <div
             v-for="job in filteredJobs"
             :key="job.ID"
-            class="p-3 rounded-lg border cursor-pointer hover:bg-gray-50"
-            :class="modelValue && modelValue.ID === job.ID ? 'ring-2 ring-primary' : ''"
+            class="p-3 rounded-lg border cursor-pointer transition-all duration-150 bg-white hover:bg-[#EAF6EC] hover:border-[#56A45C]"
+            :class="modelValue && modelValue.ID === job.ID ? 'ring-2 ring-[#44B15B] border-[#44B15B]/50 bg-[#EAF6EC]' : ''"
             @click="$emit('update:modelValue', job)"
           >
-            <div class="font-semibold">{{ job.Title }}</div>
-            <div class="text-sm text-gray-500">{{ job.Location }} • {{ job.EmploymentStatus }}</div>
+            <div class="font-semibold text-[#0A3B1F]">{{ job.Title }}</div>
+            <div class="text-sm text-gray-600">{{ job.Location }} • {{ job.EmploymentStatus }}</div>
             <div class="text-xs mt-1">
-              <span class="px-2 py-0.5 rounded bg-gray-100">{{ job.JobType }}</span>
+              <span class="px-2 py-0.5 rounded border border-[#56A45C] text-[#0A3B1F] bg-[#EAF6EC]">
+                {{ job.JobType }}
+              </span>
             </div>
           </div>
         </template>
@@ -46,18 +64,20 @@
 
       <!-- Detail -->
       <div class="md:col-span-2">
-        <div v-if="modelValue" class="border rounded-lg p-5">
+        <div v-if="modelValue" class="border rounded-lg p-5 bg-white">
           <div class="flex items-start justify-between">
             <div>
-              <h3 class="text-lg font-bold">{{ modelValue.Title }}</h3>
-              <div class="text-sm text-gray-500">
+              <h3 class="text-lg font-bold text-[#0A3B1F]">{{ modelValue.Title }}</h3>
+              <div class="text-sm text-gray-600">
                 {{ modelValue.Location }} • {{ modelValue.EmploymentStatus }}
               </div>
             </div>
             <div class="flex items-center gap-2">
               <span
                 class="text-xs px-2 py-1 rounded"
-                :class="modelValue.Approved ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'"
+                :class="modelValue.Approved
+                  ? 'bg-[#EAF6EC] text-[#0A3B1F] border border-[#56A45C]'
+                  : 'bg-yellow-100 text-yellow-700 border border-yellow-300'"
               >
                 {{ modelValue.Approved ? 'Approved' : 'Pending' }}
               </span>
@@ -70,17 +90,23 @@
             </div>
           </div>
 
-          <div class="mt-3 whitespace-pre-wrap">{{ modelValue.Description }}</div>
+          <div class="mt-3 whitespace-pre-wrap text-gray-800">{{ modelValue.Description }}</div>
 
-          <div class="mt-4 text-sm text-gray-600">
-            <div>Experience: {{ modelValue.MinExperience }}–{{ modelValue.MaxExperience }} yrs</div>
+          <div class="mt-4 text-sm text-gray-700">
             <div>
-              Salary:
+              <span class="font-medium text-[#0A3B1F]">Experience:</span>
+              {{ modelValue.MinExperience }}–{{ modelValue.MaxExperience }} yrs
+            </div>
+            <div class="mt-1">
+              <span class="font-medium text-[#0A3B1F]">Salary:</span>
               {{ modelValue.MinSalary?.toLocaleString?.() || modelValue.MinSalary }} –
               {{ modelValue.MaxSalary?.toLocaleString?.() || modelValue.MaxSalary }}
             </div>
             <div class="mt-2">
-              Type: <span class="px-2 py-0.5 rounded bg-gray-100">{{ modelValue.JobType }}</span>
+              <span class="font-medium text-[#0A3B1F]">Type:</span>
+              <span class="ml-2 px-2 py-0.5 rounded border border-[#56A45C] text-[#0A3B1F] bg-[#EAF6EC]">
+                {{ modelValue.JobType }}
+              </span>
             </div>
           </div>
         </div>
