@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"com-seek/backend/models"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -23,32 +24,45 @@ func (cc *CompanyController) GetCompanyProfile(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 	idStr := c.Param("id")
 
-	var id uint
+	var company models.Company
 
 	if idStr == "" {
-		id = userID
+		if err := cc.DB.First(&company, "user_id = ?", userID).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				c.JSON(http.StatusForbidden, gin.H{"error": "not a company account"})
+				return
+			}
+
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
 	} else {
-		bitSize := strconv.IntSize
-		u, err := strconv.ParseUint(c.Param("id"), 10, bitSize)
+		id, err := strconv.ParseUint(c.Param("id"), 10, strconv.IntSize)
 
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 			return
 		}
 
-		id = uint(u)
+		if err := cc.DB.First(&company, "user_id = ?", id).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
 	}
 
-	company := models.Company{
-		UserID: id,
-	}
+	var jobs []models.Job
 
-	if err := cc.DB.Preload("User").First(&company).Error; err != nil {
+	if err := cc.DB.Table("jobs").Preload("Company").
+		Where("jobs.company_id = ? AND jobs.approved = 1", company.UserID).Find(&jobs).
+		Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"profile": company})
+	c.JSON(http.StatusOK, gin.H{
+		"profile": company,
+		"jobs":    jobs,
+	})
 }
 
 func (cc *CompanyController) UpdateCompanyProfile(c *gin.Context) {
@@ -86,4 +100,28 @@ func (cc *CompanyController) UpdateCompanyProfile(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "successfully updated the profile"})
+}
+
+func (cc *CompanyController) GetCompanyJobs(c *gin.Context) {
+	userID := c.MustGet("userID").(uint)
+
+	company := models.Company{
+		UserID: userID,
+	}
+
+	if err := cc.DB.First(&company).Error; err != nil {
+		c.JSON(http.StatusForbidden, gin.H{"error": "not a company account"})
+		return
+	}
+
+	var jobs []models.Job
+
+	if err := cc.DB.Table("jobs").Preload("Company").
+		Where("jobs.company_id = ?", company.UserID).Find(&jobs).
+		Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"jobs": jobs})
 }
