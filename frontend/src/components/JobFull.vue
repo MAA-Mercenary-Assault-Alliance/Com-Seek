@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {JobTemplate} from './temp_template'
 import {marked} from "marked";
-import {onMounted, ref, watch} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {api} from "../../api/client.js";
 import DateConverter from './dateConverter';
 import {useRouter} from 'vue-router'
@@ -15,7 +15,9 @@ const router = useRouter();
 const successBox = ref(null);
 
 let desc_html = marked(props.jobInfo?.Description || "")
-const date = ref("")
+const date = computed(() => {
+  return DateConverter(props.jobInfo?.CreatedAt || "")
+})
 
 watch(() => props.jobInfo, (newJobInfo) => {
   console.log('JobFull received jobInfo:', newJobInfo)
@@ -62,9 +64,6 @@ function goToCompany(companyID: number) {
   // TODO: integrate with the real company profile
 }
 
-onMounted(() => {
-  date.value = DateConverter(props.jobInfo?.CreatedAt || "");
-})
 </script>
 
 <template>

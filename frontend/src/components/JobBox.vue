@@ -12,6 +12,25 @@ onMounted(() => {
 
 const applied = ref(0)
 const new_app = ref(0)
+const day = ref(0)
+
+function daysAgo(dateString: string): number {
+  if (!dateString) return 0;
+
+  const date = new Date(dateString);
+  const now = new Date();
+
+  // calculate difference in milliseconds
+  const diffMs = now.getTime() - date.getTime();
+
+  // convert to days
+  return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+}
+
+onMounted(() => {
+  day.value = daysAgo(props.jobInfo.CreatedAt)
+})
+
 </script>
 
 <template>
@@ -35,7 +54,7 @@ const new_app = ref(0)
         <span>{{ jobInfo.Location }}</span>
       </div>
     </div>
-    <span class="absolute bottom-3 right-5 text-gray-500">24 days ago</span>
+    <span class="absolute bottom-3 right-5 text-gray-500">{{ day }} days ago</span>
 
     <div v-if=hR>
       <span class="absolute top-5 right-10 text-gray-500">Applied: {{applied}}</span>
