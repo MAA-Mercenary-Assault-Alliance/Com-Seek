@@ -1,8 +1,14 @@
 <template>
-  <div class="w-full bg-gray-100" v-if="loadedOnce">
+  <div class="w-full bg-[F2F6FC]" v-if="loadedOnce">
     <ProfileHeader :profile="profile" />
 
     <section class="w-full bg-[#0a3b1f] py-5"></section>
+
+    <div
+      class="absolute bottom-4 right-6 text-green-900 opacity-10 pointer-events-none select-none"
+    >
+      <i class="fas fa-building text-[10rem]"></i>
+    </div>
 
     <div class="max-w-6xl mx-auto py-6 px-4">
       <ProfileDetails
