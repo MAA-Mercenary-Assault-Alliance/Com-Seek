@@ -57,7 +57,22 @@ func (ac *AdminController) GetPendingCompanies(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{"companies": companies})
+	var responses []models.CompanyResponse
+	for _, c := range companies {
+		responses = append(responses, models.CompanyResponse{
+			UserID:        c.UserID,
+			CreatedAt:     c.User.CreatedAt,
+			Name:          c.Name,
+			Website:       c.Website,
+			ContactEmail:  c.ContactEmail,
+			ContactNumber: c.ContactNumber,
+			Location:      c.Location,
+			Description:   c.Description,
+			Approved:      c.Approved,
+		})
+	}
+
+	c.JSON(200, gin.H{"companies": responses})
 }
 
 func (ac *AdminController) ReviewCompany(c *gin.Context) {
