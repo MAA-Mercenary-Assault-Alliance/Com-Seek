@@ -70,7 +70,7 @@ import { defineAsyncComponent } from 'vue';
 export default {
   name: "LoginForm",
   components: {
-    PasswordField: defineAsyncComponent(() => import('@/components/PasswordField.vue')), // ✅
+    PasswordField: defineAsyncComponent(() => import('@/components/auth/PasswordField.vue')), // ✅
   },
   emits: ["switch-to-register"],
   data() {
