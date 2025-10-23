@@ -11,7 +11,7 @@ const activeTab = ref('companies')
 const company_list = ref([])
 const student_list = ref([])
 const job_list = ref([])
-let isLoading = ref(true)
+const isLoading = ref(true)
 
 async function getCompanies() {
   try {
