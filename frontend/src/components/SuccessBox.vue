@@ -7,6 +7,9 @@ const dialog = ref(null)
 
 function open() {
   dialog.value.showModal();
+  setTimeout(() => {
+    close();
+  }, 2000);
 }
 
 function close() {

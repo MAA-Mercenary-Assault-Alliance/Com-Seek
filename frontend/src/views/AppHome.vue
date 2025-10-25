@@ -108,8 +108,8 @@ console.log("SelectedJob: ", selectedJob)
 
       <div class="relative w-2/3">
         <div class="flex sticky top-10">
-        <JobFull v-if="selectedJob" :job-info="selectedJob" class="ml-7"/>
-        <JobFullEmpty v-if="!selectedJob" class="ml-7"/>
+        <JobFull v-if="selectedJob" :job-info="selectedJob"/>
+        <JobFullEmpty v-if="!selectedJob"/>
         </div>
       </div>
 

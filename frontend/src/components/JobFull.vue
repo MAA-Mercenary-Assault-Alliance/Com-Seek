@@ -6,6 +6,7 @@ import {api} from "../../api/client.js";
 import DateConverter from './dateConverter';
 import {useRouter} from 'vue-router'
 import SuccessBox from "@/components/SuccessBox.vue";
+import CVBox from "@/components/CVBox.vue";
 
 const props = defineProps<{
   jobInfo: JobTemplate
@@ -13,6 +14,7 @@ const props = defineProps<{
 
 const router = useRouter();
 const successBox = ref(null);
+const cvBox = ref(null);
 
 let desc_html = marked(props.jobInfo?.Description || "")
 const date = computed(() => {
@@ -31,34 +33,6 @@ onMounted(() => {
   });
 });
 
-async function applyJob() {
-  if (role.value !== 'student') {
-    alert("Only students can apply to jobs.")
-    return
-  }
-  try {
-    console.log("This job id:", props.jobInfo.ID)
-    const res = await api.post("/job/apply", {
-      job_id: Number(props.jobInfo.ID)
-    })
-    console.log("Applied to job:", res.data)
-    successBox.value.open()
-
-    setTimeout(() => {
-      successBox.value.close();
-    }, 2000);
-
-    return
-  } catch (error) {
-    console.error("Error applying to job:", error.response.data)
-    if (error.response.data.error == "job application already exists") {
-      alert("You have already applied to this job.")
-    } else {
-      alert("Error applying to job. Please try again later.")
-    }
-  }
-}
-
 function goToCompany(companyID: number) {
   router.push({ name: 'CompanyProfile', params: {id: companyID}})
   // TODO: integrate with the real company profile
@@ -75,7 +49,7 @@ function goToCompany(companyID: number) {
         <span class="text-2xl" @click="goToCompany">{{ jobInfo.Company?.Name }}</span>
         <span class="underline">{{ jobInfo.Title }}</span>
       </div>
-      <button v-if="role === 'student'" class="btn shadow-none bg-[#44b15b] border-0 h-12 rounded-2xl text-white text-xl font-extralight ml-auto mt-6" @click="applyJob">Apply Now</button>
+      <button v-if="role === 'student'" class="btn shadow-none bg-[#44b15b] border-0 h-12 rounded-2xl text-white text-xl font-extralight ml-auto mt-6" @click="cvBox.open()">Apply Now</button>
     </div>
     <span class="absolute top-5 right-5 text-gray-500">{{ date }}</span>
 
@@ -110,6 +84,13 @@ function goToCompany(companyID: number) {
       ref="successBox"
       :message="'Successfully applied for the job!'"
   ></success-box>
+
+  <c-v-box
+    ref="cvBox"
+    :jobID="jobInfo.ID"
+    @success="successBox.open()"
+  ></c-v-box>
+
 
 </template>
 
