@@ -57,14 +57,7 @@ export interface JobTemplate {
 
 export interface CompanyTemplate {
     UserID: number;
-    User: {
-        ID: number;
-        CreatedAt: string;
-        UpdatedAt: string;
-        DeletedAt: string | null;
-        Email: string;
-        Password: string;
-    };
+    CreatedAt: string;
     Name: string;
     Website: string;
     ContactEmail: string;

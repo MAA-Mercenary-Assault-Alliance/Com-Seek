@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import {onMounted, ref} from 'vue'
 import {CompanyTemplate} from './temp_template'
 import ConfirmBox from "./ComfirmBox.vue";
 import { api } from "../../api/client.js";
@@ -13,6 +13,7 @@ console.log("Company Info:", props.companyInfo);
 
 const confirmBox = ref(null);
 const emit = defineEmits(["refresh"]);
+const date = ref()
 
 async function rejectCompany() {
   try {
@@ -38,7 +39,9 @@ async function acceptCompany() {
   }
 }
 
-const date = DateConverter(props.companyInfo.User.CreatedAt);
+onMounted(() => {
+  date.value = DateConverter(props.companyInfo.CreatedAt);
+})
 
 </script>
 

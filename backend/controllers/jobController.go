@@ -92,6 +92,15 @@ func (jc *JobController) GetJobs(c *gin.Context) {
 	var jobs []models.Job
 	query := jc.DB.Preload("Company").Preload("JobApplication.Student")
 
+	if idStr := c.Query("id"); idStr != "" {
+		if id, err := strconv.Atoi(idStr); err == nil {
+			query = query.Where("id = ?", id)
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+			return
+		}
+	}
+
 	if location := c.Query("location"); location != "" {
 		locationPattern := fmt.Sprintf("%%%s%%", location)
 		query = query.Where("location LIKE ?", locationPattern)
