@@ -13,7 +13,8 @@
       <div class="px-48">
         <ProfileHeader
           :profile="profile"
-          @edit="openEdit"
+          :can-edit="canEdit"
+          @edit="onEdit"
         />
       </div>
     </div>
@@ -23,12 +24,12 @@
 
     <!-- Details -->
     <div class="w-full h-full mx-auto bg-white shadow-md p-3 px-80 pb-50 flex-grow">
-      <ProfileDetails :profile="profile" />
+      <ProfileDetails :profile="profile" :can-edit="canEdit" />
     </div>
 
-    <!-- Edit Modal -->
+    <!-- Edit Modal (only for owner / no :id in url) -->
     <EditProfileModal
-      v-if="showEdit"
+      v-if="showEdit && canEdit"
       :profile="profile"
       @close="closeEdit"
       @save="applyChanges"
@@ -53,12 +54,19 @@ export default {
     return {
       profile: null,
       showEdit: false,
+      canEdit: false,
     };
   },
   async created() {
-    this.profile = await fetchStudentProfile();
+    const id = this.$route?.params?.id;
+    this.canEdit = !id;       
+
+    this.profile = await fetchStudentProfile?.(id) ?? await fetchStudentProfile();
   },
   methods: {
+    onEdit() {
+      if (this.canEdit) this.openEdit();
+    },
     openEdit() {
       this.showEdit = true;
     },

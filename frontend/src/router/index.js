@@ -54,6 +54,20 @@ const routes = [
     meta: { requiresAuth: true, role: 'company' },
   },
 
+  // Public Profiles
+  {
+    path: '/student-profile/:id(\\d+)',
+    name: 'StudentProfilePublic',
+    component: StudentProfilePage,
+    meta: { requiresAuth: false },
+  },
+  {
+    path: '/company-profile/:id(\\d+)',
+    name: 'CompanyProfilePublic',
+    component: CompanyProfilePage,
+    meta: { requiresAuth: false },
+  },
+
   // Jobs & Applicants
   {
     path: '/create-job',

@@ -21,12 +21,13 @@
       />
     </div>
 
-    <div v-if="canEdit" class="max-w-6xl mx-auto pb-12 px-4">
+    <div class="max-w-6xl mx-auto pb-12 px-4">
       <JobsPanel 
       :jobs="jobs" 
       :is-loading="isLoadingJobs" 
       v-model="selectedJob"
       :company-name="profile?.Name"
+      :h-r="canEdit"
       />
     </div>
   </div>
@@ -62,8 +63,15 @@ async function getCompanyProfile() {
     const id = route.params.id
     const url = id ? `/company/${id}` : '/company'
     const res = await api.get(url)
+
     profile.value = res.data.profile
     canEdit.value = !id
+
+    // ⬇️ If viewing someone else, use the jobs returned in this payload
+    if (id) {
+      jobs.value = res.data.jobs || []
+      selectedJob.value = jobs.value[0] || null
+    }
   } catch (err) {
     console.error('Error fetching company profile:', err)
     alert.value = { type: 'error', message: 'Unable to load company profile.' }
@@ -91,21 +99,20 @@ async function saveProfile(payload) {
 
 async function getCompanyJobs() {
   try {
+    // ⬇️ Public view already got jobs via getCompanyProfile()
+    if (route.params.id) return
+
     isLoadingJobs.value = true
-    if (!route.params.id) {
-      const res = await api.get('/company/jobs')
-      jobs.value = res.data.jobs || []
-      selectedJob.value = jobs.value[0] || null
-    } else {
-      jobs.value = []
-      selectedJob.value = null
-    }
+    const res = await api.get('/company/jobs')
+    jobs.value = res.data.jobs || []
+    selectedJob.value = jobs.value[0] || null
   } catch (err) {
     console.error('Error fetching jobs:', err)
   } finally {
     isLoadingJobs.value = false
   }
 }
+
 
 onMounted(async () => {
   await getCompanyProfile()

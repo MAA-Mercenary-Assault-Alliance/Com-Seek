@@ -133,7 +133,8 @@ const props = defineProps({
   jobs: { type: Array, default: () => [] },
   isLoading: { type: Boolean, default: false },
   modelValue: { type: Object, default: null },
-  companyName: { type: String, default: 'Company Name' }
+  companyName: { type: String, default: 'Company Name' },
+  hR: { type: Boolean, default: false }
 })
 defineEmits(['update:modelValue'])
 
