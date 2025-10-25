@@ -38,9 +38,9 @@
 </template>
 
 <script>
-import ProfileHeader from "../components/ProfileHeader.vue";
-import ProfileDetails from "../components/ProfileDetails.vue";
-import EditProfileModal from "../components/EditProfileModal.vue";
+import ProfileHeader from "../components/student/ProfileHeader.vue";
+import ProfileDetails from "../components/student/ProfileDetails.vue";
+import EditProfileModal from "../components/student/EditProfileModal.vue";
 import { fetchStudentProfile } from "../services/profileStubApi";
 
 export default {
