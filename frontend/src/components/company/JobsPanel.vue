@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-xl shadow-md p-6">
+  <div class="bg-white rounded-xl shadow-md p-6 h-[20vh] md:h-[70vh] flex flex-col">
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-xl font-semibold text-[#0A3B1F]">Your Job Posts</h2>
 
@@ -38,17 +38,18 @@
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Make content fill remaining height; allow children to shrink -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 min-h-0">
       <!-- List -->
-      <div class="md:col-span-1 max-h-[540px] overflow-auto space-y-3 border rounded-lg p-3">
+      <div class="md:col-span-1 h-full overflow-auto space-y-3 rounded-lg p-3 shadow-sm bg-[#F2F6FC]">
         <div v-if="isLoading" class="text-gray-500">Loading jobs…</div>
         <template v-else>
           <JobFullEmpty v-if="jobs.length === 0" />
           <div
             v-for="job in filteredJobs"
             :key="job.ID"
-            class="p-3 rounded-lg border cursor-pointer transition-all duration-150 bg-white hover:bg-[#EAF6EC] hover:border-[#56A45C]"
-            :class="modelValue && modelValue.ID === job.ID ? 'ring-2 ring-[#44B15B] border-[#44B15B]/50 bg-[#EAF6EC]' : ''"
+            class="p-3 rounded-lg shadow-sm cursor-pointer transition-all duration-150 bg-white hover:shadow-md hover:bg-[#EAF6EC]"
+            :class="modelValue && modelValue.ID === job.ID ? 'ring-2 ring-[#44B15B] bg-[#EAF6EC]' : ''"
             @click="$emit('update:modelValue', job)"
           >
             <div class="font-semibold text-[#0A3B1F]">{{ job.Title }}</div>
@@ -62,9 +63,9 @@
         </template>
       </div>
 
-      <!-- Detail -->
-      <div class="md:col-span-2">
-        <div v-if="modelValue" class="border rounded-lg p-5 bg-white">
+      <!-- Detail: fills to end and scrolls without overflowing parent -->
+      <div class="md:col-span-2 h-full min-h-0 flex">
+        <div v-if="modelValue" class="rounded-lg p-5 bg-white shadow-md flex-1 overflow-auto">
           <div class="flex items-start justify-between">
             <div>
               <h3 class="text-lg font-bold text-[#0A3B1F]">{{ modelValue.Title }}</h3>
@@ -115,7 +116,9 @@
           </div>
         </div>
 
-        <div v-else class="text-gray-500">Select a job to see details.</div>
+        <div v-else class="text-gray-500 h-full flex items-center justify-center">
+          Select a job to see details.
+        </div>
       </div>
     </div>
   </div>
