@@ -82,6 +82,7 @@ function handleFileUpload(event) {
               @click="fileInput.click()"
               class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
           >
+            <!-- @click is as if we click on the hidden fileInput above -->
             Upload PDF
           </button>
 
