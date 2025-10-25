@@ -22,7 +22,12 @@
     </div>
 
     <div v-if="canEdit" class="max-w-6xl mx-auto pb-12 px-4">
-      <JobsPanel :jobs="jobs" :is-loading="isLoadingJobs" v-model="selectedJob" />
+      <JobsPanel 
+      :jobs="jobs" 
+      :is-loading="isLoadingJobs" 
+      v-model="selectedJob"
+      :company-name="profile?.Name"
+      />
     </div>
   </div>
 

@@ -1,7 +1,7 @@
 <template>
   <div class="bg-white rounded-xl shadow-md p-6 h-[20vh] md:h-[70vh] flex flex-col">
     <div class="flex items-center justify-between mb-4">
-      <h2 class="text-xl font-semibold text-[#0A3B1F]">Your Job Posts</h2>
+      <h2 class="text-xl font-semibold text-[#0A3B1F]">{{ companyName || 'Company Name' }}'s Job Posts</h2>
 
       <div class="flex gap-2">
         <input
@@ -132,7 +132,8 @@ import JobFullEmpty from '@/components/JobFullEmpty.vue'
 const props = defineProps({
   jobs: { type: Array, default: () => [] },
   isLoading: { type: Boolean, default: false },
-  modelValue: { type: Object, default: null }
+  modelValue: { type: Object, default: null },
+  companyName: { type: String, default: 'Company Name' }
 })
 defineEmits(['update:modelValue'])
 
