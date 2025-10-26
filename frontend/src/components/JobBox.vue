@@ -29,6 +29,11 @@ function daysAgo(dateString: string): number {
 
 onMounted(() => {
   day.value = daysAgo(props.jobInfo.CreatedAt)
+  // applied.value = props.jobInfo.Applications ? props.jobInfo.Applications.length : 0
+  // new_app.value = props.jobInfo.Applications ? props.jobInfo.Applications.filter((app) => {
+  //   return daysAgo(app.CreatedAt) <= 7
+  // }).length : 0
+  // TODO: Fix applied and new_app
 })
 
 </script>
