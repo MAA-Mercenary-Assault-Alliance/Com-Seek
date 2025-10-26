@@ -1,7 +1,15 @@
 <template>
   <div class="pt-10 pb-32">
+    <!-- Watermark Icon -->
+    <div
+      class="absolute bottom-4 right-6 text-red-900 opacity-10 pointer-events-none select-none"
+    >
+      <i class="fas fa-user-graduate text-[15rem]"></i>
+    </div>
     <div class="w-120 mx-auto p-6 bg-white rounded-xl shadow-md overflow-y-auto">
-      <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Register</h2>
+      <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">
+        <span class="text-3xl text-red-700 font-black">Student</span> Register
+      </h2>
 
       <!-- Alert -->
       <div v-if="alert.message" class="mb-4">
@@ -143,6 +151,17 @@
           Login here
         </router-link>
       </p>
+
+      <p class="text-center text-sm">
+        or
+      </p>
+
+      <p class="text-center text-sm">
+        Register as a company.
+        <router-link to="/register-company" class="text-blue-500 hover:underline">
+          Register here
+        </router-link>
+      </p>
     </div>
   </div>
 
@@ -161,8 +180,8 @@ import { defineAsyncComponent } from 'vue';
 export default {
   name: "RegisterForm",
   components: {
-    PasswordField: defineAsyncComponent(() => import('@/components/PasswordField.vue')),
-    TermsModal: defineAsyncComponent(() => import('@/components/TermsModal.vue')),
+    PasswordField: defineAsyncComponent(() => import('@/components/auth/PasswordField.vue')),
+    TermsModal: defineAsyncComponent(() => import('@/components/auth/TermsModal.vue')),
   },
   emits: ["switch-to-login"],
   data() {
