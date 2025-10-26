@@ -4,12 +4,14 @@ import {ref} from "vue";
 import { api } from "../../api/client.js";
 import ConfirmBox from "./ComfirmBox.vue";
 import DateConverter from "./dateConverter";
+import { useRouter } from 'vue-router';
 const props = defineProps<{
   studentInfo: StudentTemplate,
 }>();
 
 const confirmBox = ref(null);
 const emit = defineEmits(["refresh"]);
+const router = useRouter();
 
 async function rejectStudent() {
   try {
@@ -35,11 +37,15 @@ async function acceptStudent() {
   }
 }
 
+function gotoStudent(studentID: number) {
+  router.push({ name: 'StudentProfile', params: {id: studentID}})
+}
+
 const date = DateConverter(props.studentInfo.User.CreatedAt);
 </script>
 
 <template>
-  <div id="company-box" class="flex relative rounded-2xl flex-row p-4 space-x-7 box-shadow bg-white" @click="$emit('click')">
+  <div id="student-box" class="flex relative rounded-2xl flex-row p-4 space-x-7 box-shadow bg-white" @click="gotoStudent(studentInfo.UserID)">
     <div class="items-center flex-shrink-0">
       <img src="/nagi.png" class="w-30 h-30 rounded-full ml-2" alt="company-logo"/>
     </div>

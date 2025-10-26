@@ -12,15 +12,40 @@ onMounted(() => {
 
 const applied = ref(0)
 const new_app = ref(0)
+const day = ref(0)
+
+function daysAgo(dateString: string): number {
+  if (!dateString) return 0;
+
+  const date = new Date(dateString);
+  const now = new Date();
+
+  // calculate difference in milliseconds
+  const diffMs = now.getTime() - date.getTime();
+
+  // convert to days
+  return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+}
+
+onMounted(() => {
+  day.value = daysAgo(props.jobInfo.CreatedAt)
+  // applied.value = props.jobInfo.Applications ? props.jobInfo.Applications.length : 0
+  // new_app.value = props.jobInfo.Applications ? props.jobInfo.Applications.filter((app) => {
+  //   return daysAgo(app.CreatedAt) <= 7
+  // }).length : 0
+  // TODO: Fix applied and new_app
+})
+
 </script>
 
 <template>
-  <div id="job-box" class="flex relative rounded-2xl flex-row p-4 pb-7 space-x-5 box-shadow bg-white" @click="hR && $emit('click')"  :class="{ 'cursor-pointer': hR }">
+  <div id="job-box" class="flex relative rounded-2xl flex-row p-4 pb-7 space-x-5 box-shadow bg-white hover:bg-gray-100" @click="hR && $emit('click')"  :class="{ 'cursor-pointer': hR }">
 
     <img src="../assets/company.jpg" class="w-20 h-20 rounded-2xl" alt="company-logo"/>
     <div id="job-box-content" class="flex mr-2 flex-col space-y-1.5">
       <span class="underline">{{ jobInfo.Title }}</span>
-      <span class="mb-2">{{ jobInfo.Company?.Name }}</span>
+      <router-link v-if="!hR" :to="{ name: 'CompanyProfilePublic', params: { id: Number(jobInfo.Company?.UserID) }}" class="mb-2">{{ jobInfo.Company?.Name }}</router-link>
+      <span v-else class="mb-2">{{ jobInfo.Company?.Name }}</span>
 
       <div class="in-line-stat">
         <img src="../assets/money.svg" class="in-line-icon" alt="money-icon"/>
@@ -35,7 +60,7 @@ const new_app = ref(0)
         <span>{{ jobInfo.Location }}</span>
       </div>
     </div>
-    <span class="absolute bottom-3 right-5 text-gray-500">24 days ago</span>
+    <span class="absolute bottom-3 right-5 text-gray-500">{{ day }} days ago</span>
 
     <div v-if=hR>
       <span class="absolute top-5 right-10 text-gray-500">Applied: {{applied}}</span>

@@ -8,7 +8,6 @@ const dialog = ref(null)
 
 function open() {
   dialog.value.showModal();
-  console.log("I OPENED IT DUMBASS")
 }
 function accept() {
   emit("accept");
