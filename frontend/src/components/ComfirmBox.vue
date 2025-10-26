@@ -8,7 +8,6 @@ const dialog = ref(null)
 
 function open() {
   dialog.value.showModal();
-  console.log("I OPENED IT DUMBASS")
 }
 function yes() {
   emit("reject");
@@ -24,7 +23,7 @@ defineExpose({ open });
 
 <template>
   <dialog ref="dialog" class="modal">
-    <div class="modal-box">
+    <div class="modal-box" @click.stop>
       <h3 class="text-lg font-bold">Are you sure?</h3>
       <p class="py-4">You are going to reject {{ companyName }}</p>
       <div class="flex flex-row justify-end space-x-4 mt-5">
@@ -32,7 +31,7 @@ defineExpose({ open });
         <button class="btn shadow-none bg-[#9A0000] border-0 h-8 rounded-4xl text-white text-md font-extralight px-7" @click="no">No</button>
       </div>
     </div>
-    <form method="dialog" class="modal-backdrop">
+    <form method="dialog" class="modal-backdrop" @click.stop>
       <button>close</button>
     </form>
   </dialog>

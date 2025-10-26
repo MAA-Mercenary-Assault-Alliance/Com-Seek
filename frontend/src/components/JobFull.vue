@@ -46,7 +46,7 @@ onMounted(() => {
     <div id="title-box" class="flex row items-center mt-3">
       <img src="../assets/company.jpg" class="w-20 h-20 rounded-2xl" alt="company-logo"/>
       <div id="title" class="flex flex-col ml-7 space-y-4">
-        <router-link :to="{ name: 'CompanyProfile', params: { id: Number(jobInfo.Company?.UserID) }}" class="text-2xl" >{{ jobInfo.Company?.Name }}</router-link>
+        <router-link :to="{ name: 'CompanyProfilePublic', params: { id: Number(jobInfo.Company?.UserID) }}" class="text-2xl" >{{ jobInfo.Company?.Name }}</router-link>
         <span class="underline">{{ jobInfo.Title }}</span>
       </div>
       <button v-if="role === 'student'" class="btn shadow-none bg-[#44b15b] border-0 h-12 rounded-2xl text-white text-xl font-extralight ml-auto mt-6" @click="cvBox.open()">Apply Now</button>
