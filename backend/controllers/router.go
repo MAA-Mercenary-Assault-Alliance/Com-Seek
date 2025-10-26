@@ -37,6 +37,7 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 	company.GET("/:id", companyController.GetCompanyProfile)
 	company.GET("/jobs", companyController.GetCompanyJobs)
 	company.PATCH("", companyController.UpdateCompanyProfile)
+	company.GET("/jobs", companyController.GetCompanyJobs)
 
 	job := requiredLogin.Group("/job")
 	job.GET("", jobController.GetJobs)
