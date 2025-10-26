@@ -39,7 +39,7 @@ onMounted(() => {
     <img src="../assets/company.jpg" class="w-20 h-20 rounded-2xl" alt="company-logo"/>
     <div id="job-box-content" class="flex mr-2 flex-col space-y-1.5">
       <span class="underline">{{ jobInfo.Title }}</span>
-      <span class="mb-2">{{ jobInfo.Company?.Name }}</span>
+      <router-link :to="'company-profile/' + jobInfo.Company?.UserID" class="mb-2">{{ jobInfo.Company?.Name }}</router-link>
 
       <div class="in-line-stat">
         <img src="../assets/money.svg" class="in-line-icon" alt="money-icon"/>
