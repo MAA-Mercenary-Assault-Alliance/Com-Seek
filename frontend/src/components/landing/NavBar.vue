@@ -20,7 +20,6 @@ const emit = defineEmits<{ (e:'goto', id:string): void }>()
       <nav class="hidden lg:flex items-center gap-2">
         <button class="btn btn-ghost" @click="emit('goto','features')">Features</button>
         <button class="btn btn-ghost" @click="emit('goto','howitworks')">How it Works</button>
-        <button class="btn btn-ghost" @click="emit('goto','pricing')">Pricing</button>
         <button class="btn btn-ghost" @click="emit('goto','faq')">FAQ</button>
         <div class="divider divider-horizontal mx-1"></div>
         <router-link to="/login" class="btn btn-ghost">Log in</router-link>
@@ -41,7 +40,6 @@ const emit = defineEmits<{ (e:'goto', id:string): void }>()
       <div class="container mx-auto px-4 py-2 flex flex-col gap-2">
         <button class="btn btn-ghost justify-start" @click="emit('goto','features'); mobileOpen=false">Features</button>
         <button class="btn btn-ghost justify-start" @click="emit('goto','howitworks'); mobileOpen=false">How it Works</button>
-        <button class="btn btn-ghost justify-start" @click="emit('goto','pricing'); mobileOpen=false">Pricing</button>
         <button class="btn btn-ghost justify-start" @click="emit('goto','faq'); mobileOpen=false">FAQ</button>
         <div class="divider my-1"></div>
         <router-link to="/login" class="btn btn-ghost justify-start" @click="mobileOpen=false">Log in</router-link>
