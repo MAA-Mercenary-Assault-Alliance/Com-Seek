@@ -7,9 +7,16 @@ const dialog = ref(null)
 
 function open() {
   dialog.value.showModal();
+  setTimeout(() => {
+    close();
+  }, 2000);
 }
 
-defineExpose({ open });
+function close() {
+  dialog.value.close();
+}
+
+defineExpose({ open, close });
 </script>
 
 <template>

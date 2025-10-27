@@ -12,7 +12,7 @@ A web application for Computer Engineering students and alumni at Kasetsart Univ
 ### Back end
 
 1. Navigate to the back end directory
-    
+
     ```
     cd backend
     ```
@@ -33,7 +33,7 @@ A web application for Computer Engineering students and alumni at Kasetsart Univ
     cp sample.env .env
     ```
 
-    Change the values in .env to match your configuration
+    Change the values in .env to match your configuration. For email config, refer to [this](./backend/email_config.md).
 
 4. Set up database
 
@@ -73,7 +73,7 @@ A web application for Computer Engineering students and alumni at Kasetsart Univ
 ### Back end
 
 1. Navigate to the back end directory
-    
+
     ```
     cd backend
     ```
@@ -113,7 +113,7 @@ A web application for Computer Engineering students and alumni at Kasetsart Univ
     ```
     mysql -u root -p
     ```
-4. type your password which is in your .env file 
+4. type your password which is in your .env file
 ```
 (DB_ROOT_PASSWORD=???)
 default is "mysqlrootpass"
@@ -125,7 +125,7 @@ show databases; # you should see "mysqldb" or your custom database name in .env 
 ```
 
 ```
-use mysqldb; 
+use mysqldb;
 ```
 6. now you can interact with your database
 ```

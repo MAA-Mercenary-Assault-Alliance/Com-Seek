@@ -36,8 +36,9 @@ async function findJobs() {
     const res = await api.get("/job", {
       params
     })
+    const job_filter = res.data.jobs.filter(job => job.Approved === true && job.Visibility === true)
 
-    jobs.value = res.data.jobs
+    jobs.value = job_filter
     console.log("Fetched jobs:", jobs.value)
     selectedJob.value = jobs.value[0] || null; // Select the first job by default or null if no jobs
     return;
@@ -99,14 +100,18 @@ console.log("SelectedJob: ", selectedJob)
       Jobs not Found
     </div>
 
-    <div v-if="!isLoading && jobs.length>0" class="flex w-full flex-row px-42 py-10 bg-[#f2f6fc] space-x-20">
+    <div v-if="!isLoading && jobs.length>0" class="flex w-full flex-row px-42 py-10 bg-[#f2f6fc] space-x-20 scroll">
 
       <div id="job-box-column" class="flex w-1/3 flex-col space-y-10 mr-10">
         <JobBox v-for="job in jobs" :key=job.ID :jobInfo=job :h-r="false" @click="selectedJob=job"/>
       </div>
 
-      <JobFull v-if="selectedJob" :job-info="selectedJob" class="ml-7"/>
-      <JobFullEmpty v-if="!selectedJob" class="ml-7"/>
+      <div class="relative w-2/3">
+        <div class="flex sticky top-10">
+        <JobFull v-if="selectedJob" :job-info="selectedJob"/>
+        <JobFullEmpty v-if="!selectedJob"/>
+        </div>
+      </div>
 
     </div>
   </div>

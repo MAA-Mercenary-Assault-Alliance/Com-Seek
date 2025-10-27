@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"com-seek/backend/models"
+	"com-seek/backend/services"
 	"net/http"
 	"strconv"
 
@@ -66,7 +67,10 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 		JobID:     job.ID,
 	}
 
-	result := jc.DB.Where("student_id = ? AND job_id = ?", student.UserID, job.ID).FirstOrCreate(&jobApplication)
+	tx := jc.DB.Begin()
+	defer tx.Rollback()
+
+	result := tx.Where("student_id = ? AND job_id = ?", student.UserID, job.ID).FirstOrCreate(&jobApplication)
 
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
@@ -75,6 +79,27 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 
 	if result.RowsAffected == 0 {
 		c.JSON(http.StatusConflict, gin.H{"error": "job application already exists"})
+		return
+	}
+
+	tx.Preload("Job.Company.User").Preload("Student").First(&jobApplication)
+
+	subject := jobApplication.Job.Title + ": New applicant applied"
+	body := (jobApplication.Student.FirstName +
+		" " + jobApplication.Student.LastName +
+		" has applied to your job posting: " +
+		jobApplication.Job.Title)
+
+	if err := services.SendEmail(
+		jobApplication.Job.Company.User.Email,
+		subject,
+		body); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to submit the application"})
 		return
 	}
 
