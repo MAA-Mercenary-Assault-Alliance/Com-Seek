@@ -17,65 +17,78 @@ The Account Manager is responsible for building and maintaining strong client re
 - Excellent problem-solving and communication abilities.
 `
 
-export const TE_Info = {
-    id: "1",
-    name: "ACCOUNT MANAGER (Sales Engineer)",
-    company: "TE Connectivity",
-    location: "กรุงเทพมหานคร",
-    salary_range: "฿12000-฿15000 per month", // MAKE THIS FLOOR AND CEILING
-    type: "full-time",
-    experience: "1-2 years",
-    desc: jobMarkdown,
-}
-
 export interface JobTemplate {
-    name: string;
-    company: string;
-    location: string;
-    salary_range: string;
-    type: string;
-    experience: string;
-    desc: string;
-}
-
-export const TE_Info_Company = {
-    name: "TE Connectivity",
-    website: "some url",
-    location: "กรุงเทพมหานคร",
-    description: jobMarkdown,
-    createdAt: "16/07/2025",
-    approved: true,
-    number: "111111111",
-    email: "TeConnecc@gmail.com",
+    ID: number;
+    Title: string;
+    CompanyID: number;
+    Company: {
+        UserID: number;
+        User: {
+            ID: number;
+            CreatedAt: string;
+            UpdatedAt: string;
+            DeletedAt: string | null;
+            email: string;
+            password: string;
+        };
+        Name: string;
+        Website: string;
+        ContactEmail: string;
+        ContactNumber: string;
+        Location: string;
+        Description: string;
+        Approved: boolean;
+        Jobs: JobTemplate[] | null;
+    };
+    Location: string;
+    JobType: string;
+    EmploymentStatus: string;
+    MinSalary: number;
+    MaxSalary: number;
+    MinExperience: number;
+    MaxExperience: number;
+    Description: string;
+    CreatedAt: string;
+    UpdatedAt: string;
+    Approved: boolean;
+    Visibility: boolean;
+    CheckNeeded: boolean;
 }
 
 export interface CompanyTemplate {
-    name: string;
-    website: string;
-    location: string;
-    description: string;
-    createdAt: string;
-    approved: boolean;
-    number: string;
-    email: string;
+    UserID: number;
+    CreatedAt: string;
+    Name: string;
+    Website: string;
+    ContactEmail: string;
+    ContactNumber: string;
+    Location: string;
+    Description: string;
+    Approved: boolean;
+    Jobs: any; // or a specific type if you define a Job interface later
 }
 
-export const Student_Info = {
-    id: "11",
-    user: "what",
-    firstName: "Nagi",
-    lastName: "Seishiro",
-    profile_pic: "/nagi",
-    description: "I can even destroy blue lock",
-    approved: true,
-}
 
 export interface StudentTemplate {
-    id: string;
-    user: string;
-    firstName: string;
-    lastName: string;
-    profile_pic: string;
-    description: string;
-    approved: boolean;
+    UserID: number;
+    User: {
+        ID: number;
+        CreatedAt: string;
+        UpdatedAt: string;
+        DeletedAt: string | null;
+        Email: string;
+        Password: string;
+    };
+    FirstName: string;
+    LastName: string;
+    Description: string;
+    IsAlum: boolean;
+    Approved: boolean;
+    GitHub: string;
+    LinkedIn: string;
+    Facebook: string;
+    Instagram: string;
+    Twitter: string;
+    JobApplication: any; // or a specific type if you know its structure
 }
+

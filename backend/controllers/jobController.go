@@ -148,7 +148,7 @@ func (jc *JobController) GetJobs(c *gin.Context) {
 	}
 
 	if len(jobs) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"message": "no jobs found"})
+		c.JSON(http.StatusOK, gin.H{"jobs": jobs})
 		return
 	}
 

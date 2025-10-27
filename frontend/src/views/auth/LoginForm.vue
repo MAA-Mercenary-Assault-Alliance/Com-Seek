@@ -70,7 +70,7 @@ import { defineAsyncComponent } from 'vue';
 export default {
   name: "LoginForm",
   components: {
-    PasswordField: defineAsyncComponent(() => import('@/components/PasswordField.vue')), // ✅
+    PasswordField: defineAsyncComponent(() => import('@/components/auth/PasswordField.vue')), // ✅
   },
   emits: ["switch-to-register"],
   data() {
@@ -139,7 +139,7 @@ export default {
         //   this.$router.push("/");
         // }
 
-        this.$router.push("/").then(() => {
+        this.$router.push("/home").then(() => {
           window.location.reload();
         });
 
