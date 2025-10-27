@@ -152,6 +152,25 @@ func (ac *AdminController) GetPendingStudents(c *gin.Context) {
 		c.JSON(500, gin.H{"error": "Error fetching pending students"})
 		return
 	}
+
+	var responses []models.StudentResponse
+	for _, c := range students {
+		responses = append(responses, models.StudentResponse{
+			UserID:      c.UserID,
+			CreatedAt:   c.User.CreatedAt,
+			FirstName:   c.FirstName,
+			LastName:    c.LastName,
+			Description: c.Description,
+			IsAlum:      c.IsAlum,
+			Approved:    c.Approved,
+			GitHub:      c.GitHub,
+			LinkedIn:    c.LinkedIn,
+			Facebook:    c.Facebook,
+			Instagram:   c.Instagram,
+			Twitter:     c.Twitter,
+		})
+	}
+
 	c.JSON(200, gin.H{"students": students})
 }
 
