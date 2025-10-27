@@ -100,7 +100,7 @@ console.log("SelectedJob: ", selectedJob)
       Jobs not Found
     </div>
 
-    <div v-if="!isLoading && jobs.length>0" class="flex w-full flex-row px-42 py-10 bg-[#f2f6fc] space-x-20 scroll">
+    <div v-if="!isLoading && jobs.length>0" class="flex w-full flex-row px-42 py-10 bg-background space-x-20 scroll">
 
       <div id="job-box-column" class="flex w-1/3 flex-col space-y-10 mr-10">
         <JobBox v-for="job in jobs" :key=job.ID :jobInfo=job :h-r="false" @click="selectedJob=job"/>

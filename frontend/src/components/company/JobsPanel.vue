@@ -41,7 +41,7 @@
     <!-- Make content fill remaining height; allow children to shrink -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 min-h-0">
       <!-- List -->
-      <div class="md:col-span-1 h-full overflow-auto space-y-3 rounded-lg p-3 shadow-sm bg-[#F2F6FC]">
+      <div class="md:col-span-1 h-full overflow-auto space-y-3 rounded-lg p-3 shadow-sm bg-background">
         <div v-if="isLoading" class="text-gray-500">Loading jobs…</div>
         <template v-else>
           <JobFullEmpty v-if="jobs.length === 0" />
