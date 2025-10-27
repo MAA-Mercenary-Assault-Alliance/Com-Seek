@@ -38,16 +38,6 @@ async function acceptStudent() {
   }
 }
 
-function goToCompany(newtab: boolean = false) {
-  const route = { name: 'CompanyProfilePublic', params: {id: props.companyInfo.UserID}}
-  if (newtab) {
-    const url = router.resolve(route).href
-    window.open(url, '_blank')
-    return
-  }
-  router.push(route)
-}
-
 function gotoStudent(newTab: boolean = false) {
   const route = { name: 'StudentProfilePublic', params: {id: props.studentInfo.UserID}}
   if (newTab) {
@@ -59,7 +49,7 @@ function gotoStudent(newTab: boolean = false) {
 }
 
 onMounted(() => {
-  date.value = DateConverter(props.studentInfo.User.CreatedAt);
+  date.value = DateConverter(props.studentInfo.CreatedAt);
 })
 </script>
 
@@ -75,7 +65,7 @@ onMounted(() => {
 
     <div class="flex flex-col ml-auto items-end space-y-3 mr-4">
       <span class="text-gray-500">{{ date }}</span>
-      <img src="../assets/newTab.svg" class="w-5 h-5 cursor-pointer" alt="new-tab-icon" @click="gotoStudent(true)"/>
+      <img src="../assets/newTab.svg" class="w-5 h-5 cursor-pointer" alt="new-tab-icon" @click.stop="gotoStudent(true)"/>
       <div class="flex flex-row mt-auto space-x-6">
         <button class="btn shadow-none bg-[#1F7AB9] border-0 h-8 rounded-4xl text-white text-md font-extralight px-7" @click="acceptStudent">Accept</button>
         <button class="btn shadow-none bg-[#9A0000] border-0 h-8 rounded-4xl text-white text-md font-extralight px-7" @click="confirmBox.open()">Reject</button>

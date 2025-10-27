@@ -171,7 +171,7 @@ func (ac *AdminController) GetPendingStudents(c *gin.Context) {
 		})
 	}
 
-	c.JSON(200, gin.H{"students": students})
+	c.JSON(200, gin.H{"students": responses})
 }
 
 func (ac *AdminController) ReviewStudent(c *gin.Context) {

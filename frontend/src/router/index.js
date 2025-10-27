@@ -15,6 +15,7 @@ import CookiesPage from '../views/docs/Cookies.vue'
 import NotFound from '../views/NotFound.vue'
 import CompanyRegisterForm from '../views/auth/CompanyRegisterForm.vue'
 import CompanyProfilePage from '../views/CompanyProfile.vue'
+import AppJob from "../views/AppJob.vue";
 
 const routes = [
   // Root & Landing
@@ -33,6 +34,12 @@ const routes = [
     path: '/hr-dashboard',
     component: AppHR,
     meta: { requiresAuth: true, role: 'company' },
+  },
+  {
+    path: '/company-jobs/:id(\\d+)',
+    name: "JobFull",
+    component: AppJob,
+    meta: { requiresAuth: true, role: 'admin' },
   },
   {
     path: '/admin',

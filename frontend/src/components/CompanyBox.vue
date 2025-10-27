@@ -86,7 +86,7 @@ onMounted(() => {
 
     <div class="flex flex-col ml-auto items-end space-y-3 mr-4">
       <span class="text-gray-500">{{ date }}</span>
-      <img src="../assets/newTab.svg" class="w-5 h-5 cursor-pointer" alt="new-tab-icon" @click="goToCompany(true)"/>
+      <img src="../assets/newTab.svg" class="w-5 h-5 cursor-pointer" alt="new-tab-icon" @click.stop="goToCompany(true)"/>
       <div class="flex flex-row mt-auto space-x-6">
         <button class="btn shadow-none bg-[#1F7AB9] border-0 h-8 rounded-4xl text-white text-md font-extralight px-7" @click="acceptCompany">Accept</button>
         <button class="btn shadow-none bg-[#9A0000] border-0 h-8 rounded-4xl text-white text-md font-extralight px-7" @click="confirmBox.open()">Reject</button>
