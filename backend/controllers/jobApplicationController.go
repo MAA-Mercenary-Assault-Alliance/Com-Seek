@@ -3,6 +3,7 @@ package controllers
 import (
 	"com-seek/backend/models"
 	"com-seek/backend/services"
+	"mime/multipart"
 	"net/http"
 	"strconv"
 
@@ -24,7 +25,8 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 
 	type CreateJobApplicationInput struct {
-		JobID uint `json:"job_id" binding:"required"`
+		JobID uint                  `form:"job_id" binding:"required"`
+		File  *multipart.FileHeader `form:"file" binding:"required"`
 	}
 
 	student := models.Student{
@@ -43,7 +45,7 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 
 	var input CreateJobApplicationInput
 
-	if err := c.ShouldBindJSON(&input); err != nil {
+	if err := c.ShouldBind(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -90,10 +92,11 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 		" has applied to your job posting: " +
 		jobApplication.Job.Title)
 
-	if err := services.SendEmail(
+	if err := services.SendEmailWithAttachment(
 		jobApplication.Job.Company.User.Email,
 		subject,
-		body); err != nil {
+		body,
+		input.File); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
