@@ -59,7 +59,10 @@ console.log("SelectedJob: ", selectedJob)
 
 <template>
   <div class="flex flex-col w-full">
-    <div class="flex bg-title w-full h-40">
+    <div 
+    class="flex bg-title w-full h-40"
+    style="background-image: url('/images/banner.png');"
+    >
       <div class="flex px-42 w-full flex-col justify-center items-center space-y-7 text-xl">
         <div class="text-white min-w-300 w-1/2">
           Search for your jobs now
