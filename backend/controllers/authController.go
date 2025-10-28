@@ -194,6 +194,28 @@ func (ac *AuthController) Login(c *gin.Context) {
 	})
 }
 
+func (ac *AuthController) Logout(c *gin.Context) {
+	sameSite := http.SameSiteLaxMode
+	secure := false
+	if os.Getenv("ENV") != "dev" {
+		sameSite = http.SameSiteNoneMode
+		secure = true
+	}
+
+	c.SetSameSite(sameSite)
+	c.SetCookie(
+		"token",
+		"",
+		-1,
+		"/",
+		"",
+		secure,
+		true,
+	)
+
+	c.JSON(http.StatusOK, gin.H{"message": "Logged out successfully"})
+}
+
 func GetUserRole(DB *gorm.DB, userID uint) string {
 	var result struct{ UserID uint }
 
