@@ -1,7 +1,7 @@
 <template>
   <section
     id="howitworks"
-    class="container mx-auto px-6 py-20 bg-gradient-to-b from-[#F2F6FC] via-white to-[#F2F6FC]"
+    class="container mx-auto px-6 py-20 bg-gradient-to-b from-background via-white to-background"
   >
     <!-- Header -->
     <div class="text-center max-w-2xl mx-auto">

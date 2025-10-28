@@ -3,7 +3,11 @@
     <!-- Avatar -->
     <div class="avatar">
       <div class="w-40 h-40 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden">
-        <img :src="profile.avatar || '/assets/avatar-default.png'" alt="avatar" class="object-cover w-28 h-28" />
+        <img 
+        :src="profile.avatar || '/images/avatar.png'" 
+        @error="onImgError"
+        alt="avatar" 
+        class="object-cover w-28 h-28" />
       </div>
     </div>
 
@@ -78,6 +82,7 @@
 
 <script>
 export default {
+  
   name: 'ProfileHeader',
   props: {
     profile: { type: Object, required: true },
@@ -87,7 +92,11 @@ export default {
   methods: {
     handleEdit() {
       if (this.canEdit) this.$emit('edit');
+    },
+    onImgError(event) {
+      event.target.src = '/images/avatar.png';
     }
   }
+
 };
 </script>

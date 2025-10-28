@@ -80,10 +80,10 @@ const props = defineProps({
 })
 
 const coverSrc = computed(
-  () => props.profile?.Cover || 'https://picsum.photos/1200/240?blur=2&random=1'
+  () => props.profile?.Cover || '/images/cover.png'
 )
 const logoSrc = computed(
-  () => props.profile?.Logo || 'https://placehold.co/128x128?text=Logo'
+  () => props.profile?.Logo || '/images/avatar.png'
 )
 
 const tagsList = computed(() => {

@@ -9,6 +9,7 @@
 @theme {
     --color-title: #0a3b1f;
     --color-lighter: #44b15b;
+    --color-background: #F7FFFC;
 }
 
 /*min-w-3xl THIS IS MIN WIDTH SIZE THE UI WILL SHRINK TO*/

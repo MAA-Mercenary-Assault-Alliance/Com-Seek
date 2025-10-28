@@ -42,7 +42,7 @@
       <!-- Submit button -->
       <button
         type="submit"
-        class="btn btn-primary w-full"
+        class="btn bg-[#56A45C] text-white hover:bg-[#44B15B] w-full"
         :disabled="loading"
       >
         {{ loading ? 'LOGGING IN...' : 'LOGIN' }}

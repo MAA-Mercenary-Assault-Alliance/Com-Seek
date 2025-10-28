@@ -5,7 +5,12 @@
   <div class="flex flex-col w-full bg-gray-100 overflow-hidden" v-if="profile">
     <!-- Cover image -->
     <div class="relative">
-      <img :src="profile.cover" alt="cover" class="w-full h-60 object-cover" />
+      <img 
+      :src="profile.cover"
+      @error="onCoverError"
+      alt="cover" 
+      class="w-full h-60 object-cover" 
+      />
     </div>
 
     <!-- Header (avatar + identity + socials + gear) -->
@@ -42,6 +47,9 @@ import { api } from '../../api/client.js'
 import ProfileHeader from "../components/student/ProfileHeader.vue";
 import ProfileDetails from "../components/student/ProfileDetails.vue";
 import EditProfileModal from "../components/student/EditProfileModal.vue";
+
+const DEFAULT_AVATAR = '/images/avatar.png'
+const DEFAULT_COVER  = '/images/student_cover.png'
 
 export default {
   name: "StudentProfile",
@@ -81,7 +89,7 @@ export default {
         const p = res.data?.profile || {};
         this.profile = {
           // keep your existing cover/avatar paths
-          cover: this.profile?.cover || '/assets/cover-default.jpg',
+          cover: this.profile?.cover || '/image/cover.jpg',
           avatar: this.profile?.avatar || '/assets/avatar-default.png',
 
           // identity
@@ -148,6 +156,7 @@ export default {
         console.error('Error updating student profile:', err);
       }
     },
+    onCoverError(e)  { e.target.src = DEFAULT_COVER; },
   },
 };
 </script>
