@@ -1,21 +1,22 @@
-import { createRouter, createWebHashHistory } from "vue-router";
+import { createRouter, createWebHashHistory } from 'vue-router'
 import { api } from "../../api/client";
 
-import AppHome from "../views/AppHome.vue";
-import AppHR from "../views/AppHR.vue";
-import AppApplicants from "../views/AppApplicants.vue";
-import AppAdmin from "../views/AppAdmin.vue";
-import LoginForm from "../views/auth/LoginForm.vue";
-import RegisterForm from "../views/auth/RegisterForm.vue";
-import StudentProfilePage from "../views/StudentProfile.vue";
-import LandingPage from "../views/LandingPage.vue";
-import AppJobCreation from "../views/AppJobCreation.vue";
-import TermsPage from "../views/docs/Terms.vue";
-import PrivacyPage from "../views/docs/Privacy.vue";
-import CookiesPage from "../views/docs/Cookies.vue";
-import NotFound from "../views/NotFound.vue";
-import CompanyRegisterForm from "../views/auth/CompanyRegisterForm.vue";
-import CompanyProfilePage from "../views/CompanyProfile.vue";
+import AppHome from '../views/AppHome.vue'
+import AppHR from '../views/AppHR.vue'
+import AppApplicants from '../views/AppApplicants.vue'
+import AppAdmin from '../views/AppAdmin.vue'
+import LoginForm from '../views/auth/LoginForm.vue'
+import RegisterForm from '../views/auth/RegisterForm.vue'
+import StudentProfilePage from '../views/StudentProfile.vue'
+import LandingPage from '../views/LandingPage.vue'
+import AppJobCreation from '../views/AppJobCreation.vue'
+import TermsPage from '../views/docs/Terms.vue'
+import PrivacyPage from '../views/docs/Privacy.vue'
+import CookiesPage from '../views/docs/Cookies.vue'
+import NotFound from '../views/NotFound.vue'
+import CompanyRegisterForm from '../views/auth/CompanyRegisterForm.vue'
+import CompanyProfilePage from '../views/CompanyProfile.vue'
+import AppJob from "../views/AppJob.vue";
 
 const routes = [
   // Root & Landing
@@ -35,7 +36,13 @@ const routes = [
     meta: { requiresAuth: true, role: "company" },
   },
   {
-    path: "/admin",
+    path: '/company-jobs/:id(\\d+)',
+    name: "JobFull",
+    component: AppJob,
+    meta: { requiresAuth: true, role: 'admin' },
+  },
+  {
+    path: '/admin',
     component: AppAdmin,
     meta: { requiresAuth: true, role: "admin" },
   },
