@@ -70,10 +70,10 @@ console.log("SelectedJob: ", selectedJob)
           </label>
           <div class="relative w-2/7">
             <img src="../assets/case.svg" class="absolute px-2 w-12 left-3 top-2 z-10" alt="case"/>
-            <select v-model="jobType" class="select rounded-2xl select-lg pl-18 z-0">
+            <select v-model="jobType" class="select rounded-2xl select-lg pl-18 z-0 w-full">
               <option disabled value="">Job Type</option>
               <option value="">Any</option>
-              <option>Software & Application Development</option>
+              <option value="Software & Application Development">Software & Application Development&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
               <option>Data & AI</option>
               <option>Cloud & Infrastructure</option>
               <option>Cybersecurity</option>
