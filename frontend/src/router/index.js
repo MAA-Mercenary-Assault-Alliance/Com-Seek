@@ -122,7 +122,8 @@ router.beforeEach(async (to, from, next) => {
     localStorage.removeItem("email");
     localStorage.removeItem("role");
 
-    next("/login");
+    await router.push('/login');
+    return
   }
 
   if (to.meta.requiresAuth && !isAuthenticated) {
