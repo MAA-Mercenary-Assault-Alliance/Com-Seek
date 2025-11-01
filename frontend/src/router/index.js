@@ -122,7 +122,7 @@ router.beforeEach(async (to, from, next) => {
     localStorage.removeItem("email");
     localStorage.removeItem("role");
 
-    next("/landing-page");
+    next("/login");
   }
 
   if (to.meta.requiresAuth && !isAuthenticated) {
