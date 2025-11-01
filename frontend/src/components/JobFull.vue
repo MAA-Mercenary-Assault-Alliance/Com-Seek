@@ -10,7 +10,8 @@ import CVBox from "@/components/CVBox.vue";
 import ConfirmBoxGeneral from "@/components/ConfirmBoxGeneral.vue";
 
 const props = defineProps<{
-  jobInfo: JobTemplate
+  jobInfo: JobTemplate,
+  hR: boolean
 }>();
 
 const router = useRouter();
@@ -65,7 +66,7 @@ async function terminateJob() {
         <span class="underline">{{ jobInfo.Title }}</span>
       </div>
       <button v-if="role === 'student'" class="btn shadow-none bg-[#44b15b] border-0 h-12 rounded-2xl text-white text-xl font-extralight ml-auto mt-6" @click="cvBox.open()">Apply Now</button>
-      <button v-if="role === 'company'" class="btn shadow-none bg-[#DB0000] border-0 h-18 w-45 rounded-4xl text-white text-2xl font-extralight ml-auto mt-6" @click="confirmBox.open()">Terminate</button>
+      <button v-if="role === 'company' && hR" class="btn shadow-none bg-[#DB0000] border-0 h-18 w-45 rounded-4xl text-white text-2xl font-extralight ml-auto mt-6" @click="confirmBox.open()">Terminate</button>
     </div>
     <span class="absolute top-5 right-5 text-gray-500">{{ date }}</span>
 
