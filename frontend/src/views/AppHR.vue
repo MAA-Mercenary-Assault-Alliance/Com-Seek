@@ -46,7 +46,7 @@ function goToCreateJob() {
       <button @click="goToCreateJob" class="btn shadow-none bg-lighter border-0 h-12 rounded-2xl text-white text-xl font-extralight w-[150px] ml-auto">Create Job</button>
     </div>
 
-    <div v-if="!isLoading" class="grid grid-cols-2 xl:px-42 gap-x-5 md:gap-x-20 gap-y-10 pb-20">
+    <div v-if="!isLoading" class="grid grid-cols-2 xl:px-42 gap-x-5 md:gap-x-20 gap-y-5 pb-20">
       <job-box v-for="job in jobs" :key="job" :job-info=job :h-r="true" @click="goToJob(job.ID)"/>
     </div>
   </div>

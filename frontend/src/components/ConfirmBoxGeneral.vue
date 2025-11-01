@@ -17,8 +17,11 @@ function reject() {
   emit("reject");
   dialog.value.close();
 }
+function close() {
+  dialog.value.close();
+}
 
-defineExpose({ open });
+defineExpose({ open, close });
 </script>
 
 <template>

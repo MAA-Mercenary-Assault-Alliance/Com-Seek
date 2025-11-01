@@ -7,14 +7,18 @@ import DateConverter from './dateConverter';
 import {useRouter} from 'vue-router'
 import SuccessBox from "@/components/SuccessBox.vue";
 import CVBox from "@/components/CVBox.vue";
+import ConfirmBoxGeneral from "@/components/ConfirmBoxGeneral.vue";
 
 const props = defineProps<{
-  jobInfo: JobTemplate
+  jobInfo: JobTemplate,
+  hR: boolean
 }>();
 
 const router = useRouter();
 const successBox = ref(null);
+const successBoxTerminate = ref(null);
 const cvBox = ref(null);
+const confirmBox = ref(null);
 
 let desc_html = marked(props.jobInfo?.Description || "")
 const date = computed(() => {
@@ -33,6 +37,24 @@ onMounted(() => {
   });
 });
 
+async function terminateJob() {
+  try {
+    const res = await api.patch(`/job/${props.jobInfo.ID}`, {
+      Visibility: false
+    })
+    console.log("Terminated Job:", props.jobInfo.Title)
+    successBoxTerminate.value.open()
+    setTimeout(() => {
+      router.push({ name: "HRDashboard" })
+    }, 2000) // 2 seconds
+
+    return
+  } catch (error) {
+    alert("Error terminating job. Please try again later.")
+    console.error("Error terminating job:", error.response.data)
+  }
+}
+
 // function goToCompany(companyID: number) {
 //   router.push({ name: 'CompanyProfile', params: {id: companyID}})
 //
@@ -50,6 +72,7 @@ onMounted(() => {
         <span class="underline">{{ jobInfo.Title }}</span>
       </div>
       <button v-if="role === 'student'" class="btn shadow-none bg-[#44b15b] border-0 h-12 rounded-2xl text-white text-xl font-extralight ml-auto mt-6" @click="cvBox.open()">Apply Now</button>
+      <button v-if="role === 'company' && hR" class="btn shadow-none bg-[#DB0000] border-0 h-18 w-45 rounded-4xl text-white text-2xl font-extralight ml-auto mt-6" @click="confirmBox.open()">Terminate</button>
     </div>
     <span class="absolute top-5 right-5 text-gray-500">{{ date }}</span>
 
@@ -85,12 +108,22 @@ onMounted(() => {
       :message="'Successfully applied for the job!'"
   ></success-box>
 
+  <success-box
+      ref="successBoxTerminate"
+      :message="'Successfully terminated the job'"
+  ></success-box>
+
   <c-v-box
     ref="cvBox"
     :jobID="jobInfo.ID"
     @success="successBox.open()"
   ></c-v-box>
 
+  <confirm-box-general
+    ref="confirmBox"
+    :message="'Are you sure you want to terminate this job posting? This action cannot be undone.'"
+    @accept="terminateJob"
+  ></confirm-box-general>
 
 </template>
 

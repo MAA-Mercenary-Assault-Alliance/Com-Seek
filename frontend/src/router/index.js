@@ -32,6 +32,7 @@ const routes = [
   // Dashboards
   {
     path: "/hr-dashboard",
+    name: "HRDashboard",
     component: AppHR,
     meta: { requiresAuth: true, role: "company" },
   },
@@ -122,7 +123,8 @@ router.beforeEach(async (to, from, next) => {
     localStorage.removeItem("email");
     localStorage.removeItem("role");
 
-    next("/landing-page");
+    await router.push('/login');
+    return
   }
 
   if (to.meta.requiresAuth && !isAuthenticated) {
