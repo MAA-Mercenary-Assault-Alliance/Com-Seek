@@ -16,6 +16,7 @@ const props = defineProps<{
 
 const router = useRouter();
 const successBox = ref(null);
+const successBoxTerminate = ref(null);
 const cvBox = ref(null);
 const confirmBox = ref(null);
 
@@ -39,9 +40,14 @@ onMounted(() => {
 async function terminateJob() {
   try {
     const res = await api.patch(`/job/${props.jobInfo.ID}`, {
-      Visibility: 0
+      Visibility: false
     })
     console.log("Terminated Job:", props.jobInfo.Title)
+    successBoxTerminate.value.open()
+    setTimeout(() => {
+      router.push({ name: "HRDashboard" })
+    }, 2000) // 2 seconds
+
     return
   } catch (error) {
     alert("Error terminating job. Please try again later.")
@@ -100,6 +106,11 @@ async function terminateJob() {
   <success-box
       ref="successBox"
       :message="'Successfully applied for the job!'"
+  ></success-box>
+
+  <success-box
+      ref="successBoxTerminate"
+      :message="'Successfully terminated the job'"
   ></success-box>
 
   <c-v-box

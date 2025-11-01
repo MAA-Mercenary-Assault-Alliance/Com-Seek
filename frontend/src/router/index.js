@@ -32,6 +32,7 @@ const routes = [
   // Dashboards
   {
     path: "/hr-dashboard",
+    name: "HRDashboard",
     component: AppHR,
     meta: { requiresAuth: true, role: "company" },
   },
