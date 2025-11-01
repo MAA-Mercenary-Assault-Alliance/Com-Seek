@@ -90,7 +90,7 @@ func (jc *JobController) CreateJob(c *gin.Context) {
 
 func (jc *JobController) GetJobs(c *gin.Context) {
 	var jobs []models.Job
-	query := jc.DB.Preload("Company").Preload("JobApplication.Student")
+	query := jc.DB.Preload("Company").Where("approved = 1")
 
 	if location := c.Query("location"); location != "" {
 		locationPattern := fmt.Sprintf("%%%s%%", location)
@@ -121,9 +121,6 @@ func (jc *JobController) GetJobs(c *gin.Context) {
 		if maxExp, err := strconv.Atoi(maxExperience); err == nil {
 			query = query.Where("max_experience <= ?", maxExp)
 		}
-	}
-	if visibility := c.Query("visibility"); visibility != "" {
-		query = query.Where("visibility = ?", visibility)
 	}
 	if keyword := c.Query("keyword"); keyword != "" {
 		keywordPattern := fmt.Sprintf("%%%s%%", keyword)
