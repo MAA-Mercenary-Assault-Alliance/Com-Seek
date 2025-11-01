@@ -90,7 +90,7 @@ func (jc *JobController) CreateJob(c *gin.Context) {
 
 func (jc *JobController) GetJobs(c *gin.Context) {
 	var jobs []models.Job
-	query := jc.DB.Preload("Company").Preload("JobApplication.Student")
+	query := jc.DB.Preload("Company").Where("approved = 1 AND visibility = 1")
 
 	if location := c.Query("location"); location != "" {
 		locationPattern := fmt.Sprintf("%%%s%%", location)
@@ -122,9 +122,6 @@ func (jc *JobController) GetJobs(c *gin.Context) {
 			query = query.Where("max_experience <= ?", maxExp)
 		}
 	}
-	if visibility := c.Query("visibility"); visibility != "" {
-		query = query.Where("visibility = ?", visibility)
-	}
 	if keyword := c.Query("keyword"); keyword != "" {
 		keywordPattern := fmt.Sprintf("%%%s%%", keyword)
 		query = query.Where("title LIKE ? OR description LIKE ?", keywordPattern, keywordPattern)
@@ -144,11 +141,6 @@ func (jc *JobController) GetJobs(c *gin.Context) {
 
 	if err := query.Find(&jobs).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	if len(jobs) == 0 {
-		c.JSON(http.StatusOK, gin.H{"jobs": jobs})
 		return
 	}
 
@@ -232,6 +224,7 @@ func (jc *JobController) UpdateJob(c *gin.Context) {
 		MinExperience    *uint  `json:"min_experience" binding:"omitempty"`
 		MaxExperience    *uint  `json:"max_experience" binding:"omitempty"`
 		Description      string `json:"description" binding:"omitempty,max=10240"`
+		Visibility       *bool  `json:"visibility" binding:"omitempty"`
 	}
 
 	var input UpdateJobInput
@@ -281,6 +274,9 @@ func (jc *JobController) UpdateJob(c *gin.Context) {
 	}
 	if input.Description != "" {
 		job.Description = input.Description
+	}
+	if input.Visibility != nil {
+		job.Visibility = *input.Visibility
 	}
 	if job.MaxSalary < job.MinSalary {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "max salary must be greater than or equal to min salary"})
