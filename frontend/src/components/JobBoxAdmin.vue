@@ -5,6 +5,8 @@ import {api} from "../../api/client.js";
 import DateConverter from "./dateConverter";
 import ConfirmBox from "./ComfirmBox.vue";
 import {useRouter} from "vue-router";
+import JobFull from "@/components/JobFull.vue";
+import JobModal from "@/components/JobModal.vue";
 const props = defineProps<{
   jobInfo: JobTemplate
 }>();
@@ -13,6 +15,7 @@ const confirmBox = ref(null);
 const emit = defineEmits(["refresh"]);
 const date = ref();
 const router = useRouter();
+const jobModal = ref(null);
 
 async function rejectJob() {
   try {
@@ -38,23 +41,18 @@ async function acceptJob() {
   }
 }
 
-function goToJob(newTab: boolean = false) {
-  const route = { name: 'JobFull', params: {id: props.jobInfo.CompanyID}}
-  if (newTab) {
-    const url = router.resolve(route).href
-    window.open(url, '_blank')
-    return
-  }
-  router.push(route)
+function goToJob() {
+  jobModal.value.open();
 }
 
 onMounted(() => {
-  date.value = DateConverter(props.jobInfo.CreatedAt);
+  console.log("JobINFO:", props.jobInfo);
+  date.value = DateConverter(props.jobInfo.CreatedAt) || "";
 });
 </script>
 
 <template>
-  <div id="job-box" class="flex relative rounded-2xl flex-row p-4 h-[180px] pr-4 pb-4 space-x-7 box-shadow bg-white" @click="goToJob(false)">
+  <div id="job-box" class="flex relative rounded-2xl flex-row p-4 h-[180px] pr-4 pb-4 space-x-7 box-shadow bg-white" @click="goToJob">
     <div class="flex items-center justify-center flex-shrink-0">
       <img src="../assets/company.jpg" class="company-admin-logo" alt="company-logo"/>
     </div>
@@ -78,7 +76,6 @@ onMounted(() => {
 
     <div class="flex flex-col ml-auto items-end space-y-3 mr-4">
       <span class="text-gray-500">{{ date }}</span>
-      <img src="../assets/newTab.svg" class="w-5 h-5 cursor-pointer" alt="new-tab-icon" @click.stop="goToJob(true)"/>
       <div class="flex flex-row mt-auto space-x-6">
         <button class="btn shadow-none bg-[#1F7AB9] border-0 h-8 rounded-4xl text-white text-md font-extralight px-7" @click.stop="acceptJob">Accept</button>
         <button class="btn shadow-none bg-[#9A0000] border-0 h-8 rounded-4xl text-white text-md font-extralight px-7" @click="confirmBox.open()">Reject</button>
@@ -91,7 +88,13 @@ onMounted(() => {
         @reject="rejectJob"
     ></confirm-box>
 
+    <job-modal
+        ref="jobModal"
+        :job-info="jobInfo"
+    ></job-modal>
+
   </div>
+
 </template>
 
 <style scoped>

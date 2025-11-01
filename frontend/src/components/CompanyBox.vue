@@ -5,6 +5,7 @@ import ConfirmBox from "./ComfirmBox.vue";
 import { api } from "../../api/client.js";
 import DateConverter from './dateConverter';
 import {useRouter} from "vue-router";
+import JobFull from "@/components/JobFull.vue";
 
 const props = defineProps<{
   companyInfo: CompanyTemplate,
@@ -100,6 +101,7 @@ onMounted(() => {
     ></confirm-box>
 
   </div>
+
 </template>
 
 <style scoped>

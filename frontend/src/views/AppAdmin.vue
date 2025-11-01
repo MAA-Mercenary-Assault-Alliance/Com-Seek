@@ -100,7 +100,7 @@ async function selectTab(tab: string) {
           </div>
         </template>
         <template v-if="activeTab === 'jobs'">
-          <JobBoxAdmin v-if="job_list" v-for="job in job_list" :key="job.UserID" :job-info="job" @refresh="getJobs"/>
+          <JobBoxAdmin v-if="job_list" v-for="job in job_list" :key="job.ID" :job-info="job" @refresh="getJobs"/>
           <div v-else class="flex flex-col flex-grow items-center justify-center -translate-y-10">
             <img src="../../src/assets/leaf.svg" class="w-50" alt="leaf"/>
             <span class="text-2xl text-gray-500 mt-10">No jobs pending approval</span>
