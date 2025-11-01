@@ -232,6 +232,7 @@ func (jc *JobController) UpdateJob(c *gin.Context) {
 		MinExperience    *uint  `json:"min_experience" binding:"omitempty"`
 		MaxExperience    *uint  `json:"max_experience" binding:"omitempty"`
 		Description      string `json:"description" binding:"omitempty,max=10240"`
+		Visibility       *bool  `json:"visibility" binding:"omitempty"`
 	}
 
 	var input UpdateJobInput
@@ -281,6 +282,9 @@ func (jc *JobController) UpdateJob(c *gin.Context) {
 	}
 	if input.Description != "" {
 		job.Description = input.Description
+	}
+	if input.Visibility != nil {
+		job.Visibility = *input.Visibility
 	}
 	if job.MaxSalary < job.MinSalary {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "max salary must be greater than or equal to min salary"})
