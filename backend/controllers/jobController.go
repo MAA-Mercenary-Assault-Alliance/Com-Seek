@@ -144,11 +144,6 @@ func (jc *JobController) GetJobs(c *gin.Context) {
 		return
 	}
 
-	if len(jobs) == 0 {
-		c.JSON(http.StatusOK, gin.H{"jobs": jobs})
-		return
-	}
-
 	c.JSON(http.StatusOK, gin.H{"jobs": jobs})
 }
 
