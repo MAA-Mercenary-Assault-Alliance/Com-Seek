@@ -187,7 +187,7 @@
           <div class="ml-auto flex gap-2">
             <button class="btn btn-ghost" @click="onClose">Cancel</button>
             <button
-              class="btn btn-primary"
+              class="btn bg-[#56A45C] text-white hover:bg-[#44B15B]"
               :disabled="!canAccept"
               @click="onAccept"
             >
