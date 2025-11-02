@@ -260,11 +260,12 @@ const submitJob = async () => {
         </div>
 
         <div class="job-input-box">
-          <div>
+          <div class="space-y-3">
             <div class="title-and-error-box">
               <span class="text-xl">Experience Range</span>
-              <span class="text-xl text-gray-400"> [Year] *leave empty if require no experience</span>
+              <span class="text-xl text-gray-400"> Year</span>
             </div>
+            <span class="text-gray-400">leave empty if require no experience</span>
             <div v-if="errors.expMin || errors.expMax" class="flex space-x-5 mt-3">
               <span v-if="errors.expMin" class="text-red-500 text-sm">{{ errors.expMin }}</span>
               <span v-if="errors.expMax" class="text-red-500 text-sm">{{ errors.expMax }}</span>
