@@ -60,6 +60,10 @@ async function terminateJob() {
 //
 // }
 
+function goToEdit() {
+  router.push({ name: 'EditJob', params: {id: props.jobInfo.ID}})
+}
+
 </script>
 
 <template>
@@ -71,8 +75,11 @@ async function terminateJob() {
         <router-link :to="{ name: 'CompanyProfilePublic', params: { id: Number(jobInfo.Company?.UserID) }}" class="text-2xl" >{{ jobInfo.Company?.Name }}</router-link>
         <span class="underline">{{ jobInfo.Title }}</span>
       </div>
-      <button v-if="role === 'student'" class="btn shadow-none bg-[#44b15b] border-0 h-12 rounded-2xl text-white text-xl font-extralight ml-auto mt-6" @click="cvBox.open()">Apply Now</button>
-      <button v-if="role === 'company' && hR" class="btn shadow-none bg-[#DB0000] border-0 h-18 w-45 rounded-4xl text-white text-2xl font-extralight ml-auto mt-6" @click="confirmBox.open()">Terminate</button>
+      <div class="flex flex-col ml-auto">
+        <button v-if="role === 'student'" class="btn shadow-none bg-[#44b15b] border-0 h-12 rounded-2xl text-white text-xl font-extralight ml-auto mt-6" @click="cvBox.open()">Apply Now</button>
+        <button v-if="role === 'company' && hR" class="btn shadow-none bg-[#DB0000] border-0 h-18 w-45 rounded-4xl text-white text-2xl font-extralight ml-auto mt-6" @click="confirmBox.open()">Terminate</button>
+        <button v-if="role === 'company' && hR" class="btn shadow-none bg-[#44b15b] border-0 h-18 w-45 rounded-4xl text-white text-2xl font-extralight ml-auto mt-6" @click="goToEdit">Edit Job</button>
+      </div>
     </div>
     <span class="absolute top-5 right-5 text-gray-500">{{ date }}</span>
 
@@ -88,7 +95,7 @@ async function terminateJob() {
       </div>
       <div class="requirements-div">
         <img src="../assets/time.svg" class="requirements-icon" alt="time-icon"/>
-        <span>{{ jobInfo.JobType }}</span>
+        <span>{{ jobInfo.EmploymentStatus }}</span>
       </div>
       <div class="requirements-div">
         <img src="../assets/cap.svg" class="requirements-icon" alt="cap-icon"/>

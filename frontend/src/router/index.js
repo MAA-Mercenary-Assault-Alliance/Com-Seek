@@ -84,6 +84,12 @@ const routes = [
     meta: { requiresAuth: true, role: "company" },
   },
   {
+    path: "/edit-job/:id(\\d+)",
+    name: "EditJob",
+    component: AppJobCreation,
+    meta: { requiresAuth: true, role: "company" },
+  },
+  {
     path: "/applicants/:id",
     name: "Applicants",
     component: AppApplicants,
