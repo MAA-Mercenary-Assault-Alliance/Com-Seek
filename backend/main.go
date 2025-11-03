@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"com-seek/backend/config"
 	"com-seek/backend/controllers"
 	"com-seek/backend/database"
 
@@ -18,7 +19,12 @@ func main() {
 		log.Fatalf("Failed to connect to the database: %v", dbErr)
 	}
 
-	router := controllers.NewRouter(db)
+	fileConfig, err := config.LoadFileConfig()
+	if err != nil {
+		log.Fatalf("Error loading file configuration: %v", err)
+	}
+
+	router := controllers.NewRouter(db, fileConfig)
 
 	routerErr := router.Run(os.Getenv("SERVER_ADDRESS"))
 	if routerErr != nil {

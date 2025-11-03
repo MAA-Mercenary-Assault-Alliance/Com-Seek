@@ -1,14 +1,22 @@
 package controllers
 
 import (
+	"bytes"
 	"com-seek/backend/models"
 	"fmt"
 	"image"
+	"io"
 	"mime/multipart"
+	"os"
 	"path/filepath"
-	"strings"
 
+	_ "image/jpeg"
+	_ "image/png"
+
+	"github.com/gabriel-vasile/mimetype"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	_ "golang.org/x/image/webp"
 	"gorm.io/gorm"
 )
 
@@ -44,10 +52,6 @@ func (fc *FileController) SaveImage(
 	userID uint,
 	fileHeader *multipart.FileHeader,
 	fileCategory models.FileCategory) (*models.File, error) {
-	extension, err := ExtractExtension(fileHeader.Filename)
-	if err != nil {
-		return nil, fmt.Errorf("%w", err)
-	}
 
 	if fileHeader.Size > int64(fc.MaxFileSize) {
 		return nil, fmt.Errorf("file size exceeds the limit of %d", fc.MaxFileSize)
@@ -58,11 +62,16 @@ func (fc *FileController) SaveImage(
 		return nil, fmt.Errorf("could not open image file: %w", err)
 	}
 
-	defer func() { _ = img.Close() }()
+	defer img.Close()
 
-	config, _, err := image.DecodeConfig(img)
+	fileBytes, err := io.ReadAll(img)
 	if err != nil {
-		return nil, fmt.Errorf("invalid image file")
+		return nil, fmt.Errorf("failed to read file content: %w", err)
+	}
+
+	extension, config, err := CheckAndGetConfigFromBytes(fileBytes)
+	if err != nil {
+		return nil, err
 	}
 
 	if (fileCategory == models.FileCategoryProfile) &&
@@ -76,6 +85,7 @@ func (fc *FileController) SaveImage(
 	}
 
 	fileRecord := &models.File{
+		ID:        uuid.NewString(),
 		UserID:    userID,
 		Extension: extension,
 		Category:  fileCategory,
@@ -83,6 +93,11 @@ func (fc *FileController) SaveImage(
 
 	if err := db.Create(fileRecord).Error; err != nil {
 		return nil, fmt.Errorf("failed to create file record: %w", err)
+	}
+
+	if err := os.MkdirAll(fc.SavePath, 0o755); err != nil {
+		db.Delete(fileRecord)
+		return nil, fmt.Errorf("failed to create save directory %s: %w", fc.SavePath, err)
 	}
 
 	filePath := filepath.Join(fc.SavePath, fileRecord.ID)
@@ -95,23 +110,29 @@ func (fc *FileController) SaveImage(
 	return fileRecord, nil
 }
 
-func ExtractExtension(filename string) (models.FileExtension, error) {
-	extension := strings.ToLower(filepath.Ext(filename))
-	if extension == "" {
-		return "", fmt.Errorf("no file extension found")
-	}
-	extension = extension[1:]
+func CheckAndGetConfigFromBytes(fileBytes []byte) (models.FileExtension, image.Config, error) {
+	mimeType := mimetype.Detect(fileBytes).String()
 
-	switch extension {
-	case "jpg":
-		return models.FileExtensionJPG, nil
-	case "jpeg":
-		return models.FileExtensionJPEG, nil
-	case "png":
-		return models.FileExtensionPNG, nil
-	case "webp":
-		return models.FileExtensionWEBP, nil
+	var extension models.FileExtension
+	switch mimeType {
+	case "image/jpeg":
+		extension = models.FileExtensionJPG
+	case "image/png":
+		extension = models.FileExtensionPNG
+	case "image/webp":
+		extension = models.FileExtensionWEBP
 	default:
-		return "", fmt.Errorf("unsupported file: %s", extension)
+		return "", image.Config{}, fmt.Errorf("unsupported file type: %s", mimeType)
 	}
+
+	reader := bytes.NewReader(fileBytes)
+	config, format, err := image.DecodeConfig(reader) // Capture the format
+
+	if err != nil {
+		// Log or print the format variable to see if it was recognized at all
+		fmt.Printf("DecodeConfig failed. Detected format was: %s. Error: %v\n", format, err)
+		return "", image.Config{}, fmt.Errorf("invalid image file: %w", err)
+	}
+
+	return extension, config, nil
 }

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"com-seek/backend/config"
 	"com-seek/backend/middlewares"
 
 	"github.com/gin-contrib/cors"
@@ -8,14 +9,21 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewRouter(db *gorm.DB) *gin.Engine {
+func NewRouter(db *gorm.DB, fileConfig *config.FileConfig) *gin.Engine {
 	router := gin.Default()
 
 	corsConfig := middlewares.SetupCors()
 	router.Use(cors.New(corsConfig))
 
 	authController := NewAuthController(db)
-	studentController := NewStudentController(db)
+	fileController := NewFileController(
+		fileConfig.SavePath,
+		fileConfig.MaxFileSize,
+		fileConfig.MaxProfileHeight,
+		fileConfig.MaxProfileWidth,
+		fileConfig.MaxCoverHeight,
+		fileConfig.MaxCoverWidth)
+	studentController := NewStudentController(db, fileController)
 	companyController := NewCompanyController(db)
 	jobController := NewJobController(db)
 	JobApplicationController := NewJobApplicationController(db)
