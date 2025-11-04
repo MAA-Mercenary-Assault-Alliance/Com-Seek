@@ -16,6 +16,16 @@ import (
 	"gorm.io/gorm"
 )
 
+var supportedImageExtension = map[models.FileExtension]bool{
+	models.FileExtensionJPG:  true,
+	models.FileExtensionPNG:  true,
+	models.FileExtensionWEBP: true,
+}
+
+var supportedDocExtension = map[models.FileExtension]bool{
+	models.FileExtensionPDF: true,
+}
+
 func DeleteFileRecord(db *gorm.DB, fileID string) {
 	var fileRecordToDelete models.File
 	if err := db.First(&fileRecordToDelete, "id = ?", fileID).Error; err == nil {
@@ -47,11 +57,22 @@ func ValidateAndGetExtension(
 		extension = models.FileExtensionPNG
 	case "image/webp":
 		extension = models.FileExtensionWEBP
+	case "application/pdf", "application/x-pdf":
+		extension = models.FileExtensionPDF
 	default:
 		return false, "", fmt.Errorf("unsupported file type: %s", mimeType)
 	}
 
-	if fileCategory == models.FileCategoryProfile || fileCategory == models.FileCategoryCover {
+	switch fileCategory {
+	case models.FileCategoryTranscript:
+		if !supportedDocExtension[extension] {
+			return false, "", fmt.Errorf("unsupported document file type: %s", extension)
+		}
+	case models.FileCategoryProfile, models.FileCategoryCover:
+		if !supportedImageExtension[extension] {
+			return false, "", fmt.Errorf("unsupported image file type: %s", extension)
+		}
+
 		reader := bytes.NewReader(fileBytes)
 		config, _, err := image.DecodeConfig(reader)
 

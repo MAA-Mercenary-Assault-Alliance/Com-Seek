@@ -43,14 +43,14 @@ func (fc *FileController) SaveFile(
 	userID uint,
 	fileHeader *multipart.FileHeader,
 	fileCategory models.FileCategory) (*models.File, error) {
-	img, err := fileHeader.Open()
+	file, err := fileHeader.Open()
 	if err != nil {
 		return nil, fmt.Errorf("could not open file: %w", err)
 	}
 
-	defer img.Close()
+	defer file.Close()
 
-	fileBytes, err := io.ReadAll(img)
+	fileBytes, err := io.ReadAll(file)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read file content: %w", err)
 	}

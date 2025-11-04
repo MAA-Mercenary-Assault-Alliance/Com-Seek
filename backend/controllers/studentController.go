@@ -38,6 +38,7 @@ type StudentResponse struct {
 	Twitter        string `json:"twitter"`
 	ProfileImageID string `json:"profile_image_id"`
 	CoverImageID   string `json:"cover_image_id"`
+	TranscriptID   string `json:"transcript_id"`
 }
 
 type JobApplicationResponse struct {

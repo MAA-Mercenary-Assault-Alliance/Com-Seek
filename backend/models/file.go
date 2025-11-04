@@ -15,13 +15,15 @@ const (
 	FileExtensionJPG  FileExtension = "jpg"
 	FileExtensionPNG  FileExtension = "png"
 	FileExtensionWEBP FileExtension = "webp"
+	FileExtensionPDF  FileExtension = "pdf"
 )
 
 type FileCategory string
 
 const (
-	FileCategoryProfile FileCategory = "profile"
-	FileCategoryCover   FileCategory = "cover"
+	FileCategoryProfile    FileCategory = "profile"
+	FileCategoryCover      FileCategory = "cover"
+	FileCategoryTranscript FileCategory = "transcript"
 )
 
 type File struct {

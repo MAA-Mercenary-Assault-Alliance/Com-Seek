@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"mime/multipart"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"com-seek/backend/models"
@@ -14,41 +16,46 @@ import (
 )
 
 type AuthController struct {
-	DB *gorm.DB
+	DB             *gorm.DB
+	fileController *FileController
 }
 
-func NewAuthController(db *gorm.DB) *AuthController {
+func NewAuthController(db *gorm.DB, fileController *FileController) *AuthController {
 	return &AuthController{
-		DB: db,
+		DB:             db,
+		fileController: fileController,
 	}
 }
 
-type RegisterInput struct {
-	Email          string               `json:"email" binding:"required"`
-	Password       string               `json:"password" binding:"required"`
-	UserType       string               `json:"user_type" binding:"required,oneof=student company"`
-	StudentProfile *StudentProfileInput `json:"student_profile,omitempty"`
-	CompanyProfile *CompanyProfileInput `json:"company_profile,omitempty"`
+type RegisterStudentInput struct {
+	Email        string                `form:"email" binding:"required,email"`
+	Password     string                `form:"password" binding:"required"`
+	FirstName    string                `form:"first_name" binding:"required"`
+	LastName     string                `form:"last_name" binding:"required"`
+	IsAlumString string                `form:"is_alum" binding:"required,oneof=true false 1 0"`
+	Transcript   *multipart.FileHeader `form:"transcript" binding:"required"`
 }
 
-type StudentProfileInput struct {
-	FirstName string `json:"first_name" binding:"required"`
-	LastName  string `json:"last_name" binding:"required"`
-	IsAlum    *bool  `json:"is_alum" binding:"required"`
-}
-
-type CompanyProfileInput struct {
+type RegisterCompanyInput struct {
+	Email         string `json:"email" binding:"required,email"`
+	Password      string `json:"password" binding:"required"`
 	Name          string `json:"name" binding:"required"`
 	Location      string `json:"location" binding:"required"`
-	ContactEmail  string `json:"contact_email" binding:"required"`
+	ContactEmail  string `json:"contact_email" binding:"required,email"`
 	ContactNumber string `json:"contact_number" binding:"required"`
 }
 
-func (ac *AuthController) CreateUser(c *gin.Context) {
-	var input RegisterInput
+func (ac *AuthController) RegisterStudent(c *gin.Context) {
+	var input RegisterStudentInput
 
-	if err := c.ShouldBindJSON(&input); err != nil {
+	if err := c.ShouldBind(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	isAlum, err := strconv.ParseBool(input.IsAlumString)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid value for is_alum"})
 		return
 	}
 
@@ -75,58 +82,174 @@ func (ac *AuthController) CreateUser(c *gin.Context) {
 	defer tx.Rollback()
 
 	if err := tx.Create(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user: " + err.Error()})
+		return
+	}
+
+	transcript, err := ac.fileController.SaveFile(c, user.ID, input.Transcript, models.FileCategoryTranscript)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	switch input.UserType {
-	case "student":
-		studentProfile := input.StudentProfile
-		if studentProfile == nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Student profile is required for student type"})
-			return
-		}
+	profile := models.Student{
+		UserID:       user.ID,
+		FirstName:    input.FirstName,
+		LastName:     input.LastName,
+		IsAlum:       isAlum,
+		TranscriptID: transcript.ID,
+	}
 
-		profile := models.Student{
-			UserID:    user.ID,
-			FirstName: studentProfile.FirstName,
-			LastName:  studentProfile.LastName,
-			IsAlum:    *studentProfile.IsAlum,
-		}
-
-		if err := tx.Create(&profile).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-
-	case "company":
-		companyProfile := input.CompanyProfile
-		if companyProfile == nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Company profile is required for company type"})
-			return
-		}
-
-		profile := models.Company{
-			UserID:        user.ID,
-			Name:          companyProfile.Name,
-			Location:      companyProfile.Location,
-			ContactEmail:  companyProfile.ContactEmail,
-			ContactNumber: companyProfile.ContactNumber,
-		}
-
-		if err := tx.Create(&profile).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
+	if err := tx.Create(&profile).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create student profile: " + err.Error()})
+		return
 	}
 
 	if err := tx.Commit().Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "transaction commit failed: " + err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": user})
+	c.JSON(http.StatusOK, gin.H{"message": "student user created successfully", "user": user})
 }
+
+func (ac *AuthController) RegisterCompany(c *gin.Context) {
+	var input RegisterCompanyInput
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var userFound models.User
+	if err := ac.DB.Where("email = ?", input.Email).First(&userFound).Error; err == nil {
+		c.JSON(http.StatusConflict, gin.H{"error": "email already registered"})
+		return
+	}
+
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to hash password"})
+		return
+	}
+
+	user := models.User{
+		Email:    input.Email,
+		Password: string(passwordHash),
+	}
+
+	tx := ac.DB.Begin()
+	defer tx.Rollback()
+
+	if err := tx.Create(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user: " + err.Error()})
+		return
+	}
+
+	profile := models.Company{
+		UserID:        user.ID,
+		Name:          input.Name,
+		Location:      input.Location,
+		ContactEmail:  input.ContactEmail,
+		ContactNumber: input.ContactNumber,
+	}
+
+	if err := tx.Create(&profile).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create company profile: " + err.Error()})
+		return
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "transaction commit failed: " + err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "company user created successfully", "user": user})
+}
+
+// func (ac *AuthController) CreateUser(c *gin.Context) {
+// 	var input RegisterInput
+
+// 	if err := c.ShouldBindJSON(&input); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
+
+// 	var userFound models.User
+// 	ac.DB.Where("email=?", input.Email).Find(&userFound)
+
+// 	if userFound.ID != 0 {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": "email already registered"})
+// 		return
+// 	}
+
+// 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to hash password"})
+// 		return
+// 	}
+
+// 	user := models.User{
+// 		Email:    input.Email,
+// 		Password: string(passwordHash),
+// 	}
+
+// 	tx := ac.DB.Begin()
+// 	defer tx.Rollback()
+
+// 	if err := tx.Create(&user).Error; err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+// 		return
+// 	}
+
+// 	switch input.UserType {
+// 	case "student":
+// 		studentProfile := input.StudentProfile
+// 		if studentProfile == nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{"error": "Student profile is required for student type"})
+// 			return
+// 		}
+
+// 		profile := models.Student{
+// 			UserID:    user.ID,
+// 			FirstName: studentProfile.FirstName,
+// 			LastName:  studentProfile.LastName,
+// 			IsAlum:    *studentProfile.IsAlum,
+// 		}
+
+// 		if err := tx.Create(&profile).Error; err != nil {
+// 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+// 			return
+// 		}
+
+// 	case "company":
+// 		companyProfile := input.CompanyProfile
+// 		if companyProfile == nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{"error": "Company profile is required for company type"})
+// 			return
+// 		}
+
+// 		profile := models.Company{
+// 			UserID:        user.ID,
+// 			Name:          companyProfile.Name,
+// 			Location:      companyProfile.Location,
+// 			ContactEmail:  companyProfile.ContactEmail,
+// 			ContactNumber: companyProfile.ContactNumber,
+// 		}
+
+// 		if err := tx.Create(&profile).Error; err != nil {
+// 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+// 			return
+// 		}
+// 	}
+
+// 	if err := tx.Commit().Error; err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusOK, gin.H{"data": user})
+// }
 
 type LoginInput struct {
 	Email    string `json:"email" binding:"required"`

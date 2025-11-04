@@ -15,8 +15,8 @@ func NewRouter(db *gorm.DB, fileConfig config.FileConfig) *gin.Engine {
 	corsConfig := middlewares.SetupCors()
 	router.Use(cors.New(corsConfig))
 
-	authController := NewAuthController(db)
 	fileController := NewFileController(db, fileConfig)
+	authController := NewAuthController(db, fileController)
 	studentController := NewStudentController(db, fileController)
 	companyController := NewCompanyController(db, fileController)
 	jobController := NewJobController(db)
@@ -24,7 +24,8 @@ func NewRouter(db *gorm.DB, fileConfig config.FileConfig) *gin.Engine {
 	adminController := NewAdminController(db)
 
 	authGroup := router.Group("/auth")
-	authGroup.POST("/register", authController.CreateUser)
+	authGroup.POST("/register/student", authController.RegisterStudent)
+	authGroup.POST("/register/company", authController.RegisterCompany)
 	authGroup.POST("/login", authController.Login)
 	authGroup.POST("/logout", middlewares.CheckAuth, authController.Logout)
 
