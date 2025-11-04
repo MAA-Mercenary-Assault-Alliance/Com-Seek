@@ -27,13 +27,13 @@ import (
 )
 
 type FileController struct {
-	FileConfig config.FileConfig
+	fileConfig config.FileConfig
 	DB         *gorm.DB
 }
 
 func NewFileController(db *gorm.DB, fileConfig config.FileConfig) *FileController {
 	return &FileController{
-		FileConfig: fileConfig,
+		fileConfig: fileConfig,
 		DB:         db,
 	}
 }
@@ -55,7 +55,7 @@ func (fc *FileController) SaveFile(
 		return nil, fmt.Errorf("failed to read file content: %w", err)
 	}
 
-	valid, extension, err := helpers.ValidateAndGetExtension(fileBytes, fileCategory, fc.FileConfig)
+	valid, extension, err := helpers.ValidateAndGetExtension(fileBytes, fileCategory, fc.fileConfig)
 
 	if !valid {
 		if err != nil {
@@ -76,12 +76,12 @@ func (fc *FileController) SaveFile(
 		return nil, fmt.Errorf("failed to create file record: %w", err)
 	}
 
-	if err := os.MkdirAll(fc.FileConfig.SavePath, 0o755); err != nil {
+	if err := os.MkdirAll(fc.fileConfig.SavePath, 0o755); err != nil {
 		fc.DB.Delete(fileRecord)
-		return nil, fmt.Errorf("failed to create save directory %s: %w", fc.FileConfig.SavePath, err)
+		return nil, fmt.Errorf("failed to create save directory %s: %w", fc.fileConfig.SavePath, err)
 	}
 
-	filePath := filepath.Join(fc.FileConfig.SavePath, fileRecord.ID)
+	filePath := filepath.Join(fc.fileConfig.SavePath, fileRecord.ID)
 
 	if err := c.SaveUploadedFile(fileHeader, filePath); err != nil {
 		fc.DB.Delete(fileRecord)
@@ -116,7 +116,7 @@ func (fc *FileController) ServeFile(c *gin.Context) {
 		return
 	}
 
-	filePath := filepath.Join(fc.FileConfig.SavePath, fileRecord.ID)
+	filePath := filepath.Join(fc.fileConfig.SavePath, fileRecord.ID)
 
 	securePath, err := filepath.Abs(filePath)
 	if err != nil {
@@ -126,7 +126,7 @@ func (fc *FileController) ServeFile(c *gin.Context) {
 		return
 	}
 
-	savePathAbs, err := filepath.Abs(fc.FileConfig.SavePath)
+	savePathAbs, err := filepath.Abs(fc.fileConfig.SavePath)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": "internal configuration error",

@@ -18,7 +18,7 @@ func NewRouter(db *gorm.DB, fileConfig config.FileConfig) *gin.Engine {
 	authController := NewAuthController(db)
 	fileController := NewFileController(db, fileConfig)
 	studentController := NewStudentController(db, fileController)
-	companyController := NewCompanyController(db)
+	companyController := NewCompanyController(db, fileController)
 	jobController := NewJobController(db)
 	JobApplicationController := NewJobApplicationController(db)
 	adminController := NewAdminController(db)

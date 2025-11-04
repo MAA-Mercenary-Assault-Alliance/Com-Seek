@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"com-seek/backend/helpers"
 	"com-seek/backend/models"
 	"errors"
+	"mime/multipart"
 	"net/http"
 	"strconv"
 
@@ -11,12 +13,14 @@ import (
 )
 
 type CompanyController struct {
-	DB *gorm.DB
+	DB             *gorm.DB
+	fileController *FileController
 }
 
-func NewCompanyController(db *gorm.DB) *CompanyController {
+func NewCompanyController(db *gorm.DB, fileController *FileController) *CompanyController {
 	return &CompanyController{
-		DB: db,
+		DB:             db,
+		fileController: fileController,
 	}
 }
 
@@ -69,17 +73,19 @@ func (cc *CompanyController) UpdateCompanyProfile(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 
 	type CompanyProfileInput struct {
-		Name          string `json:"name" binding:"omitempty"`
-		Website       string `json:"website" binding:"omitempty,max=256"`
-		ContactEmail  string `json:"contact_email" binding:"omitempty,max=100"`
-		ContactNumber string `json:"contact_number" binding:"omitempty,max=20"`
-		Location      string `json:"location" binding:"omitempty,max=256"`
-		Description   string `json:"description" binding:"omitempty,max=4096"`
+		Name          string                `form:"name" binding:"omitempty"`
+		Website       *string               `form:"website" binding:"omitempty,max=256"`
+		ContactEmail  *string               `form:"contact_email" binding:"omitempty,max=100"`
+		ContactNumber *string               `form:"contact_number" binding:"omitempty,max=20"`
+		Location      *string               `form:"location" binding:"omitempty,max=256"`
+		Description   *string               `form:"description" binding:"omitempty,max=4096"`
+		ProfileImage  *multipart.FileHeader `form:"profile_image"`
+		CoverImage    *multipart.FileHeader `form:"cover_image"`
 	}
 
 	var input CompanyProfileInput
 
-	if err := c.ShouldBindJSON(&input); err != nil {
+	if err := c.ShouldBind(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -93,10 +99,79 @@ func (cc *CompanyController) UpdateCompanyProfile(c *gin.Context) {
 		return
 	}
 
-	res := cc.DB.Model(&company).Updates(&input)
+	var oldProfileImageID, oldCoverImageID string
+
+	if company.ProfileImageID != nil && *company.ProfileImageID != "" {
+		oldProfileImageID = *company.ProfileImageID
+	}
+	if company.CoverImageID != nil && *company.CoverImageID != "" {
+		oldCoverImageID = *company.CoverImageID
+	}
+
+	if input.Name != "" {
+		company.Name = input.Name
+	}
+
+	if input.Website != nil {
+		company.Website = *input.Website
+	}
+
+	if input.ContactEmail != nil {
+		company.ContactEmail = *input.ContactEmail
+	}
+
+	if input.ContactNumber != nil {
+		company.ContactNumber = *input.ContactNumber
+	}
+
+	if input.Location != nil {
+		company.Location = *input.Location
+	}
+
+	if input.Description != nil {
+		company.Description = *input.Description
+	}
+
+	if input.ProfileImage != nil {
+		profile, err := cc.fileController.SaveFile(c, userID, input.ProfileImage, models.FileCategoryProfile)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		if company.ProfileImageID == nil {
+			company.ProfileImageID = new(string)
+		}
+
+		*company.ProfileImageID = profile.ID
+	}
+
+	if input.CoverImage != nil {
+		cover, err := cc.fileController.SaveFile(c, userID, input.CoverImage, models.FileCategoryCover)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		if company.CoverImageID == nil {
+			company.CoverImageID = new(string)
+		}
+
+		*company.CoverImageID = cover.ID
+	}
+
+	res := cc.DB.Save(&company)
 	if res.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": res.Error.Error()})
 		return
+	}
+
+	if oldProfileImageID != "" && oldProfileImageID != *company.ProfileImageID {
+		go helpers.DeleteFileRecord(cc.DB, oldProfileImageID)
+	}
+
+	if oldCoverImageID != "" && oldCoverImageID != *company.CoverImageID {
+		go helpers.DeleteFileRecord(cc.DB, oldCoverImageID)
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "successfully updated the profile"})
