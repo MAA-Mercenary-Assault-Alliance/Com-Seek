@@ -148,12 +148,18 @@ func (fc *FileController) ServeFile(c *gin.Context) {
 		return
 	}
 
-	contentType := mime.TypeByExtension(string(fileRecord.Extension))
+	contentType := mime.TypeByExtension("." + string(fileRecord.Extension))
 	if contentType == "" {
 		contentType = "application/octet-stream"
 	}
 
 	c.Header("Content-Type", contentType)
+
+	if strings.HasPrefix(contentType, "image/") {
+		c.Header("Content-Disposition", "inline")
+	} else {
+		c.Header("Content-Disposition", "attachment")
+	}
 
 	c.File(filePath)
 }
