@@ -3,12 +3,16 @@ package controllers
 import (
 	"bytes"
 	"com-seek/backend/models"
+	"errors"
 	"fmt"
 	"image"
 	"io"
+	"mime"
 	"mime/multipart"
+	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	_ "image/jpeg"
 	_ "image/png"
@@ -27,6 +31,7 @@ type FileController struct {
 	MaxProfileWidth  int
 	MaxCoverHeight   int
 	MaxCoverWidth    int
+	DB               *gorm.DB
 }
 
 func NewFileController(
@@ -35,7 +40,8 @@ func NewFileController(
 	maxProfileHeight int,
 	maxProfileWidth int,
 	maxCoverHeight int,
-	maxCoverWidth int) *FileController {
+	maxCoverWidth int,
+	db *gorm.DB) *FileController {
 	return &FileController{
 		SavePath:         savePath,
 		MaxFileSize:      maxFileSize,
@@ -43,12 +49,12 @@ func NewFileController(
 		MaxProfileWidth:  maxProfileWidth,
 		MaxCoverHeight:   maxCoverHeight,
 		MaxCoverWidth:    maxCoverWidth,
+		DB:               db,
 	}
 }
 
 func (fc *FileController) SaveImage(
 	c *gin.Context,
-	db *gorm.DB,
 	userID uint,
 	fileHeader *multipart.FileHeader,
 	fileCategory models.FileCategory) (*models.File, error) {
@@ -91,23 +97,90 @@ func (fc *FileController) SaveImage(
 		Category:  fileCategory,
 	}
 
-	if err := db.Create(fileRecord).Error; err != nil {
+	if err := fc.DB.Create(fileRecord).Error; err != nil {
 		return nil, fmt.Errorf("failed to create file record: %w", err)
 	}
 
 	if err := os.MkdirAll(fc.SavePath, 0o755); err != nil {
-		db.Delete(fileRecord)
+		fc.DB.Delete(fileRecord)
 		return nil, fmt.Errorf("failed to create save directory %s: %w", fc.SavePath, err)
 	}
 
 	filePath := filepath.Join(fc.SavePath, fileRecord.ID)
 
 	if err := c.SaveUploadedFile(fileHeader, filePath); err != nil {
-		db.Delete(fileRecord)
+		fc.DB.Delete(fileRecord)
 		return nil, fmt.Errorf("failed to save file to local: %w", err)
 	}
 
 	return fileRecord, nil
+}
+
+func (fc *FileController) ServeFile(c *gin.Context) {
+	fileID := c.Param("uuid")
+
+	if _, err := uuid.Parse(fileID); err != nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+			"error": "file not found",
+		})
+		return
+	}
+
+	var fileRecord models.File
+
+	if err := fc.DB.Where("id = ?", fileID).First(&fileRecord).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+				"error": "file not found",
+			})
+		} else {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+				"error": "failed to retrieve file record",
+			})
+		}
+		return
+	}
+
+	filePath := filepath.Join(fc.SavePath, fileRecord.ID)
+
+	securePath, err := filepath.Abs(filePath)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"error": "internal path error",
+		})
+		return
+	}
+
+	savePathAbs, err := filepath.Abs(fc.SavePath)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"error": "internal configuration error",
+		})
+		return
+	}
+
+	if !strings.HasPrefix(securePath, savePathAbs) {
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+			"error": "invalid file path detected",
+		})
+		return
+	}
+
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+			"error": "file not found on server storage",
+		})
+		return
+	}
+
+	contentType := mime.TypeByExtension(string(fileRecord.Extension))
+	if contentType == "" {
+		contentType = "application/octet-stream"
+	}
+
+	c.Header("Content-Type", contentType)
+
+	c.File(filePath)
 }
 
 func CheckAndGetConfigFromBytes(fileBytes []byte) (models.FileExtension, image.Config, error) {

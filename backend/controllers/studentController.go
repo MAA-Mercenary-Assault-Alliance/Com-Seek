@@ -205,7 +205,7 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 	}
 
 	if input.ProfileImage != nil {
-		profile, err := sc.fileController.SaveImage(c, sc.DB, userID, input.ProfileImage, models.FileCategoryProfile)
+		profile, err := sc.fileController.SaveImage(c, userID, input.ProfileImage, models.FileCategoryProfile)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -219,7 +219,7 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 	}
 
 	if input.CoverImage != nil {
-		cover, err := sc.fileController.SaveImage(c, sc.DB, userID, input.CoverImage, models.FileCategoryCover)
+		cover, err := sc.fileController.SaveImage(c, userID, input.CoverImage, models.FileCategoryCover)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return

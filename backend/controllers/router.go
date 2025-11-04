@@ -22,7 +22,8 @@ func NewRouter(db *gorm.DB, fileConfig *config.FileConfig) *gin.Engine {
 		fileConfig.MaxProfileHeight,
 		fileConfig.MaxProfileWidth,
 		fileConfig.MaxCoverHeight,
-		fileConfig.MaxCoverWidth)
+		fileConfig.MaxCoverWidth,
+		db)
 	studentController := NewStudentController(db, fileController)
 	companyController := NewCompanyController(db)
 	jobController := NewJobController(db)
@@ -34,6 +35,8 @@ func NewRouter(db *gorm.DB, fileConfig *config.FileConfig) *gin.Engine {
 	authGroup.POST("/login", authController.Login)
 
 	requiredLogin := router.Group("/", middlewares.CheckAuth)
+
+	requiredLogin.GET("/file/:uuid", fileController.ServeFile)
 
 	student := requiredLogin.Group("/student")
 	student.GET("", studentController.GetStudentProfile)
