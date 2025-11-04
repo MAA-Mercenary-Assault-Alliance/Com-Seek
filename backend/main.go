@@ -24,7 +24,7 @@ func main() {
 		log.Fatalf("Error loading file configuration: %v", err)
 	}
 
-	router := controllers.NewRouter(db, fileConfig)
+	router := controllers.NewRouter(db, *fileConfig)
 
 	routerErr := router.Run(os.Getenv("SERVER_ADDRESS"))
 	if routerErr != nil {

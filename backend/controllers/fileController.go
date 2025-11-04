@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"bytes"
+	"com-seek/backend/config"
+	"com-seek/backend/helpers"
 	"com-seek/backend/models"
 	"errors"
 	"fmt"
@@ -25,47 +27,25 @@ import (
 )
 
 type FileController struct {
-	SavePath         string
-	MaxFileSize      int
-	MaxProfileHeight int
-	MaxProfileWidth  int
-	MaxCoverHeight   int
-	MaxCoverWidth    int
-	DB               *gorm.DB
+	FileConfig config.FileConfig
+	DB         *gorm.DB
 }
 
-func NewFileController(
-	savePath string,
-	maxFileSize int,
-	maxProfileHeight int,
-	maxProfileWidth int,
-	maxCoverHeight int,
-	maxCoverWidth int,
-	db *gorm.DB) *FileController {
+func NewFileController(db *gorm.DB, fileConfig config.FileConfig) *FileController {
 	return &FileController{
-		SavePath:         savePath,
-		MaxFileSize:      maxFileSize,
-		MaxProfileHeight: maxProfileHeight,
-		MaxProfileWidth:  maxProfileWidth,
-		MaxCoverHeight:   maxCoverHeight,
-		MaxCoverWidth:    maxCoverWidth,
-		DB:               db,
+		FileConfig: fileConfig,
+		DB:         db,
 	}
 }
 
-func (fc *FileController) SaveImage(
+func (fc *FileController) SaveFile(
 	c *gin.Context,
 	userID uint,
 	fileHeader *multipart.FileHeader,
 	fileCategory models.FileCategory) (*models.File, error) {
-
-	if fileHeader.Size > int64(fc.MaxFileSize) {
-		return nil, fmt.Errorf("file size exceeds the limit of %d", fc.MaxFileSize)
-	}
-
 	img, err := fileHeader.Open()
 	if err != nil {
-		return nil, fmt.Errorf("could not open image file: %w", err)
+		return nil, fmt.Errorf("could not open file: %w", err)
 	}
 
 	defer img.Close()
@@ -75,19 +55,14 @@ func (fc *FileController) SaveImage(
 		return nil, fmt.Errorf("failed to read file content: %w", err)
 	}
 
-	extension, config, err := CheckAndGetConfigFromBytes(fileBytes)
-	if err != nil {
-		return nil, err
-	}
+	valid, extension, err := helpers.ValidateAndGetExtension(fileBytes, fileCategory, fc.FileConfig)
 
-	if (fileCategory == models.FileCategoryProfile) &&
-		(config.Height > fc.MaxProfileHeight || config.Width > fc.MaxProfileWidth) {
-		return nil, fmt.Errorf("image dimensions exceed the limit of %dx%d pixels", fc.MaxProfileWidth, fc.MaxProfileHeight)
-	}
+	if !valid {
+		if err != nil {
+			return nil, err
+		}
 
-	if (fileCategory == models.FileCategoryCover) &&
-		(config.Height > fc.MaxCoverHeight || config.Width > fc.MaxCoverWidth) {
-		return nil, fmt.Errorf("image dimensions exceed the limit of %dx%d pixels", fc.MaxCoverWidth, fc.MaxCoverHeight)
+		return nil, fmt.Errorf("file is not valid")
 	}
 
 	fileRecord := &models.File{
@@ -101,12 +76,12 @@ func (fc *FileController) SaveImage(
 		return nil, fmt.Errorf("failed to create file record: %w", err)
 	}
 
-	if err := os.MkdirAll(fc.SavePath, 0o755); err != nil {
+	if err := os.MkdirAll(fc.FileConfig.SavePath, 0o755); err != nil {
 		fc.DB.Delete(fileRecord)
-		return nil, fmt.Errorf("failed to create save directory %s: %w", fc.SavePath, err)
+		return nil, fmt.Errorf("failed to create save directory %s: %w", fc.FileConfig.SavePath, err)
 	}
 
-	filePath := filepath.Join(fc.SavePath, fileRecord.ID)
+	filePath := filepath.Join(fc.FileConfig.SavePath, fileRecord.ID)
 
 	if err := c.SaveUploadedFile(fileHeader, filePath); err != nil {
 		fc.DB.Delete(fileRecord)
@@ -141,7 +116,7 @@ func (fc *FileController) ServeFile(c *gin.Context) {
 		return
 	}
 
-	filePath := filepath.Join(fc.SavePath, fileRecord.ID)
+	filePath := filepath.Join(fc.FileConfig.SavePath, fileRecord.ID)
 
 	securePath, err := filepath.Abs(filePath)
 	if err != nil {
@@ -151,7 +126,7 @@ func (fc *FileController) ServeFile(c *gin.Context) {
 		return
 	}
 
-	savePathAbs, err := filepath.Abs(fc.SavePath)
+	savePathAbs, err := filepath.Abs(fc.FileConfig.SavePath)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": "internal configuration error",

@@ -1,8 +1,8 @@
 package controllers
 
 import (
+	"com-seek/backend/helpers"
 	"com-seek/backend/models"
-	"log"
 	"mime/multipart"
 	"net/http"
 	"strconv"
@@ -205,7 +205,7 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 	}
 
 	if input.ProfileImage != nil {
-		profile, err := sc.fileController.SaveImage(c, userID, input.ProfileImage, models.FileCategoryProfile)
+		profile, err := sc.fileController.SaveFile(c, userID, input.ProfileImage, models.FileCategoryProfile)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -219,7 +219,7 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 	}
 
 	if input.CoverImage != nil {
-		cover, err := sc.fileController.SaveImage(c, userID, input.CoverImage, models.FileCategoryCover)
+		cover, err := sc.fileController.SaveFile(c, userID, input.CoverImage, models.FileCategoryCover)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -239,27 +239,11 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 	}
 
 	if oldProfileImageID != "" && oldProfileImageID != *student.ProfileImageID {
-		go func() {
-			var fileToDelete models.File
-			if err := sc.DB.First(&fileToDelete, "id = ?", oldProfileImageID).Error; err == nil {
-
-				if err := sc.DB.Delete(&fileToDelete).Error; err != nil {
-					log.Printf("Failed to delete old file %s: %v\n", oldProfileImageID, err)
-				}
-			}
-		}()
+		go helpers.DeleteFileRecord(sc.DB, oldProfileImageID)
 	}
 
 	if oldCoverImageID != "" && oldCoverImageID != *student.CoverImageID {
-		go func() {
-			var fileToDelete models.File
-			if err := sc.DB.First(&fileToDelete, "id = ?", oldCoverImageID).Error; err == nil {
-
-				if err := sc.DB.Delete(&fileToDelete).Error; err != nil {
-					log.Printf("Failed to delete old file %s: %v\n", oldCoverImageID, err)
-				}
-			}
-		}()
+		go helpers.DeleteFileRecord(sc.DB, oldCoverImageID)
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "successfully updated the profile"})

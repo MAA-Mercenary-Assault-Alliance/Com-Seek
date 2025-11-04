@@ -9,21 +9,14 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewRouter(db *gorm.DB, fileConfig *config.FileConfig) *gin.Engine {
+func NewRouter(db *gorm.DB, fileConfig config.FileConfig) *gin.Engine {
 	router := gin.Default()
 
 	corsConfig := middlewares.SetupCors()
 	router.Use(cors.New(corsConfig))
 
 	authController := NewAuthController(db)
-	fileController := NewFileController(
-		fileConfig.SavePath,
-		fileConfig.MaxFileSize,
-		fileConfig.MaxProfileHeight,
-		fileConfig.MaxProfileWidth,
-		fileConfig.MaxCoverHeight,
-		fileConfig.MaxCoverWidth,
-		db)
+	fileController := NewFileController(db, fileConfig)
 	studentController := NewStudentController(db, fileController)
 	companyController := NewCompanyController(db)
 	jobController := NewJobController(db)
