@@ -118,7 +118,7 @@
         <div class="form-control mt-4 flex justify-center">
           <button
             type="submit"
-            class="btn btn-primary w-full"
+            class="btn bg-[#56A45C] text-white hover:bg-[#44B15B] w-full"
             :disabled="loading"
             :title="!tosAccepted ? 'You must accept the Terms of Service before registering' : ''"
           >

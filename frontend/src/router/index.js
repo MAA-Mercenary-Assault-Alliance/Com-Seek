@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { api } from "../../api/client";
 
 import AppHome from '../views/AppHome.vue'
 import AppHR from '../views/AppHR.vue'
@@ -15,108 +16,130 @@ import CookiesPage from '../views/docs/Cookies.vue'
 import NotFound from '../views/NotFound.vue'
 import CompanyRegisterForm from '../views/auth/CompanyRegisterForm.vue'
 import CompanyProfilePage from '../views/CompanyProfile.vue'
+import AppJob from "../views/AppJob.vue";
 
 const routes = [
   // Root & Landing
-  { path: '/', redirect: '/landing-page' },
-  { path: '/landing-page', component: LandingPage, meta: { layout: 'blank' } },
-  { path: '/home', component: AppHome },
+  { path: "/", redirect: "/landing-page" },
+  { path: "/landing-page", component: LandingPage, meta: { layout: "blank" } },
+  { path: "/home", component: AppHome },
 
   // Auth
-  { path: '/login', component: LoginForm },
-  { path: '/logout', component: LoginForm }, // TODO: wire logout handler
-  { path: '/register', component: RegisterForm },
-  { path: '/register-company', component: CompanyRegisterForm },
+  { path: "/login", component: LoginForm },
+  { path: "/register", component: RegisterForm },
+  { path: "/register-company", component: CompanyRegisterForm },
 
   // Dashboards
   {
-    path: '/hr-dashboard',
+    path: "/hr-dashboard",
     component: AppHR,
-    meta: { requiresAuth: true, role: 'company' },
+    meta: { requiresAuth: true, role: "company" },
+  },
+  {
+    path: '/company-jobs/:id(\\d+)',
+    name: "JobFull",
+    component: AppJob,
+    meta: { requiresAuth: true, role: 'admin' },
   },
   {
     path: '/admin',
     component: AppAdmin,
-    meta: { requiresAuth: true, role: 'admin' },
+    meta: { requiresAuth: true, role: "admin" },
   },
 
   // Profiles
   {
-    path: '/student-profile',
-    name: 'StudentProfile',
+    path: "/student-profile",
+    name: "StudentProfile",
     component: StudentProfilePage,
-    meta: { requiresAuth: true, role: 'student' },
+    meta: { requiresAuth: true, role: "student" },
   },
   {
-    path: '/company-profile',
-    name: 'CompanyProfile',
+    path: "/company-profile",
+    name: "CompanyProfile",
     component: CompanyProfilePage,
-    meta: { requiresAuth: true, role: 'company' },
+    meta: { requiresAuth: true, role: "company" },
   },
 
   // Public Profiles
   {
-    path: '/student-profile/:id(\\d+)',
-    name: 'StudentProfilePublic',
+    path: "/student-profile/:id(\\d+)",
+    name: "StudentProfilePublic",
     component: StudentProfilePage,
     meta: { requiresAuth: false },
   },
   {
-    path: '/company-profile/:id(\\d+)',
-    name: 'CompanyProfilePublic',
+    path: "/company-profile/:id(\\d+)",
+    name: "CompanyProfilePublic",
     component: CompanyProfilePage,
     meta: { requiresAuth: false },
   },
 
   // Jobs & Applicants
   {
-    path: '/create-job',
-    name: 'CreateJob',
+    path: "/create-job",
+    name: "CreateJob",
     component: AppJobCreation,
-    meta: { requiresAuth: true, role: 'company' },
+    meta: { requiresAuth: true, role: "company" },
   },
   {
-    path: '/applicants/:id',
-    name: 'Applicants',
+    path: "/applicants/:id",
+    name: "Applicants",
     component: AppApplicants,
-    meta: { requiresAuth: true, role: 'company' },
+    meta: { requiresAuth: true, role: "company" },
   },
 
   // Docs (public)
-  { path: '/docs/terms', component: TermsPage, meta: { layout: 'blank' } },
-  { path: '/docs/privacy', component: PrivacyPage, meta: { layout: 'blank' } },
-  { path: '/docs/cookies', component: CookiesPage, meta: { layout: 'blank' } },
+  { path: "/docs/terms", component: TermsPage, meta: { layout: "blank" } },
+  { path: "/docs/privacy", component: PrivacyPage, meta: { layout: "blank" } },
+  { path: "/docs/cookies", component: CookiesPage, meta: { layout: "blank" } },
 
   // Not Found
-  { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound, meta: { layout: 'blank' } },
-]
+  {
+    path: "/:pathMatch(.*)*",
+    name: "NotFound",
+    component: NotFound,
+    meta: { layout: "blank" },
+  },
+];
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
   scrollBehavior() {
-    return { top: 0 }
+    return { top: 0 };
   },
-})
+});
 
-router.beforeEach((to, from, next) => {
-  const email = localStorage.getItem('email')
-  const role = localStorage.getItem('role')
-  const isAuthenticated = !!(email && role)
+router.beforeEach(async (to, from, next) => {
+  const email = localStorage.getItem("email");
+  const role = localStorage.getItem("role");
+  const isAuthenticated = !!(email && role);
+
+  if (to.path === "/logout") {
+    await api.post("/auth/logout");
+
+    localStorage.removeItem("email");
+    localStorage.removeItem("role");
+
+    next("/landing-page");
+  }
 
   if (to.meta.requiresAuth && !isAuthenticated) {
-    return next('/login')
+    return next("/login");
   }
 
   if (to.meta.role && isAuthenticated) {
-    const required = to.meta.role // can be string or array
-    const allowed = Array.isArray(required) ? required.includes(role) : role === required
+    const required = to.meta.role; // can be string or array
+    const allowed = Array.isArray(required)
+      ? required.includes(role)
+      : role === required;
     if (!allowed) {
-      return next('/')
+      return next("/");
     }
   }
 
-  next()
-})
+  next();
+});
 
-export default router
+export default router;

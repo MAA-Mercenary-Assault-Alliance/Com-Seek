@@ -79,6 +79,7 @@ export interface StudentTemplate {
         Email: string;
         Password: string;
     };
+    CreatedAt: string;
     FirstName: string;
     LastName: string;
     Description: string;

@@ -17,7 +17,7 @@ const isBlankLayout = computed(() => route.meta?.layout === "blank")
   <!-- DEFAULT LAYOUT -->
   <div v-else class="flex flex-col relative min-h-screen">
     <FullNavBar></FullNavBar>
-    <div id="all" class="flex flex-col bg-[#F2F6FC] w-full flex-grow text-black"> <!--Default Text set to black right here -->
+    <div id="all" class="flex flex-col bg-background w-full flex-grow text-black"> <!--Default Text set to black right here -->
       <div id="main" class="flex justify-center">
         <router-view />
       </div>
