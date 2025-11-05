@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, watch, reactive, onMounted} from 'vue'
+import {ref, watch, reactive, onMounted, computed} from 'vue'
 import ConfirmBoxGeneral from "@/components/ConfirmBoxGeneral.vue";
 import {marked} from "marked";
 import { api } from "../../api/client.js"
@@ -12,7 +12,7 @@ const confirmBox = ref(null)
 const successBox = ref(null)
 const successBoxUpdate = ref(null)
 
-const id = route.params.id || null // company id for editing jobs
+const id = computed(() => route.params.id || null) // company id for editing jobs
 
 const jobName = ref('')
 const employmentStatus = ref('')
@@ -183,7 +183,7 @@ const submitJob = async () => {
 
 async function getJob() {
   try {
-    const res = await api.get(`/job/${id}`)
+    const res = await api.get(`/job/${id.value}`)
     console.log("Got Job:", res.data)
 
     const job = res.data.job
@@ -198,8 +198,15 @@ async function getJob() {
     jobDesc.value = job.Description
     return
   } catch (error) {
-    alert("Error getting your job. Please try again later.")
     console.error("Error getting job:", error.response.data)
+
+    // If invalid job ID, go back
+    if (error.response && error.response.data.error == "Invalid ID" || error.response.data.error == "record not found") {
+      router.back();
+      alert("Invalid Job ID")
+      return
+    }
+    alert("Error getting your job. Please try again later.")
   }
 }
 
@@ -222,7 +229,7 @@ async function updateJob() {
       max_experience: Number(expMax.value),
       description: jobDesc.value
     }
-    const res = await api.patch(`/job/${id}`,
+    const res = await api.patch(`/job/${id.value}`,
       payload
     )
     console.log("Updating Job With Data:", payload)
@@ -240,9 +247,13 @@ async function updateJob() {
 }
 
 onMounted(() => {
-  if (id) {
+  if (id.value) {
     getJob()
   }
+})
+
+watch(id, () => {
+  getJob()
 })
 
 </script>
