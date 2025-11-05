@@ -38,10 +38,11 @@ onMounted(() => {
       <span class="text-white text-5xl font-bold">Applicants</span>
     </div>
     <div v-if="!isLoading && job" class="flex flex-row w-full xl:px-42 bg-background space-x-5 xl:space-x-20 pb-20">
-      <JobFull :job-info="job" />
+      <JobFull :job-info="job" :h-r="true"/>
       <ApplicantsColumn v-if="applicants" :applicants="applicants" @refresh="findThisJob"/>
-      <div v-else class="flex justify-center w-1/3 mt-20">
-        <span class="text-2xl text-gray-500 italic">No applicants yet.</span>
+      <div v-else class="flex flex-col flex-grow w-1/3 justify-center items-center h-60 text-2xl mt-20 text-gray-500 space-y-5">
+        <img src="../../src/assets/leaf2.svg" class="w-50" alt="leaf"/>
+        <span>No applicants yet</span>
       </div>
     </div>
   </div>
