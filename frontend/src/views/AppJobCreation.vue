@@ -83,7 +83,7 @@ const validateForm = () => {
   }
 
 // Salary validation
-  if (!salaryMin.value) {
+  if (salaryMin.value === '' || salaryMin.value == null) {
     errors.salaryMin = 'Minimum salary is required'
     valid = false
   } else if (isNaN(Number(salaryMin.value))) {
@@ -91,7 +91,7 @@ const validateForm = () => {
     valid = false
   }
 
-  if (!salaryMax.value) {
+  if (salaryMax.value === '' || salaryMax.value == null) {
     errors.salaryMax = 'Maximum salary is required'
     valid = false
   } else if (isNaN(Number(salaryMax.value))) {
