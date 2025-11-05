@@ -5,6 +5,7 @@ import ConfirmBox from "./ComfirmBox.vue";
 import { api } from "../../api/client.js";
 import DateConverter from './dateConverter';
 import {useRouter} from "vue-router";
+import JobFull from "@/components/JobFull.vue";
 
 const props = defineProps<{
   companyInfo: CompanyTemplate,
@@ -88,7 +89,7 @@ onMounted(() => {
       <span class="text-gray-500">{{ date }}</span>
       <img src="../assets/newTab.svg" class="w-5 h-5 cursor-pointer" alt="new-tab-icon" @click.stop="goToCompany(true)"/>
       <div class="flex flex-row mt-auto space-x-6">
-        <button class="btn shadow-none bg-[#1F7AB9] border-0 h-8 rounded-4xl text-white text-md font-extralight px-7" @click="acceptCompany">Accept</button>
+        <button class="btn shadow-none bg-[#1F7AB9] border-0 h-8 rounded-4xl text-white text-md font-extralight px-7" @click.stop="acceptCompany">Accept</button>
         <button class="btn shadow-none bg-[#9A0000] border-0 h-8 rounded-4xl text-white text-md font-extralight px-7" @click="confirmBox.open()">Reject</button>
       </div>
     </div>
@@ -100,6 +101,7 @@ onMounted(() => {
     ></confirm-box>
 
   </div>
+
 </template>
 
 <style scoped>

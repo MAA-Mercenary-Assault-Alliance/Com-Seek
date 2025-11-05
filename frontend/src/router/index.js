@@ -32,6 +32,7 @@ const routes = [
   // Dashboards
   {
     path: "/hr-dashboard",
+    name: "HRDashboard",
     component: AppHR,
     meta: { requiresAuth: true, role: "company" },
   },
@@ -83,6 +84,12 @@ const routes = [
     meta: { requiresAuth: true, role: "company" },
   },
   {
+    path: "/edit-job/:id(\\d+)",
+    name: "EditJob",
+    component: AppJobCreation,
+    meta: { requiresAuth: true, role: "company" },
+  },
+  {
     path: "/applicants/:id",
     name: "Applicants",
     component: AppApplicants,
@@ -122,7 +129,8 @@ router.beforeEach(async (to, from, next) => {
     localStorage.removeItem("email");
     localStorage.removeItem("role");
 
-    next("/landing-page");
+    await router.push('/login');
+    return
   }
 
   if (to.meta.requiresAuth && !isAuthenticated) {

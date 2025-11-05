@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import { ref, watch, reactive} from 'vue'
+import {ref, watch, reactive, onMounted, computed} from 'vue'
 import ConfirmBoxGeneral from "@/components/ConfirmBoxGeneral.vue";
 import {marked} from "marked";
 import { api } from "../../api/client.js"
-import {useRouter} from "vue-router";
+import {useRouter, useRoute} from "vue-router";
 import SuccessBox from "@/components/SuccessBox.vue";
 
 const router = useRouter()
+const route = useRoute()
 const confirmBox = ref(null)
 const successBox = ref(null)
+const successBoxUpdate = ref(null)
+
+const id = computed(() => route.params.id || null) // company id for editing jobs
 
 const jobName = ref('')
 const employmentStatus = ref('')
@@ -79,7 +83,7 @@ const validateForm = () => {
   }
 
 // Salary validation
-  if (!salaryMin.value) {
+  if (salaryMin.value === '' || salaryMin.value == null) {
     errors.salaryMin = 'Minimum salary is required'
     valid = false
   } else if (isNaN(Number(salaryMin.value))) {
@@ -87,7 +91,7 @@ const validateForm = () => {
     valid = false
   }
 
-  if (!salaryMax.value) {
+  if (salaryMax.value === '' || salaryMax.value == null) {
     errors.salaryMax = 'Maximum salary is required'
     valid = false
   } else if (isNaN(Number(salaryMax.value))) {
@@ -177,12 +181,88 @@ const submitJob = async () => {
   }
 }
 
+async function getJob() {
+  try {
+    const res = await api.get(`/job/${id.value}`)
+    console.log("Got Job:", res.data)
+
+    const job = res.data.job
+    jobName.value = job.Title
+    employmentStatus.value = job.EmploymentStatus
+    location.value = job.Location
+    salaryMin.value = job.MinSalary
+    salaryMax.value = job.MaxSalary
+    expMin.value = job.MinExperience
+    expMax.value = job.MaxExperience
+    jobType.value = job.JobType
+    jobDesc.value = job.Description
+    return
+  } catch (error) {
+    console.error("Error getting job:", error.response.data)
+
+    // If invalid job ID, go back
+    if (error.response && error.response.data.error == "Invalid ID" || error.response.data.error == "record not found") {
+      router.back();
+      alert("Invalid Job ID")
+      return
+    }
+    alert("Error getting your job. Please try again later.")
+  }
+}
+
+async function updateJob() {
+  try {
+
+    if (!validateForm()) {
+      alert("Please fix the errors in the form")
+      return
+    }
+
+    const payload = {
+      title: jobName.value,
+      location: location.value,
+      job_type: jobType.value,
+      employment_status: employmentStatus.value,
+      min_salary: Number(salaryMin.value),
+      max_salary: Number(salaryMax.value),
+      min_experience: Number(expMin.value),
+      max_experience: Number(expMax.value),
+      description: jobDesc.value
+    }
+    const res = await api.patch(`/job/${id.value}`,
+      payload
+    )
+    console.log("Updating Job With Data:", payload)
+    console.log("Updated Job:", res.data)
+    successBoxUpdate.value.open()
+
+    setTimeout(() => {
+      router.back();
+    }, 2000);
+    return
+  } catch (error) {
+    alert("Error getting your job. Please try again later.")
+    console.error("Error getting job:", error)
+  }
+}
+
+onMounted(() => {
+  if (id.value) {
+    getJob()
+  }
+})
+
+watch(id, () => {
+  getJob()
+})
+
 </script>
 
 <template>
   <div class="flex flex-col w-full space-y-10 2xl:px-60 lg:px-42">
     <div class="flex w-full h-40 items-center">
-      <span class="text-black text-5xl font-bold">Create a Job</span>
+      <span v-if="!id" class="text-black text-5xl font-bold">Create a Job</span>
+      <span v-else class="text-black text-5xl font-bold">Edit a Job</span>
     </div>
 
     <div id="input-field">
@@ -241,7 +321,7 @@ const submitJob = async () => {
 
         <div class="job-input-box">
           <div class="title-and-error-box">
-            <span class="text-xl">Employment Status</span>
+            <span class="text-xl">Job Type</span>
             <label v-if="errors.jobType" class="text-red-500 text-sm">{{ errors.jobType }}</label>
           </div>
           <select v-model="jobType" class="input-select">
@@ -260,11 +340,12 @@ const submitJob = async () => {
         </div>
 
         <div class="job-input-box">
-          <div>
+          <div class="space-y-3">
             <div class="title-and-error-box">
               <span class="text-xl">Experience Range</span>
-              <span class="text-xl text-gray-400"> [Year] *leave empty if require no experience</span>
+              <span class="text-xl text-gray-400"> Year</span>
             </div>
+            <span class="text-gray-400">leave empty if require no experience</span>
             <div v-if="errors.expMin || errors.expMax" class="flex space-x-5 mt-3">
               <span v-if="errors.expMin" class="text-red-500 text-sm">{{ errors.expMin }}</span>
               <span v-if="errors.expMax" class="text-red-500 text-sm">{{ errors.expMax }}</span>
@@ -328,7 +409,8 @@ const submitJob = async () => {
       </div>
 
       <div class="flex flex-row space-x-10 mt-10 pb-20">
-        <button class="btn shadow-none border-0 h-15 rounded-3xl text-white text-lg font-extralight px-7 bg-[#44B15B]" @click="submitJob ">Confirm</button>
+        <button v-if="!id" class="btn shadow-none border-0 h-15 rounded-3xl text-white text-lg font-extralight px-7 bg-[#44B15B]" @click="submitJob">Confirm</button>
+        <button v-else class="btn shadow-none border-0 h-15 rounded-3xl text-white text-lg font-extralight px-7 bg-[#44B15B]" @click="updateJob">Confirm</button>
         <button class="btn shadow-none  border-0 h-15 rounded-3xl text-white text-lg font-extralight px-7 bg-gray-300" @click="confirmBox.open()">Cancel</button>
       </div>
 
@@ -342,6 +424,11 @@ const submitJob = async () => {
       <success-box
           ref="successBox"
           :message="'The job has been created successfully!'"
+      ></success-box>
+
+      <success-box
+          ref="successBoxUpdate"
+          :message="'Updated job successfully!'"
       ></success-box>
 
     </div>
