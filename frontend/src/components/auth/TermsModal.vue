@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center">
+    <div v-if="show" id="terms-modal" class="fixed inset-0 z-50 flex items-center justify-center">
       <!-- Backdrop -->
       <div class="absolute inset-0 bg-black/50" @click="onClose"></div>
 
@@ -18,6 +18,7 @@
 
         <!-- Scrollable Content -->
         <div
+            id="terms-scroll-area"
           ref="scrollArea"
           class="px-6 py-4 max-h-[60vh] overflow-y-auto space-y-4 leading-relaxed text-sm text-gray-800"
           @scroll="checkScrolledToBottom"
@@ -187,6 +188,7 @@
           <div class="ml-auto flex gap-2">
             <button class="btn btn-ghost" @click="onClose">Cancel</button>
             <button
+                id="accept-terms"
               class="btn bg-[#56A45C] text-white hover:bg-[#44B15B]"
               :disabled="!canAccept"
               @click="onAccept"

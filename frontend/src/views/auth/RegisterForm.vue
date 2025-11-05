@@ -134,6 +134,7 @@
         <!-- Submit -->
         <div class="form-control mt-4 flex justify-center">
           <button
+              id="register-button"
             type="submit"
             class="btn bg-[#56A45C] text-white hover:bg-[#44B15B] w-full"
             :disabled="loading"
