@@ -37,7 +37,7 @@ onMounted(() => {
     <div class="flex bg-title w-full h-40 px-42 items-center">
       <span class="text-white text-5xl font-bold">Applicants</span>
     </div>
-    <div v-if="!isLoading && job" class="flex flex-row w-full xl:px-42 bg-[#f2f6fc] space-x-5 xl:space-x-20 pb-20">
+    <div v-if="!isLoading && job" class="flex flex-row w-full xl:px-42 bg-background space-x-5 xl:space-x-20 pb-20">
       <JobFull :job-info="job" :h-r="true"/>
       <ApplicantsColumn v-if="applicants" :applicants="applicants" @refresh="findThisJob"/>
       <div v-else class="flex flex-col flex-grow w-1/3 justify-center items-center h-60 text-2xl mt-20 text-gray-500 space-y-5">

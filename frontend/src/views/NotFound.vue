@@ -1,6 +1,6 @@
 <template>
   <section
-    class="min-h-screen flex flex-col items-center justify-center text-center bg-gradient-to-b from-[#F2F6FC] via-white to-[#F2F6FC] text-[#0A3B1F]"
+    class="min-h-screen flex flex-col items-center justify-center text-center bg-gradient-to-b bg-background text-[#0A3B1F]"
   >
     <div class="max-w-md">
       <h1 class="text-8xl font-extrabold text-[#56A45C] mb-4">404</h1>

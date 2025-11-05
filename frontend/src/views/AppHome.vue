@@ -59,7 +59,10 @@ console.log("SelectedJob: ", selectedJob)
 
 <template>
   <div class="flex flex-grow flex-col w-full">
-    <div class="flex bg-title w-full h-40">
+    <div
+        class="flex bg-title w-full h-40"
+        style="background-image: url('/images/banner.png');"
+    >
       <div class="flex px-42 w-full flex-col justify-center items-center space-y-7 text-xl">
         <div class="text-white min-w-300 w-1/2">
           Search for your jobs now
@@ -101,7 +104,7 @@ console.log("SelectedJob: ", selectedJob)
       <span>Jobs not Found</span>
     </div>
 
-    <div v-if="!isLoading && jobs.length>0" class="flex w-full flex-row px-42 py-10 bg-[#f2f6fc] space-x-20 scroll">
+    <div v-if="!isLoading && jobs.length>0" class="flex w-full flex-row px-42 py-10 bg-background space-x-20 scroll">
 
       <div id="job-box-column" class="flex w-1/3 flex-col space-y-5 mr-10">
         <JobBox v-for="job in jobs" :key=job.ID :jobInfo=job :h-r="false" @click="selectedJob=job"/>
