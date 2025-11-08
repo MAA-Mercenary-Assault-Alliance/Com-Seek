@@ -52,7 +52,7 @@ function goToJob() {
 onMounted(() => {
   console.log("JobINFO:", props.jobInfo);
   date.value = DateConverter(props.jobInfo.CreatedAt) || "";
-  company_logo_url.value = getFileUrl(props.jobInfo.Company?.ProfileImageID, DEFAULT_AVATAR)
+  company_logo_url.value = getFileUrl(props.jobInfo.Company?.profile_image_id, DEFAULT_AVATAR)
 });
 </script>
 
