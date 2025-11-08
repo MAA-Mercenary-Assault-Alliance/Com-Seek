@@ -33,7 +33,7 @@ function daysAgo(dateString: string): number {
 
 onMounted(() => {
   day.value = daysAgo(props.jobInfo.CreatedAt)
-  company_logo_url.value = getFileUrl(props.jobInfo.Company?.ProfileImageID, DEFAULT_AVATAR)
+  company_logo_url.value = getFileUrl(props.jobInfo.Company?.profile_image_id, DEFAULT_AVATAR)
   console.log("Company Logo URL:", company_logo_url.value)
   // applied.value = props.jobInfo.Applications ? props.jobInfo.Applications.length : 0
   // new_app.value = props.jobInfo.Applications ? props.jobInfo.Applications.filter((app) => {

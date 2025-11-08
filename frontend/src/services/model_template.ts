@@ -38,8 +38,8 @@ export interface JobTemplate {
         Location: string;
         Description: string;
         Approved: boolean;
-        ProfileImageID?: string | null;
-        CoverImageID?: string | null;
+        profile_image_id?: string | null;
+        cover_image_id?: string | null;
         Jobs: JobTemplate[] | null;
     };
     Location: string;

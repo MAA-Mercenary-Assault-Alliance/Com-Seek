@@ -55,15 +55,18 @@ async function applyJob() {
     if (fileInput.value) {
       fileInput.value.value = "";
     }
-
     return;
   } catch (error) {
-    console.error("Error applying to job:", error.response.data);
-    close();
-    if (error.response.data.error == "job application already exists") {
-      alert("You have already applied to this job.");
+    if (error.response) {
+      console.error("Error applying to job:", error.response.data);
+      close();
+      if (error.response.data.error == "job application already exists") {
+        alert("You have already applied to this job.");
+      } else {
+        alert("Error applying to job. Please try again later.");
+      }
     } else {
-      alert("Error applying to job. Please try again later.");
+      console.error("Error applying to job:", error);
     }
   }
 }
