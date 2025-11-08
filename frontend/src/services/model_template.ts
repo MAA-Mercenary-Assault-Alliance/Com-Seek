@@ -38,6 +38,8 @@ export interface JobTemplate {
         Location: string;
         Description: string;
         Approved: boolean;
+        ProfileImageID?: string | null;
+        CoverImageID?: string | null;
         Jobs: JobTemplate[] | null;
     };
     Location: string;
@@ -57,7 +59,6 @@ export interface JobTemplate {
 
 export interface CompanyTemplate {
     UserID: number;
-    CreatedAt: string;
     Name: string;
     Website: string;
     ContactEmail: string;
@@ -65,8 +66,12 @@ export interface CompanyTemplate {
     Location: string;
     Description: string;
     Approved: boolean;
-    Jobs: any; // or a specific type if you define a Job interface later
+    profile_image_id?: string | null;
+    cover_image_id?: string | null;
+    Jobs: any[]; // replace 'any' with Job[] if you define a Job interface later
+    CreatedAt?: string; // optional if provided by backend
 }
+
 
 
 export interface StudentTemplate {
@@ -90,6 +95,8 @@ export interface StudentTemplate {
     Facebook: string;
     Instagram: string;
     Twitter: string;
+    profile_image_id?: string | null;
+    cover_image_id?: string | null;
     JobApplication: any; // or a specific type if you know its structure
 }
 
