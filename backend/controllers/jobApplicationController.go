@@ -3,9 +3,12 @@ package controllers
 import (
 	"com-seek/backend/models"
 	"com-seek/backend/services"
+	"io"
+	"mime/multipart"
 	"net/http"
 	"strconv"
 
+	"github.com/gabriel-vasile/mimetype"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -24,7 +27,8 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 
 	type CreateJobApplicationInput struct {
-		JobID uint `json:"job_id" binding:"required"`
+		JobID uint                  `form:"job_id" binding:"required"`
+		File  *multipart.FileHeader `form:"file" binding:"required"`
 	}
 
 	student := models.Student{
@@ -43,7 +47,7 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 
 	var input CreateJobApplicationInput
 
-	if err := c.ShouldBindJSON(&input); err != nil {
+	if err := c.ShouldBind(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -65,6 +69,27 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 	jobApplication := models.JobApplication{
 		StudentID: student.UserID,
 		JobID:     job.ID,
+	}
+
+	file, err := input.File.Open()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to open attachment file"})
+		return
+	}
+	defer file.Close()
+
+	buffer := make([]byte, 512)
+	_, err = file.Read(buffer)
+	if err != nil && err != io.EOF {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to read file"})
+		return
+	}
+
+	mime := mimetype.Detect(buffer)
+
+	if mime.String() != "application/pdf" && mime.String() != "application/x-pdf" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "only PDF files are allowed"})
+		return
 	}
 
 	tx := jc.DB.Begin()
@@ -90,10 +115,11 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 		" has applied to your job posting: " +
 		jobApplication.Job.Title)
 
-	if err := services.SendEmail(
+	if err := services.SendEmailWithAttachment(
 		jobApplication.Job.Company.User.Email,
 		subject,
-		body); err != nil {
+		body,
+		input.File); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

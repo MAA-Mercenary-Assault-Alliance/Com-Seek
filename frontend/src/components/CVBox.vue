@@ -1,10 +1,10 @@
 <script setup lang="ts">
 // @ts-nocheck
-import {onMounted, ref, defineEmits} from 'vue'
-import {api} from "../../api/client";
+import { onMounted, ref } from "vue";
+import { api } from "../../api/client";
 const props = defineProps({ jobID: Number });
 
-const dialog = ref(null)
+const dialog = ref(null);
 
 function open() {
   dialog.value.showModal();
@@ -15,48 +15,80 @@ function close() {
 }
 
 defineExpose({ open, close });
-const emit = defineEmits("success")
+const emit = defineEmits("success");
 
-const role = ref(localStorage.getItem('role'));
+const role = ref(localStorage.getItem("role"));
 onMounted(() => {
-  window.addEventListener('storage', () => {
-    role.value = localStorage.getItem('role');
+  window.addEventListener("storage", () => {
+    role.value = localStorage.getItem("role");
   });
 });
 
-const fileInput = ref(null)
-const selectedFile = ref(null)
+const fileInput = ref(null);
+const selectedFile = ref(null);
 
 async function applyJob() {
-  if (role.value !== 'student') {
-    alert("Only students can apply to jobs.")
-    return
+  if (role.value !== "student") {
+    alert("Only students can apply to jobs.");
+    return;
   }
-  try {
-    console.log("This job id:", props.jobID)
-    const res = await api.post("/job/apply", {
-      job_id: Number(props.jobID)
-    })
-    console.log("Applied to job:", res.data)
-    emit("success")
 
-    return
+  if (!selectedFile.value) {
+    alert("Please upload your CV/Resume (PDF) before applying.");
+    return;
+  }
+
+  try {
+    console.log("Applying for job ID:", props.jobID);
+
+    const fd = new FormData();
+
+    fd.append("job_id", String(props.jobID));
+    fd.append("file", selectedFile.value);
+
+    const res = await api.post("/job/apply", fd);
+
+    console.log("Applied to job:", res.data);
+    emit("success");
+
+    selectedFile.value = null;
+    if (fileInput.value) {
+      fileInput.value.value = "";
+    }
+
+    return;
   } catch (error) {
-    console.error("Error applying to job:", error.response.data)
-    close()
+    console.error("Error applying to job:", error.response.data);
+    close();
     if (error.response.data.error == "job application already exists") {
-      alert("You have already applied to this job.")
+      alert("You have already applied to this job.");
     } else {
-      alert("Error applying to job. Please try again later.")
+      alert("Error applying to job. Please try again later.");
     }
   }
 }
 
 function handleFileUpload(event) {
-  const file = event.target.files[0] // take the first selected file
+  const file = event.target.files[0]; // take the first selected file
   if (file) {
-    selectedFile.value = file
-    console.log('Selected file:', file)
+    if (file.type !== "application/pdf") {
+      alert("Please upload a PDF file.");
+      event.target.value = ""; // Clear file input
+      selectedFile.value = null;
+      return;
+    }
+
+    const MAX_SIZE_MB = 10;
+
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+      alert(`File size exceeds the limit of ${MAX_SIZE_MB}MB.`);
+      event.target.value = "";
+      selectedFile.value = null;
+      return;
+    }
+
+    selectedFile.value = file;
+    console.log("Selected file:", file);
   }
 }
 </script>
@@ -69,34 +101,37 @@ function handleFileUpload(event) {
         <div class="relative inline-flex items-center">
           <!-- Hidden file input -->
           <input
-              ref="fileInput"
-              type="file"
-              accept=".pdf"
-              @change="handleFileUpload"
-              class="absolute w-0 h-0 opacity-0 overflow-hidden"
+            ref="fileInput"
+            type="file"
+            accept=".pdf"
+            @change="handleFileUpload"
+            class="absolute w-0 h-0 opacity-0 overflow-hidden"
           />
 
           <!-- Styled button -->
           <button
-              type="button"
-              @click="fileInput.click()"
-              class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+            type="button"
+            @click="fileInput.click()"
+            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
           >
             <!-- @click is as if we click on the hidden fileInput above -->
             Upload PDF
           </button>
 
           <!-- Display selected file name -->
-          <span v-if="selectedFile" class="ml-2 text-gray-700">{{ selectedFile.name }}</span>
+          <span v-if="selectedFile" class="ml-2 text-gray-700">{{
+            selectedFile.name
+          }}</span>
         </div>
 
-        <button class="btn shadow-none border-0 h-10 w-30 rounded-md text-white text-md font-extralight px-7 disabled:bg-gray-200 bg-lighter"
-                :disabled="!selectedFile"
-                @click="applyJob">
+        <button
+          class="btn shadow-none border-0 h-10 w-30 rounded-md text-white text-md font-extralight px-7 disabled:bg-gray-200 bg-lighter"
+          :disabled="!selectedFile"
+          @click="applyJob"
+        >
           Apply
         </button>
       </div>
-
     </div>
     <form method="dialog" class="modal-backdrop">
       <button>close</button>
@@ -104,6 +139,4 @@ function handleFileUpload(event) {
   </dialog>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

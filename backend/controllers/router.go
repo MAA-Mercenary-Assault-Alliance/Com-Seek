@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"com-seek/backend/config"
 	"com-seek/backend/middlewares"
 
 	"github.com/gin-contrib/cors"
@@ -8,25 +9,29 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewRouter(db *gorm.DB) *gin.Engine {
+func NewRouter(db *gorm.DB, fileConfig config.FileConfig) *gin.Engine {
 	router := gin.Default()
 
 	corsConfig := middlewares.SetupCors()
 	router.Use(cors.New(corsConfig))
 
-	authController := NewAuthController(db)
-	studentController := NewStudentController(db)
-	companyController := NewCompanyController(db)
+	fileController := NewFileController(db, fileConfig)
+	authController := NewAuthController(db, fileController)
+	studentController := NewStudentController(db, fileController)
+	companyController := NewCompanyController(db, fileController)
 	jobController := NewJobController(db)
 	JobApplicationController := NewJobApplicationController(db)
 	adminController := NewAdminController(db)
 
 	authGroup := router.Group("/auth")
-	authGroup.POST("/register", authController.CreateUser)
+	authGroup.POST("/register/student", authController.RegisterStudent)
+	authGroup.POST("/register/company", authController.RegisterCompany)
 	authGroup.POST("/login", authController.Login)
 	authGroup.POST("/logout", middlewares.CheckAuth, authController.Logout)
 
 	requiredLogin := router.Group("/", middlewares.CheckAuth)
+
+	requiredLogin.GET("/file/:uuid", fileController.ServeFile)
 
 	student := requiredLogin.Group("/student")
 	student.GET("", studentController.GetStudentProfile)
