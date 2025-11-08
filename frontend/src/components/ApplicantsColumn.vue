@@ -13,7 +13,7 @@ function onEmit() {
 </script>
 
 <template>
-  <div class="flex flex-col w-1/3 space-y-5">
+  <div class="flex flex-col w-1/3 space-y-4">
     <Applicant v-for="applicant in applicants" :key="applicant.id" :applicant="applicant" @refresh="onEmit"/>
   </div>
 </template>
