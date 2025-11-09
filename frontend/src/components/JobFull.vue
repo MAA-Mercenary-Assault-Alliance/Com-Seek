@@ -12,7 +12,8 @@ import {getFileUrl} from "@/services/fileUpload";
 
 const props = defineProps<{
   jobInfo: JobTemplate,
-  hR: boolean
+  hR: boolean,
+  verified: boolean
 }>();
 
 const router = useRouter();
@@ -68,6 +69,10 @@ function goToEdit() {
   router.push({ name: 'EditJob', params: {id: props.jobInfo.ID}})
 }
 
+function alertNotVerified() {
+  alert("Your student profile is not verified. You cannot apply for jobs.")
+}
+
 onMounted(() => {
   company_logo_url.value = getFileUrl(props.jobInfo.Company?.profile_image_id, DEFAULT_AVATAR)
 })
@@ -83,7 +88,8 @@ onMounted(() => {
         <span class="underline">{{ jobInfo.Title }}</span>
       </div>
       <div class="flex flex-col ml-auto">
-        <button v-if="role === 'student'" class="btn shadow-none bg-[#44b15b] border-0 h-12 rounded-2xl text-white text-xl font-extralight ml-auto mt-6" @click="cvBox.open()">Apply Now</button>
+        <button v-if="role === 'student' && verified" class="btn shadow-none bg-[#44b15b] border-0 h-12 rounded-2xl text-white text-xl font-extralight ml-auto mt-6" @click="cvBox.open()">Apply Now</button>
+        <button v-if="role === 'student' && !verified" class="btn shadow-none bg-gray-200 border-0 h-12 rounded-2xl text-white text-xl font-extralight ml-auto mt-6" @click="alertNotVerified">Apply Now</button>
         <button v-if="role === 'company' && hR" class="btn shadow-none bg-[#DB0000] border-0 h-18 w-45 rounded-4xl text-white text-2xl font-extralight ml-auto mt-6" @click="confirmBox.open()">Terminate</button>
         <button v-if="role === 'company' && hR" class="btn shadow-none bg-[#44b15b] border-0 h-18 w-45 rounded-4xl text-white text-2xl font-extralight ml-auto mt-6" @click="goToEdit">Edit Job</button>
       </div>

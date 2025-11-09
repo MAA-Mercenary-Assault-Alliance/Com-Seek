@@ -13,6 +13,7 @@ const jobType = ref('')
 const location = ref('')
 const isLoading = ref(true)
 const selectedJob = ref(null) // need to pass this value to JobBoard
+const verified = ref(false)
 
 watch(keyword, (newVal) => {
   console.log('keyword changed:', newVal)
@@ -49,8 +50,19 @@ async function findJobs() {
   }
 }
 
+async function getMyStatus() {
+  try {
+    const res = await api.get("/student")
+    console.log("User status:", res.data.profile.approved)
+    verified.value = res.data.profile.approved
+  } catch (error) {
+    console.error("Error fetching user status:", error)
+  }
+}
+
 onMounted(() => {
   findJobs();
+  getMyStatus();
 });
 
 console.log("SelectedJob: ", selectedJob)
@@ -112,7 +124,7 @@ console.log("SelectedJob: ", selectedJob)
 
       <div class="relative w-2/3">
         <div class="flex sticky top-10">
-        <JobFull v-if="selectedJob" :job-info="selectedJob"/>
+        <JobFull v-if="selectedJob" :job-info="selectedJob" :h-r="false" :verified="verified"/>
         <JobFullEmpty v-if="!selectedJob"/>
         </div>
       </div>

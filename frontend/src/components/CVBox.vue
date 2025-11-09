@@ -50,16 +50,16 @@ async function applyJob() {
 
     console.log("Applied to job:", res.data);
     emit("success");
-
+    close();
     selectedFile.value = null;
     if (fileInput.value) {
       fileInput.value.value = "";
     }
     return;
   } catch (error) {
+    close();
     if (error.response) {
       console.error("Error applying to job:", error.response.data);
-      close();
       if (error.response.data.error == "job application already exists") {
         alert("You have already applied to this job.");
       } else {
