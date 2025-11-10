@@ -47,6 +47,7 @@ type JobApplicationResponse struct {
 	JobID            uint                    `json:"job_id"`
 	Title            string                  `json:"job_title"`
 	Name             string                  `json:"company_name"`
+	ProfileImageID   string                  `json:"company_profile_image_id"`
 	Location         string                  `json:"job_location"`
 	JobType          models.JobType          `json:"job_type"`
 	EmploymentStatus models.EmploymentStatus `json:"job_employment_status"`
@@ -111,7 +112,7 @@ func (sc *StudentController) GetStudentProfile(c *gin.Context) {
 			Joins("LEFT JOIN jobs ON jobs.id = job_applications.job_id").
 			Joins("LEFT JOIN companies ON jobs.company_id = companies.user_id").
 			Where("student_id = ?", studentRes.UserID).
-			Select("job_applications.*, jobs.*, companies.name").
+			Select("job_applications.*, jobs.*, companies.name, companies.profile_image_id").
 			Scan(&jobApplications).
 			Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
