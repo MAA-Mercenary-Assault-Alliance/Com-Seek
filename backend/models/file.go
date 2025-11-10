@@ -24,6 +24,7 @@ const (
 	FileCategoryProfile    FileCategory = "profile"
 	FileCategoryCover      FileCategory = "cover"
 	FileCategoryTranscript FileCategory = "transcript"
+	FileCategoryCV         FileCategory = "cv"
 )
 
 type File struct {
