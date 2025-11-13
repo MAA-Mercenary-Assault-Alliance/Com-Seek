@@ -64,7 +64,7 @@ func ValidateAndGetExtension(
 	}
 
 	switch fileCategory {
-	case models.FileCategoryTranscript:
+	case models.FileCategoryTranscript, models.FileCategoryCV:
 		if !supportedDocExtension[extension] {
 			return false, "", fmt.Errorf("unsupported document file type: %s", extension)
 		}

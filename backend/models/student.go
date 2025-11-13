@@ -18,6 +18,8 @@ type Student struct {
 	CoverImageID   *string          `gorm:"type:char(36);default:null" json:"cover_image_id"`
 	CoverImage     File             `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignKey:CoverImageID" json:"-"`
 	TranscriptID   string           `gorm:"type:char(36)" json:"transcript_id"`
+	CVID           *string          `gorm:"type:char(36);default:null" json:"cv_id"`
+	CV             File             `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignKey:CVID" json:"-"`
 	Transcript     File             `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignKey:TranscriptID" json:"-"`
 	JobApplication []JobApplication `json:"-"`
 }
