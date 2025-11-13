@@ -171,12 +171,13 @@ func (jc *JobController) GetJob(c *gin.Context) {
 	}
 
 	type JobApplicantResponse struct {
-		ID        uint   `json:"id"`
-		StudentID uint   `json:"student_id"`
-		FirstName string `json:"first_name"`
-		LastName  string `json:"last_name"`
-		IsAlum    bool   `json:"is_alum"`
-		CreatedAt string `json:"created_at"`
+		ID             uint   `json:"id"`
+		StudentID      uint   `json:"student_id"`
+		FirstName      string `json:"first_name"`
+		LastName       string `json:"last_name"`
+		IsAlum         bool   `json:"is_alum"`
+		CreatedAt      string `json:"created_at"`
+		ProfileImageID string `json:"profile_image_id"`
 	}
 
 	if job.CompanyID == userID {

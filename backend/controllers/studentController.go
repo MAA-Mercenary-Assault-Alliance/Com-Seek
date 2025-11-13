@@ -39,6 +39,7 @@ type StudentResponse struct {
 	ProfileImageID string `json:"profile_image_id"`
 	CoverImageID   string `json:"cover_image_id"`
 	TranscriptID   string `json:"transcript_id"`
+	CVID           string `json:"cv_id"`
 }
 
 type JobApplicationResponse struct {
@@ -46,6 +47,7 @@ type JobApplicationResponse struct {
 	JobID            uint                    `json:"job_id"`
 	Title            string                  `json:"job_title"`
 	Name             string                  `json:"company_name"`
+	ProfileImageID   string                  `json:"company_profile_image_id"`
 	Location         string                  `json:"job_location"`
 	JobType          models.JobType          `json:"job_type"`
 	EmploymentStatus models.EmploymentStatus `json:"job_employment_status"`
@@ -110,7 +112,7 @@ func (sc *StudentController) GetStudentProfile(c *gin.Context) {
 			Joins("LEFT JOIN jobs ON jobs.id = job_applications.job_id").
 			Joins("LEFT JOIN companies ON jobs.company_id = companies.user_id").
 			Where("student_id = ?", studentRes.UserID).
-			Select("job_applications.*, jobs.*, companies.name").
+			Select("job_applications.*, jobs.*, companies.name, companies.profile_image_id").
 			Scan(&jobApplications).
 			Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -142,6 +144,7 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 		Twitter      *string               `form:"twitter" binding:"omitempty,max=256"`
 		ProfileImage *multipart.FileHeader `form:"profile_image"`
 		CoverImage   *multipart.FileHeader `form:"cover_image"`
+		CV           *multipart.FileHeader `form:"cv"`
 	}
 
 	var input StudentProfileInput
@@ -160,7 +163,7 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 		return
 	}
 
-	var oldProfileImageID, oldCoverImageID string
+	var oldProfileImageID, oldCoverImageID, oldCVID string
 
 	if student.ProfileImageID != nil {
 		oldProfileImageID = *student.ProfileImageID
@@ -233,6 +236,20 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 		*student.CoverImageID = cover.ID
 	}
 
+	if input.CV != nil {
+		cover, err := sc.fileController.SaveFile(c, userID, input.CV, models.FileCategoryCV)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		if student.CVID == nil {
+			student.CVID = new(string)
+		}
+
+		*student.CVID = cover.ID
+	}
+
 	res := sc.DB.Save(&student)
 	if res.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": res.Error.Error()})
@@ -245,6 +262,10 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 
 	if oldCoverImageID != "" && oldCoverImageID != *student.CoverImageID {
 		go helpers.DeleteFileRecord(sc.DB, oldCoverImageID)
+	}
+
+	if oldCVID != "" && oldCVID != *student.CVID {
+		go helpers.DeleteFileRecord(sc.DB, oldCVID)
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "successfully updated the profile"})
