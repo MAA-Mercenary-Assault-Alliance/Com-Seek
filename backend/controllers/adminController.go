@@ -156,18 +156,19 @@ func (ac *AdminController) GetPendingStudents(c *gin.Context) {
 	var responses []models.StudentResponse
 	for _, c := range students {
 		responses = append(responses, models.StudentResponse{
-			UserID:      c.UserID,
-			CreatedAt:   c.User.CreatedAt,
-			FirstName:   c.FirstName,
-			LastName:    c.LastName,
-			Description: c.Description,
-			IsAlum:      c.IsAlum,
-			Approved:    c.Approved,
-			GitHub:      c.GitHub,
-			LinkedIn:    c.LinkedIn,
-			Facebook:    c.Facebook,
-			Instagram:   c.Instagram,
-			Twitter:     c.Twitter,
+			UserID:         c.UserID,
+			CreatedAt:      c.User.CreatedAt,
+			FirstName:      c.FirstName,
+			LastName:       c.LastName,
+			Description:    c.Description,
+			IsAlum:         c.IsAlum,
+			Approved:       c.Approved,
+			GitHub:         c.GitHub,
+			LinkedIn:       c.LinkedIn,
+			Facebook:       c.Facebook,
+			Instagram:      c.Instagram,
+			Twitter:        c.Twitter,
+			ProfileImageID: c.ProfileImageID,
 		})
 	}
 

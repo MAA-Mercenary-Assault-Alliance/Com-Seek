@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { TE_Info } from './temp_template'
+import { TE_Info } from '../services/model_template'
 import JobBox from "./JobBox.vue";
 import JobFull from "./JobFull.vue";
 

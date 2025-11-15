@@ -48,16 +48,10 @@ import { api } from "../../api/client.js";
 import ProfileHeader from "../components/student/ProfileHeader.vue";
 import ProfileDetails from "../components/student/ProfileDetails.vue";
 import EditProfileModal from "../components/student/EditProfileModal.vue";
+import {getFileUrl} from "@/services/fileUpload.js";
 
 const DEFAULT_AVATAR = "/images/avatar.png";
 const DEFAULT_COVER = "/images/student_cover.png";
-
-function getFileUrl(fileId, defaultUrl) {
-  if (fileId) {
-    return `${api.defaults.baseURL}/file/${fileId}`;
-  }
-  return defaultUrl;
-}
 
 export default {
   name: "StudentProfile",

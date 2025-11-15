@@ -20,7 +20,7 @@ defineExpose({ open, close });
 
 <template>
   <dialog ref="dialog" class="modal">
-    <div class="modal-box p-0 max-w-none w-2/3">
+    <div class="modal-box p-0 max-w-none w-2/3 my-20">
         <job-full :job-info="jobInfo"/>
     </div>
     <form method="dialog" class="modal-backdrop">

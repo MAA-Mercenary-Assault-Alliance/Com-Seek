@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import {StudentTemplate} from './temp_template'
+import {StudentTemplate} from '../services/model_template'
 import {onMounted, ref} from "vue";
 import { api } from "../../api/client.js";
 import ConfirmBox from "./ComfirmBox.vue";
-import DateConverter from "./dateConverter";
+import DateConverter from "../services/dateConverter";
 import { useRouter } from 'vue-router';
+import {getFileUrl} from "@/services/fileUpload";
 const props = defineProps<{
   studentInfo: StudentTemplate,
 }>();
@@ -13,6 +14,8 @@ const confirmBox = ref(null);
 const emit = defineEmits(["refresh"]);
 const date = ref()
 const router = useRouter();
+const DEFAULT_AVATAR = "/images/avatar.png";
+const student_logo_url = ref("");
 
 async function rejectStudent() {
   try {
@@ -50,13 +53,14 @@ function gotoStudent(newTab: boolean = false) {
 
 onMounted(() => {
   date.value = DateConverter(props.studentInfo.CreatedAt);
+  student_logo_url.value = getFileUrl(props.studentInfo.profile_image_id, DEFAULT_AVATAR)
 })
 </script>
 
 <template>
   <div id="student-box" class="flex relative rounded-2xl flex-row p-4 space-x-7 box-shadow bg-white" @click="gotoStudent(false)">
     <div class="items-center flex-shrink-0">
-      <img src="/nagi.png" class="w-30 h-30 rounded-full ml-2" alt="company-logo"/>
+      <img :src=student_logo_url class="w-30 h-30 rounded-full ml-2" alt="company-logo"/>
     </div>
     <div id="student-box-content" class="flex mr-2 flex-col space-y-1.5 max-w-1/3">
       <span class="text-2xl">{{ studentInfo.FirstName }} {{ studentInfo.LastName }}</span>

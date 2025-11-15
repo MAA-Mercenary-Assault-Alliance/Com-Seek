@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import {onMounted, ref} from 'vue'
-import {CompanyTemplate} from './temp_template'
+import {CompanyTemplate} from '../services/model_template'
 import ConfirmBox from "./ComfirmBox.vue";
 import { api } from "../../api/client.js";
-import DateConverter from './dateConverter';
+import DateConverter from '../services/dateConverter';
 import {useRouter} from "vue-router";
 import JobFull from "@/components/JobFull.vue";
 

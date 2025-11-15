@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import DateConverter from "../components/dateConverter";
-import {ref} from "vue";
+import DateConverter from "../services/dateConverter";
+import {onMounted, ref} from "vue";
 import { api } from '../../api/client.js';
 import ConfirmBox from "./ComfirmBox.vue";
 import {useRouter} from "vue-router";
+import {getFileUrl} from "@/services/fileUpload";
 
 const props = defineProps({
   applicant: { type: Object, required: true }
@@ -21,6 +22,9 @@ const studentStatus = () => {
 
 const confirmBox = ref(null);
 const emit = defineEmits(["refresh"]);
+const date = ref("");
+const DEFAULT_AVATAR = "/images/avatar.png";
+const student_logo_url = ref("");
 
 async function deleteApplicant() {
   try {
@@ -36,13 +40,17 @@ function gotoStudent(studentID) {
   router.push({ name: 'StudentProfilePublic', params: {id: studentID}})
 }
 
-const date = DateConverter(props.applicant.created_at);
+onMounted(() => {
+  date.value = DateConverter(props.applicant.created_at);
+  student_logo_url.value = getFileUrl(props.applicant.profile_image_id, DEFAULT_AVATAR)
+})
+
 </script>
 
 <template>
   <div class="flex w-full cursor-pointer" @click="gotoStudent(applicant.student_id)">
     <div id="applicant-box" class="flex relative rounded-2xl flex-row p-4 pb-4 space-x-5 box-shadow bg-white w-full">
-      <img src="../assets/company.jpg" class="w-20 h-20 rounded-full" alt="company-logo"/>
+      <img :src=student_logo_url class="w-20 h-20 rounded-full" alt="company-logo"/>
       <div class="flex flex-col">
         <span>{{ applicant.first_name }} {{ applicant.last_name }}</span>
         <span class="text-gray-500">{{ studentStatus() }}</span>

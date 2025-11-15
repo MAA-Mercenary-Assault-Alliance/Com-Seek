@@ -19,6 +19,7 @@ async function findThisJob() {
     job.value = res.data.job
     applicants.value = res.data.applicants
     console.log("Fetched this job:", job.value)
+    console.log("Fetched applicants:", applicants.value)
   } catch (error) {
     console.error("Error fetching jobs:", error)
   } finally {
