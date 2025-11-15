@@ -39,7 +39,6 @@ onMounted(() => {
   // new_app.value = props.jobInfo.Applications ? props.jobInfo.Applications.filter((app) => {
   //   return daysAgo(app.CreatedAt) <= 7
   // }).length : 0
-  // TODO: Fix applied and new_app
 })
 
 </script>
@@ -81,8 +80,6 @@ onMounted(() => {
             class="text-xs px-2 py-1 rounded bg-gray-200 text-gray-700"
         >Hidden</span>
       </div>
-      <span class="text-gray-500">Applied: {{applied}}</span>
-      <span :class="new_app == 0 ? 'text-gray-500' : 'text-green-500'">New: {{new_app}}</span>
     </div>
   </div>
 </template>
