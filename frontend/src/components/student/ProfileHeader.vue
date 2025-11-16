@@ -59,12 +59,6 @@
           <i class="fa-brands fa-linkedin"></i>
         </a>
       </div>
-
-      <!-- (Optional date removed since script has no formatter) -->
-
-      <p class="text-gray-600 text-sm whitespace-pre-line mt-2">
-        {{ profile.bio || profile.description || '' }}
-      </p>
     </div>
 
     <!-- Spacer pushes gear right -->
