@@ -64,10 +64,14 @@
     <!-- Spacer pushes gear right -->
     <div class="ml-auto" v-if="canEdit">
       <button
-        class="p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary transition"
-        aria-label="Edit profile" title="Edit profile" @click="handleEdit"
+        class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#44B15B] transition"
+        aria-label="Edit profile"
+        title="Edit profile"
+        @click="handleEdit"
       >
-        <span class="material-icons text-3xl text-gray-600 hover:rotate-90 transition">settings</span>
+        <span class="material-icons text-3xl text-gray-600 hover:rotate-90 transition">
+          settings
+        </span>
       </button>
     </div>
   </div>
