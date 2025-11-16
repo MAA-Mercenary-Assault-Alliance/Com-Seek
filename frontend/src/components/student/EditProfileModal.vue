@@ -122,7 +122,7 @@
                   <input
                     ref="avatarFile"
                     type="file"
-                    accept="image/*"
+                    accept="image/png, image/jpeg, image/webp"
                     class="block w-full text-xs text-gray-700
                            file:mr-3 file:py-1.5 file:px-4
                            file:rounded-full file:border-0
@@ -165,7 +165,7 @@
                   <input
                     ref="coverFile"
                     type="file"
-                    accept="image/*"
+                    accept="image/png, image/jpeg, image/webp"
                     class="block w-full text-xs text-gray-700
                            file:mr-3 file:py-1.5 file:px-4
                            file:rounded-full file:border-0
