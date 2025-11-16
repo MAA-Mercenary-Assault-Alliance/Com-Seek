@@ -180,7 +180,7 @@
         </div>
 
         <div class="md:col-span-2 grid sm:grid-cols-2 gap-6">
-          <div>
+          <div class="space-y-5">
             <label class="label"
               ><span class="label-text text-[#0A3B1F]"
                 >Profile Image</span
@@ -210,30 +210,33 @@
           </div>
 
           <div>
-            <label class="label"
+            <div class="space-y-5">
+              <label class="label"
               ><span class="label-text text-[#0A3B1F]">Cover Image</span></label
-            >
-            <div class="flex items-start gap-4">
-              <div
-                class="w-28 h-16 overflow-hidden rounded-md bg-gray-100 flex items-center justify-center border border-gray-300 flex-shrink-0"
               >
-                <img
-                  v-if="coverImagePreview || info.cover_image_url"
-                  :src="coverImagePreview || info.cover_image_url"
-                  alt="Cover Preview"
-                  class="object-cover w-full h-full"
-                />
-                <i v-else class="fas fa-image text-xl text-gray-400"></i>
-              </div>
+              <div class="flex items-start gap-4">
+                <div
+                    class="w-28 h-16 overflow-hidden rounded-md bg-gray-100 flex items-center justify-center border border-gray-300 flex-shrink-0"
+                >
+                  <img
+                      v-if="coverImagePreview || info.cover_image_url"
+                      :src="coverImagePreview || info.cover_image_url"
+                      alt="Cover Preview"
+                      class="object-cover w-full h-full"
+                  />
+                  <i v-else class="fas fa-image text-xl text-gray-400"></i>
+                </div>
 
-              <input
-                type="file"
-                ref="coverImageFileInput"
-                class="file-input file-input-bordered w-full file-input-sm focus:outline-none focus:border-[#44B15B] focus:ring-2 focus:ring-[#44B15B]/30"
-                accept="image/*"
-                @change="onCoverImageChange"
-              />
+                <input
+                    type="file"
+                    ref="coverImageFileInput"
+                    class="file-input file-input-bordered w-full file-input-sm focus:outline-none focus:border-[#44B15B] focus:ring-2 focus:ring-[#44B15B]/30"
+                    accept="image/*"
+                    @change="onCoverImageChange"
+                />
+              </div>
             </div>
+
           </div>
         </div>
 

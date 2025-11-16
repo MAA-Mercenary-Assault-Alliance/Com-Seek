@@ -13,6 +13,7 @@ const jobType = ref('')
 const location = ref('')
 const isLoading = ref(true)
 const selectedJob = ref(null) // need to pass this value to JobBoard
+const verified = ref(false)
 
 watch(keyword, (newVal) => {
   console.log('keyword changed:', newVal)
@@ -49,8 +50,19 @@ async function findJobs() {
   }
 }
 
+async function getMyStatus() {
+  try {
+    const res = await api.get("/student")
+    console.log("User status:", res.data.profile.approved)
+    verified.value = res.data.profile.approved
+  } catch (error) {
+    console.error("Error fetching user status:", error)
+  }
+}
+
 onMounted(() => {
   findJobs();
+  getMyStatus();
 });
 
 console.log("SelectedJob: ", selectedJob)
@@ -99,12 +111,17 @@ console.log("SelectedJob: ", selectedJob)
 
     </div>
 
-    <div v-if="jobs.length==0" class="flex flex-col flex-grow -translate-y-10 w-full justify-center items-center h-60 text-2xl text-gray-500 space-y-5">
+    <div v-if="isLoading" class="flex flex-col flex-grow -translate-y-10 w-full justify-center items-center h-60 text-2xl text-gray-500 space-y-5">
+      <img src="../../src/assets/bubble-load.svg" class="w-40 mb-10" alt="loading-bubble"/>
+      <span>Loading Jobs...</span>
+    </div>
+
+    <div v-else-if="jobs.length==0" class="flex flex-col flex-grow -translate-y-10 w-full justify-center items-center h-60 text-2xl text-gray-500 space-y-5">
       <img src="../../src/assets/leaf2.svg" class="w-50" alt="leaf"/>
       <span>Jobs not Found</span>
     </div>
 
-    <div v-if="!isLoading && jobs.length>0" class="flex w-full flex-row px-42 py-10 bg-background space-x-20 scroll">
+    <div v-else-if="!isLoading && jobs.length>0" class="flex w-full flex-row px-42 py-10 bg-background space-x-20 scroll">
 
       <div id="job-box-column" class="flex w-1/3 flex-col space-y-5 mr-10">
         <JobBox v-for="job in jobs" :key=job.ID :jobInfo=job :h-r="false" @click="selectedJob=job"/>
@@ -112,7 +129,7 @@ console.log("SelectedJob: ", selectedJob)
 
       <div class="relative w-2/3">
         <div class="flex sticky top-10">
-        <JobFull v-if="selectedJob" :job-info="selectedJob"/>
+        <JobFull v-if="selectedJob" :job-info="selectedJob" :h-r="false" :verified="verified"/>
         <JobFullEmpty v-if="!selectedJob"/>
         </div>
       </div>

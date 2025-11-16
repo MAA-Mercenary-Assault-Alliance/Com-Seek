@@ -47,6 +47,7 @@ import { useRoute } from "vue-router";
 import ProfileHeader from "@/components/company/ProfileHeader.vue";
 import ProfileDetails from "@/components/company/ProfileDetails.vue";
 import JobsPanel from "@/components/company/JobsPanel.vue";
+import {getFileUrl} from "@/services/fileUpload.js";
 
 const route = useRoute();
 const profile = ref(null);
@@ -62,13 +63,6 @@ const selectedJob = ref(null);
 
 const DEFAULT_AVATAR = "/images/avatar.png";
 const DEFAULT_COVER = "/images/cover.png";
-
-function getFileUrl(fileId, defaultUrl) {
-  if (fileId) {
-    return `${api.defaults.baseURL}/file/${fileId}`;
-  }
-  return defaultUrl;
-}
 
 async function getCompanyProfile() {
   try {
