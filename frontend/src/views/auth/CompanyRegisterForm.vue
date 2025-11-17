@@ -141,6 +141,12 @@
           }}</label>
         </div>
 
+        <div
+          class="g-recaptcha flex justify-center"
+          ref="recaptchaContainer"
+          :data-sitekey="reCAPTCHASiteKey"
+        ></div>
+
         <!-- Submit -->
         <div class="form-control mt-4 flex justify-center">
           <button
@@ -192,7 +198,10 @@
 
 <script>
 import { api } from "../../../api/client";
+import { renderRecaptcha } from "../../services/reCAPTCHA";
 import { defineAsyncComponent } from "vue";
+
+const reCAPTCHASiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 
 export default {
   name: "CompanyRegister",
@@ -207,6 +216,7 @@ export default {
   emits: ["switch-to-login"],
   data() {
     return {
+      reCAPTCHASiteKey: reCAPTCHASiteKey,
       form: {
         companyName: "",
         location: "",
@@ -225,6 +235,9 @@ export default {
       showTos: false,
       continueAfterTos: false,
     };
+  },
+  mounted() {
+    renderRecaptcha(this.$refs.recaptchaContainer, this.reCAPTCHASiteKey);
   },
   methods: {
     validateEmail(email) {
@@ -282,6 +295,8 @@ export default {
           location: this.form.location,
           contact_email: this.form.contactEmail,
           contact_number: this.form.contactNumber,
+          // eslint-disable-next-line no-undef
+          recaptcha_response: grecaptcha.getResponse(),
         };
 
         await api.post("/auth/register/company", body);

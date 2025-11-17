@@ -139,6 +139,19 @@ func (ac *AuthController) RegisterCompany(c *gin.Context) {
 		return
 	}
 
+	if err := services.VerifyRecaptchaToken(input.ReCAPTCHAToken); err != nil {
+		if errors.Is(err, services.ErrRecaptchaFailed) {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err,
+			})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err,
+			})
+		}
+		return
+	}
+
 	var userFound models.User
 	if err := ac.DB.Where("email = ?", input.Email).First(&userFound).Error; err == nil {
 		c.JSON(http.StatusConflict, gin.H{"error": "email already registered"})
