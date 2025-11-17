@@ -137,7 +137,6 @@
             :enabledCountryCode="true"
             :inputOptions="{ showDialCode: true }"
             valid-characters-only
-            @input="onPhoneInput"
             :class="{ 'input-error': errors.contactNumber }"
             input-class="input input-bordered w-full !focus:border-black !focus:ring-0"
             dropdown-class="bg-white shadow-md rounded-lg"
@@ -234,24 +233,27 @@ export default {
       continueAfterTos: false,
     };
   },
+      watch: {
+      phoneInput(value) {
+        if (!value) {
+          this.form.contactNumber = "";
+          return;
+        }
+
+        const raw =
+          typeof value === "string"
+            ? value
+            : (value && (value.number || value.phone)) || "";
+
+        this.form.contactNumber = raw.replace(/\s+/g, "");
+      },
+    },
   methods: {
     validateEmail(email) {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     },
     validatePassword(password) {
       return password.length >= 8;
-    },
-
-    onPhoneInput(value) {
-      this.phoneInput = value || "";
-
-      if (!value) {
-        this.form.contactNumber = "";
-        return;
-      }
-
-      // Remove all spaces → "+66970161250"
-      this.form.contactNumber = value.replace(/\s+/g, "");
     },
 
     validateForm() {
@@ -279,13 +281,14 @@ export default {
 
     // Public submit handler (ToS-gated)
     async handleRegister() {
+      if (!this.validateForm()) return;
+
       if (!this.tosAccepted) {
         this.continueAfterTos = true;
         this.showTos = true;
         return;
       }
 
-      if (!this.validateForm()) return;
       await this.performRegister();
     },
 
