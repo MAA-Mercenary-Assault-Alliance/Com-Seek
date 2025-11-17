@@ -183,8 +183,11 @@
           <div class="space-y-5">
             <label class="label"
               ><span class="label-text text-[#0A3B1F]"
-                >Profile Image</span
-              ></label
+                >Profile Image               
+                <p class="text-xs text-gray-500 mt-2">
+                  Max 5MB. Square images look best.
+                </p>
+            </span></label
             >
             <div class="flex items-start gap-4">
               <div
@@ -212,7 +215,11 @@
           <div>
             <div class="space-y-5">
               <label class="label"
-              ><span class="label-text text-[#0A3B1F]">Cover Image</span></label
+              ><span class="label-text text-[#0A3B1F]">Cover Image
+                <p class="text-xs text-gray-500 mt-2">
+                  Max 5MB. Widescreen (e.g., 1200×300) recommended.
+                </p>
+              </span></label
               >
               <div class="flex items-start gap-4">
                 <div
@@ -236,7 +243,6 @@
                 />
               </div>
             </div>
-
           </div>
         </div>
 
