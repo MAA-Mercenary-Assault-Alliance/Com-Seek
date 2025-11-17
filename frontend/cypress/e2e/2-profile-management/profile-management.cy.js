@@ -1,4 +1,5 @@
 //UAT-R05-M01
+import 'cypress-file-upload';
 
 context('Actions', () => {
   beforeEach(() => {
@@ -45,8 +46,31 @@ context('Actions', () => {
       cy.contains("Profile").click()
       cy.contains("Edit").click()
 
-      cy.get("#edit-profile").clear().type(data.name)
-      cy.get("#edit-cover").clear().type(data.website);
+      cy.get("#edit-profile").attachFile('images/newProfile.png')
+      cy.get("#edit-cover").attachFile('images/redBanner.webp')
+
+      cy.contains("Save").click()
+
+      cy.get('img[alt="company avatar"]').then(($img) => {
+        const src1 = $img.attr('src');
+        cy.get("#edit-profile").attachFile('images/newProfile2.jpg')
+        cy.contains("Save").click()
+        cy.get('img[alt="company avatar"]').then(($img) => {
+          const src2 = $img.attr('src');
+          expect(src1).to.not.equal(src2);
+        })
+      });
+
+      cy.get('img[alt="company cover"]').then(($img) => {
+        const src1 = $img.attr('src');
+        cy.get("#edit-cover").attachFile('images/greenBanner.jpg')
+        cy.contains("Save").click()
+        cy.get('img[alt="company cover"]').then(($img) => {
+          const src2 = $img.attr('src');
+          expect(src1).to.not.equal(src2);
+        })
+      });
+
 
       cy.contains("Save").click()
     });
