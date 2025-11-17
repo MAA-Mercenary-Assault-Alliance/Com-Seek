@@ -128,7 +128,7 @@
                 <div class="flex-1">
                   <input
                     ref="avatarFile"
-                    id="edit-profile"
+                    id="edit-avatar"
                     type="file"
                     accept="image/png, image/jpeg, image/webp"
                     class="block w-full text-xs text-gray-700

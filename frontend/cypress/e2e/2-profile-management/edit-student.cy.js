@@ -42,7 +42,7 @@ context('Actions', () => {
       cy.contains("Profile").click()
       cy.get("#edit-profile").click()
 
-      cy.get("#edit-profile").attachFile('images/newProfile.png')
+      cy.get("#edit-avatar").attachFile('images/newProfile.png')
       cy.get("#edit-cover").attachFile('images/redBanner.webp')
 
       cy.get("#save").click()
@@ -51,7 +51,7 @@ context('Actions', () => {
 
       cy.get('img[alt="avatar"]').then(($img) => {
         const src1 = $img.attr('src');
-        cy.get("#edit-profile").attachFile('images/newProfile2.jpg')
+        cy.get("#edit-avatar").attachFile('images/newProfile2.jpg')
         cy.get("#save").click()
         cy.get('img[alt="avatar"]').then(($img) => {
           const src2 = $img.attr('src');
@@ -71,8 +71,6 @@ context('Actions', () => {
         })
       });
 
-
-      cy.get("#save").click()
     });
   })
 
