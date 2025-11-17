@@ -34,4 +34,30 @@ context('Actions', () => {
     });
   })
 
+  it('Login as a company', function () {
+    cy.fixture("exampleCompany").then((data) => {
+      cy.contains("Log in").click()
+
+      cy.get("#email").type(data.email)
+      cy.get("#login-password").type(data.password)
+
+      cy.contains("LOGIN").click()
+
+      cy.contains("HR Dashboard").should("be.visible");
+    });
+  })
+
+  it('Login as an admin', function () {
+    cy.fixture("exampleAdmin").then((data) => {
+      cy.contains("Log in").click()
+
+      cy.get("#email").type(data.email)
+      cy.get("#login-password").type(data.password)
+
+      cy.contains("LOGIN").click()
+
+      cy.contains("Admin Dashboard").should("be.visible");
+    });
+  })
+
 })
