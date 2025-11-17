@@ -14,7 +14,7 @@
     <!-- Identity -->
     <div class="min-w-0">
       <h1 class="text-5xl font-bold text-gray-800 truncate">
-          {{ profile.first_name || profile.firstName }} {{ profile.last_name || profile.lastName }}
+        {{ profile.first_name || profile.firstName }} {{ profile.last_name || profile.lastName }}
       </h1>
 
       <!-- Socials (supports either nested socials.* or top-level fields from API) -->
@@ -59,22 +59,20 @@
           <i class="fa-brands fa-linkedin"></i>
         </a>
       </div>
-
-      <!-- (Optional date removed since script has no formatter) -->
-
-      <p class="text-gray-600 text-sm whitespace-pre-line mt-2">
-        {{ profile.bio || profile.description || '' }}
-      </p>
     </div>
 
     <!-- Spacer pushes gear right -->
     <div class="ml-auto" v-if="canEdit">
       <button
-        class="p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary transition"
+        class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#44B15B] transition"
         id="edit-profile"
-        aria-label="Edit profile" title="Edit profile" @click="handleEdit"
+        aria-label="Edit profile"
+        title="Edit profile"
+        @click="handleEdit"
       >
-        <span class="material-icons text-3xl text-gray-600 hover:rotate-90 transition">settings</span>
+        <span class="material-icons text-3xl text-gray-600 hover:rotate-90 transition">
+          settings
+        </span>
       </button>
     </div>
   </div>

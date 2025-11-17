@@ -125,20 +125,23 @@
 
         <!-- Contact Number -->
         <div class="form-control">
-          <label class="label"
-            ><span class="label-text">Contact Number</span></label
-          >
-          <input
-            v-model.trim="form.contactNumber"
-            type="text"
-            placeholder="02-123-4567"
-            class="input input-bordered w-full"
+          <label class="label">
+            <span class="label-text">Contact Number</span>
+          </label>
+
+          <vue-tel-input
+            v-model="form.contactNumber"
+            placeholder="+66804250689"
+            :default-country="'th'"
+            @input="normalizePhone"
             :class="{ 'input-error': errors.contactNumber }"
-            required
+            input-class="input input-bordered w-full !focus:border-black !focus:ring-0"
+            dropdown-class="bg-white shadow-md rounded-lg"
           />
-          <label v-if="errors.contactNumber" class="label text-error text-sm">{{
-            errors.contactNumber
-          }}</label>
+
+          <label v-if="errors.contactNumber" class="label text-error text-sm">
+            {{ errors.contactNumber }}
+          </label>
         </div>
 
         <!-- Submit -->
@@ -232,6 +235,14 @@ export default {
     },
     validatePassword(password) {
       return password.length >= 8;
+    },
+
+    normalizePhone(value) {
+    if (!value) {
+      this.form.contactNumber = '';
+      return;
+    }
+    this.form.contactNumber = value.replace(/\s+/g, '');
     },
 
     validateForm() {

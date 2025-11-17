@@ -116,9 +116,9 @@
           </div>
         </div>
 
-        <div v-else class="text-gray-500 h-full flex items-center justify-center">
-          Select a job to see details.
-        </div>
+      <div class="flex justify-center items-center w-full h-full min-h-[500px]">
+        <p class="text-gray-500 text-lg">Select a job to see details.</p>
+      </div>
       </div>
     </div>
   </div>

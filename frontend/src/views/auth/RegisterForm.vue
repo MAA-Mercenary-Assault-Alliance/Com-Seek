@@ -292,15 +292,17 @@ export default {
 
     // Public submit handler
     async handleRegister() {
-      // Ensure ToS is accepted first
+      // 1. Validate all fields first
+      if (!this.validateForm()) {
+        return;
+      }
+
       if (!this.tosAccepted) {
         this.continueAfterTos = true;
         this.showTos = true;
         return;
       }
 
-      // Validate and proceed
-      if (!this.validateForm()) return;
       await this.performRegister();
     },
 
@@ -344,18 +346,15 @@ export default {
       }
     },
 
-    onAcceptTos() {
-      this.tosAccepted = true;
-      this.showTos = false;
+      onAcceptTos() {
+        this.tosAccepted = true;
+        this.showTos = false;
 
-      // If the user clicked Register before accepting, continue now:
-      if (this.continueAfterTos) {
-        this.continueAfterTos = false;
-        if (this.validateForm()) {
+        if (this.continueAfterTos) {
+          this.continueAfterTos = false;
           this.performRegister();
         }
-      }
-    },
+      },
 
     resetForm() {
       this.form = {
