@@ -8,15 +8,19 @@ import JobBoxAdmin from "../components/JobBoxAdmin.vue";
 import PureSearchBar from "../components/PureSearchBar.vue";
 const activeTab = ref('companies')
 
-const company_list = ref([])
-const student_list = ref([])
-const job_list = ref([])
+const company_list = ref()
+const student_list = ref()
+const job_list = ref()
 const isLoading = ref(true)
 
 async function getCompanies() {
   try {
     const res = await api.get("/admin/companies")
-    company_list.value = res.data.companies
+    if (!res.data) {
+      company_list.value = null
+    } else {
+      company_list.value = res.data.companies
+    }
     console.log("Fetched companies:", company_list.value)
     isLoading.value = false
     return company_list.value
@@ -30,7 +34,14 @@ async function getCompanies() {
 async function getStudents() {
   try {
     const res = await api.get("/admin/students")
-    student_list.value = res.data.students
+    if (!res.data) {
+      student_list.value = null
+    }
+    else if (res.data.students.length === 0) {
+        job_list.value = null
+    } else {
+      student_list.value = res.data.students
+    }
     console.log("Fetched students:", student_list.value)
     return student_list.value
   } catch (error) {
@@ -42,7 +53,13 @@ async function getStudents() {
 async function getJobs() {
   try {
     const res = await api.get("/admin/jobs")
-    job_list.value = res.data.jobs
+    if (!res.data) {
+      job_list.value = null
+    } else if (res.data.jobs.length === 0) {
+      job_list.value = null
+    } else {
+        job_list.value = res.data.jobs
+    }
     console.log("Fetched jobs:", job_list.value)
     return job_list.value
   } catch (error) {

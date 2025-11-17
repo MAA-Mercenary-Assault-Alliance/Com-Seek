@@ -6,27 +6,35 @@
     >
       <i class="fas fa-user-graduate text-[15rem]"></i>
     </div>
-    <div class="w-120 mx-auto p-6 bg-white rounded-xl shadow-md overflow-y-auto">
+    <div
+      class="w-120 mx-auto p-6 bg-white rounded-xl shadow-md overflow-y-auto"
+    >
       <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">
         <span class="text-3xl text-red-700 font-black">Student</span> Register
       </h2>
 
       <!-- Alert -->
       <div v-if="alert.message" class="mb-4">
-        <div :class="`alert ${alert.type === 'success' ? 'alert-success' : 'alert-error'}`">
+        <div
+          :class="`alert ${alert.type === 'success' ? 'alert-success' : 'alert-error'}`"
+        >
           {{ alert.message }}
         </div>
       </div>
 
       <!-- User type switch -->
       <div class="flex justify-center mb-6">
-        <div class="bg-base-200 rounded-full p-1 flex w-64 border-gray-300 border-2">
+        <div
+          class="bg-base-200 rounded-full p-1 flex w-64 border-gray-300 border-2"
+        >
           <button
             type="button"
             @click="setUserType('student')"
             :class="[
               'flex-1 py-2 rounded-full font-medium transition',
-              userType === 'student' ? 'bg-primary text-white shadow' : 'text-gray-600'
+              userType === 'student'
+                ? 'bg-primary text-white shadow'
+                : 'text-gray-600',
             ]"
           >
             KU Student
@@ -36,7 +44,9 @@
             @click="setUserType('alumni')"
             :class="[
               'flex-1 py-2 rounded-full font-medium transition',
-              userType === 'alumni' ? 'bg-primary text-white shadow' : 'text-gray-600'
+              userType === 'alumni'
+                ? 'bg-primary text-white shadow'
+                : 'text-gray-600',
             ]"
           >
             Alum
@@ -47,7 +57,9 @@
       <form @submit.prevent="handleRegister" class="flex flex-col gap-4">
         <!-- Email -->
         <div class="form-control flex flex-col">
-          <label class="label" for="email"><span class="label-text">Email</span></label>
+          <label class="label" for="email"
+            ><span class="label-text">Email</span></label
+          >
           <input
             type="email"
             id="email"
@@ -86,7 +98,9 @@
 
         <!-- Names -->
         <div class="form-control flex flex-col">
-          <label class="label" for="firstName"><span class="label-text">First Name</span></label>
+          <label class="label" for="firstName"
+            ><span class="label-text">First Name</span></label
+          >
           <input
             type="text"
             id="firstName"
@@ -96,12 +110,16 @@
             :class="{ 'input-error': errors.firstName }"
           />
           <label v-if="errors.firstName" class="label">
-            <span class="label-text-alt text-error">{{ errors.firstName }}</span>
+            <span class="label-text-alt text-error">{{
+              errors.firstName
+            }}</span>
           </label>
         </div>
 
         <div class="form-control flex flex-col">
-          <label class="label" for="lastName"><span class="label-text">Last Name</span></label>
+          <label class="label" for="lastName"
+            ><span class="label-text">Last Name</span></label
+          >
           <input
             type="text"
             id="lastName"
@@ -117,7 +135,9 @@
 
         <!-- Transcript (alumni only) -->
         <div class="form-control flex flex-col">
-          <label class="label"><span class="label-text">Official Transcript (PDF)</span></label>
+          <label class="label"
+            ><span class="label-text">Official Transcript (PDF)</span></label
+          >
           <input
             type="file"
             ref="transcriptInput"
@@ -127,7 +147,9 @@
           />
           <span class="text-sm mt-1">{{ transcriptFileName }}</span>
           <label v-if="errors.transcript" class="label">
-            <span class="label-text-alt text-error">{{ errors.transcript }}</span>
+            <span class="label-text-alt text-error">{{
+              errors.transcript
+            }}</span>
           </label>
         </div>
 
@@ -138,9 +160,19 @@
             type="submit"
             class="btn bg-[#56A45C] text-white hover:bg-[#44B15B] w-full"
             :disabled="loading"
-            :title="!tosAccepted ? 'You must accept the Terms of Service before registering' : ''"
+            :title="
+              !tosAccepted
+                ? 'You must accept the Terms of Service before registering'
+                : ''
+            "
           >
-            {{ loading ? 'CREATING ACCOUNT...' : (tosAccepted ? 'REGISTER' : 'READ & ACCEPT TERMS TO REGISTER') }}
+            {{
+              loading
+                ? "CREATING ACCOUNT..."
+                : tosAccepted
+                  ? "REGISTER"
+                  : "READ & ACCEPT TERMS TO REGISTER"
+            }}
           </button>
         </div>
       </form>
@@ -153,13 +185,14 @@
         </router-link>
       </p>
 
-      <p class="text-center text-sm">
-        or
-      </p>
+      <p class="text-center text-sm">or</p>
 
       <p class="text-center text-sm">
         Register as a company.
-        <router-link to="/register-company" class="text-blue-500 hover:underline">
+        <router-link
+          to="/register-company"
+          class="text-blue-500 hover:underline"
+        >
           Register here
         </router-link>
       </p>
@@ -167,22 +200,22 @@
   </div>
 
   <!-- Terms Modal (no slot; internal ToS) -->
-  <TermsModal
-    :show="showTos"
-    @close="showTos = false"
-    @accept="onAcceptTos"
-  />
+  <TermsModal :show="showTos" @close="showTos = false" @accept="onAcceptTos" />
 </template>
 
 <script>
-import { api } from '../../../api/client';
-import { defineAsyncComponent } from 'vue';
+import { api } from "../../../api/client";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "RegisterForm",
   components: {
-    PasswordField: defineAsyncComponent(() => import('@/components/auth/PasswordField.vue')),
-    TermsModal: defineAsyncComponent(() => import('@/components/auth/TermsModal.vue')),
+    PasswordField: defineAsyncComponent(
+      () => import("@/components/auth/PasswordField.vue"),
+    ),
+    TermsModal: defineAsyncComponent(
+      () => import("@/components/auth/TermsModal.vue"),
+    ),
   },
   emits: ["switch-to-login"],
   data() {
@@ -244,13 +277,15 @@ export default {
       this.errors = {};
       if (!this.form.firstName.trim()) this.errors.firstName = "Required";
       if (!this.form.lastName.trim()) this.errors.lastName = "Required";
-      if (!this.validateEmail(this.form.email)) this.errors.email = "Invalid email";
-      if (!this.validatePassword(this.form.password)) this.errors.password = "Minimum 8 characters";
-      if (this.form.password !== this.form.confirmPassword) this.errors.confirmPassword = "Passwords do not match";
+      if (!this.validateEmail(this.form.email))
+        this.errors.email = "Invalid email";
+      if (!this.validatePassword(this.form.password))
+        this.errors.password = "Minimum 8 characters";
+      if (this.form.password !== this.form.confirmPassword)
+        this.errors.confirmPassword = "Passwords do not match";
 
-      if (this.userType === "alumni" && !this.form.transcript) {
-        this.errors.transcript = "Transcript required for alumni.";
-      }
+      if (!this.form.transcript)
+        this.errors.transcript = "Transcript is required";
 
       return Object.keys(this.errors).length === 0;
     },
@@ -276,33 +311,21 @@ export default {
 
       try {
         const isAlum = this.userType === "alumni";
-        const body = {
-          email: this.form.email,
-          password: this.form.password,
-          user_type: "student", // backend expects 'student' or 'company'
-          student_profile: {
-            first_name: this.form.firstName,
-            last_name: this.form.lastName,
-            is_alum: isAlum,
-          },
-        };
 
-        // If you need to upload transcript to the server now, switch to FormData:
-        // const fd = new FormData();
-        // fd.append('email', this.form.email);
-        // fd.append('password', this.form.password);
-        // fd.append('user_type', 'student');
-        // fd.append('student_profile[first_name]', this.form.firstName);
-        // fd.append('student_profile[last_name]', this.form.lastName);
-        // fd.append('student_profile[is_alum]', isAlum ? '1' : '0');
-        // if (this.form.transcript) fd.append('transcript', this.form.transcript);
-        // const { data } = await api.post('/auth/register', fd, { headers: { 'Content-Type': 'multipart/form-data' }});
-
-        const { data } = await api.post("/auth/register", body);
-        console.log("Registered:", data);
+        const fd = new FormData();
+        fd.append("email", this.form.email);
+        fd.append("password", this.form.password);
+        fd.append("first_name", this.form.firstName);
+        fd.append("last_name", this.form.lastName);
+        fd.append("is_alum", isAlum ? "true" : "false");
+        if (this.form.transcript) fd.append("transcript", this.form.transcript);
+        await api.post("/auth/register/student", fd, {
+          headers: {},
+        });
 
         this.alert = {
-          message: "Registration successful! Pending admin approval.",
+          message:
+            "Registration successful! Pending admin approval for full access. Redirecting to login...",
           type: "success",
         };
 

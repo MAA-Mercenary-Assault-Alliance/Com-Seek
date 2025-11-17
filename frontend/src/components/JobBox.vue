@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {onMounted, ref} from 'vue'
-import {JobTemplate} from './temp_template'
+import {JobTemplate} from '../services/model_template'
+import {getFileUrl} from '../services/fileUpload.js';
 const props = defineProps<{
   jobInfo: JobTemplate,
   hR: boolean
@@ -13,6 +14,9 @@ onMounted(() => {
 const applied = ref(0)
 const new_app = ref(0)
 const day = ref(0)
+
+const DEFAULT_AVATAR = "/images/avatar.png";
+const company_logo_url = ref("");
 
 function daysAgo(dateString: string): number {
   if (!dateString) return 0;
@@ -29,11 +33,12 @@ function daysAgo(dateString: string): number {
 
 onMounted(() => {
   day.value = daysAgo(props.jobInfo.CreatedAt)
+  company_logo_url.value = getFileUrl(props.jobInfo.Company?.profile_image_id, DEFAULT_AVATAR)
+  console.log("Company Logo URL:", company_logo_url.value)
   // applied.value = props.jobInfo.Applications ? props.jobInfo.Applications.length : 0
   // new_app.value = props.jobInfo.Applications ? props.jobInfo.Applications.filter((app) => {
   //   return daysAgo(app.CreatedAt) <= 7
   // }).length : 0
-  // TODO: Fix applied and new_app
 })
 
 </script>
@@ -41,7 +46,7 @@ onMounted(() => {
 <template>
   <div id="job-box" class="flex relative rounded-2xl flex-row p-4 pb-7 space-x-5 box-shadow bg-white hover:bg-gray-100" @click="hR && $emit('click')"  :class="{ 'cursor-pointer': hR }">
 
-    <img src="../assets/company.jpg" class="w-20 h-20 rounded-2xl" alt="company-logo"/>
+    <img :src=company_logo_url class="w-20 h-20 rounded-2xl" alt="company-logo"/>
     <div id="job-box-content" class="flex mr-2 flex-col space-y-1.5">
       <span class="underline">{{ jobInfo.Title }}</span>
       <router-link v-if="!hR" :to="{ name: 'CompanyProfilePublic', params: { id: Number(jobInfo.Company?.UserID) }}" class="mb-2">{{ jobInfo.Company?.Name }}</router-link>
@@ -75,8 +80,6 @@ onMounted(() => {
             class="text-xs px-2 py-1 rounded bg-gray-200 text-gray-700"
         >Hidden</span>
       </div>
-      <span class="text-gray-500">Applied: {{applied}}</span>
-      <span :class="new_app == 0 ? 'text-gray-500' : 'text-green-500'">New: {{new_app}}</span>
     </div>
   </div>
 </template>

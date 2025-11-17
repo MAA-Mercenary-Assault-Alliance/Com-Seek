@@ -16,5 +16,6 @@ type StudentResponse struct {
 	Facebook       string
 	Instagram      string
 	Twitter        string
+	ProfileImageID *string          `gorm:"type:char(36);default:null" json:"profile_image_id"`
 	JobApplication []JobApplication `json:"-"`
 }

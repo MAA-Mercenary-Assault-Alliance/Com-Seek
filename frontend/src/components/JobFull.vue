@@ -1,17 +1,19 @@
 <script setup lang="ts">
-import {JobTemplate} from './temp_template'
+import {JobTemplate} from '../services/model_template'
 import {marked} from "marked";
 import {computed, onMounted, ref, watch} from "vue";
 import {api} from "../../api/client.js";
-import DateConverter from './dateConverter';
+import DateConverter from '../services/dateConverter';
 import {useRouter} from 'vue-router'
 import SuccessBox from "@/components/SuccessBox.vue";
 import CVBox from "@/components/CVBox.vue";
 import ConfirmBoxGeneral from "@/components/ConfirmBoxGeneral.vue";
+import {getFileUrl} from "@/services/fileUpload";
 
 const props = defineProps<{
   jobInfo: JobTemplate,
-  hR: boolean
+  hR: boolean,
+  verified: boolean
 }>();
 
 const router = useRouter();
@@ -19,6 +21,9 @@ const successBox = ref(null);
 const successBoxTerminate = ref(null);
 const cvBox = ref(null);
 const confirmBox = ref(null);
+
+const DEFAULT_AVATAR = "/images/avatar.png";
+const company_logo_url = ref("");
 
 let desc_html = marked(props.jobInfo?.Description || "")
 const date = computed(() => {
@@ -64,19 +69,27 @@ function goToEdit() {
   router.push({ name: 'EditJob', params: {id: props.jobInfo.ID}})
 }
 
+function alertNotVerified() {
+  alert("Your student profile is not verified. You cannot apply for jobs.")
+}
+
+onMounted(() => {
+  company_logo_url.value = getFileUrl(props.jobInfo.Company?.profile_image_id, DEFAULT_AVATAR)
+})
 </script>
 
 <template>
   <div id="job full" class="flex w-full px-25 py-10 flex-col rounded-2xl box-shadow bg-white sticky">
 
     <div id="title-box" class="flex row items-center mt-3">
-      <img src="../assets/company.jpg" class="w-20 h-20 rounded-2xl" alt="company-logo"/>
+      <img :src=company_logo_url class="w-20 h-20 rounded-2xl" alt="company-logo"/>
       <div id="title" class="flex flex-col ml-7 space-y-4">
         <router-link :to="{ name: 'CompanyProfilePublic', params: { id: Number(jobInfo.Company?.UserID) }}" class="text-2xl" >{{ jobInfo.Company?.Name }}</router-link>
         <span class="underline">{{ jobInfo.Title }}</span>
       </div>
       <div class="flex flex-col ml-auto">
-        <button v-if="role === 'student'" class="btn shadow-none bg-[#44b15b] border-0 h-12 rounded-2xl text-white text-xl font-extralight ml-auto mt-6" @click="cvBox.open()">Apply Now</button>
+        <button v-if="role === 'student' && verified" class="btn shadow-none bg-[#44b15b] border-0 h-12 rounded-2xl text-white text-xl font-extralight ml-auto mt-6" @click="cvBox.open()">Apply Now</button>
+        <button v-if="role === 'student' && !verified" class="btn shadow-none bg-gray-200 border-0 h-12 rounded-2xl text-white text-xl font-extralight ml-auto mt-6" @click="alertNotVerified">Apply Now</button>
         <button v-if="role === 'company' && hR" class="btn shadow-none bg-[#DB0000] border-0 h-18 w-45 rounded-4xl text-white text-2xl font-extralight ml-auto mt-6" @click="confirmBox.open()">Terminate</button>
         <button v-if="role === 'company' && hR" class="btn shadow-none bg-[#44b15b] border-0 h-18 w-45 rounded-4xl text-white text-2xl font-extralight ml-auto mt-6" @click="goToEdit">Edit Job</button>
       </div>

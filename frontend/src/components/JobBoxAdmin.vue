@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import {onMounted, ref} from 'vue'
-import {JobTemplate} from './temp_template'
+import {JobTemplate} from '../services/model_template'
 import {api} from "../../api/client.js";
-import DateConverter from "./dateConverter";
+import DateConverter from "../services/dateConverter";
 import ConfirmBox from "./ComfirmBox.vue";
 import {useRouter} from "vue-router";
 import JobFull from "@/components/JobFull.vue";
 import JobModal from "@/components/JobModal.vue";
+import {getFileUrl} from "@/services/fileUpload";
 const props = defineProps<{
   jobInfo: JobTemplate
 }>();
@@ -16,6 +17,9 @@ const emit = defineEmits(["refresh"]);
 const date = ref();
 const router = useRouter();
 const jobModal = ref(null);
+
+const DEFAULT_AVATAR = "/images/avatar.png";
+const company_logo_url = ref("");
 
 async function rejectJob() {
   try {
@@ -48,13 +52,14 @@ function goToJob() {
 onMounted(() => {
   console.log("JobINFO:", props.jobInfo);
   date.value = DateConverter(props.jobInfo.CreatedAt) || "";
+  company_logo_url.value = getFileUrl(props.jobInfo.Company?.profile_image_id, DEFAULT_AVATAR)
 });
 </script>
 
 <template>
   <div id="job-box" class="flex relative rounded-2xl flex-row p-4 h-[180px] pr-4 pb-4 space-x-7 box-shadow bg-white" @click="goToJob">
     <div class="flex items-center justify-center flex-shrink-0">
-      <img src="../assets/company.jpg" class="company-admin-logo" alt="company-logo"/>
+      <img :src=company_logo_url class="company-admin-logo" alt="company-logo"/>
     </div>
     <div id="job-box-content" class="flex mr-2 flex-col space-y-1.5">
       <span class="underline">{{ jobInfo.Title }}</span>

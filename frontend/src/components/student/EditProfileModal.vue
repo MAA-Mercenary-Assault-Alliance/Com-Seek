@@ -6,7 +6,11 @@
     <div class="bg-white w-full max-w-2xl rounded-xl shadow-lg p-6">
       <div class="flex items-start justify-between mb-4">
         <h3 class="text-xl font-semibold">Edit Profile</h3>
-        <button class="p-2 rounded-full hover:bg-gray-100" @click="$emit('close')" aria-label="Close">
+        <button
+          class="p-2 rounded-full hover:bg-gray-100"
+          @click="$emit('close')"
+          aria-label="Close"
+        >
           <span class="material-icons">close</span>
         </button>
       </div>
@@ -35,9 +39,11 @@
           </label>
 
           <label class="block">
-            <span class="text-sm font-medium text-gray-700">About / Bio</span>
+            <span class="text-sm font-medium text-gray-700"
+              >About / Description</span
+            >
             <textarea
-              v-model="editable.bio"
+              v-model="editable.description"
               rows="6"
               class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="Tell people a bit about yourself…"
@@ -49,7 +55,9 @@
         <div class="space-y-4">
           <div class="grid grid-cols-1 gap-3">
             <label class="block">
-              <span class="text-sm font-medium text-gray-700">Facebook URL</span>
+              <span class="text-sm font-medium text-gray-700"
+                >Facebook URL</span
+              >
               <input
                 v-model="editable.socials.facebook"
                 type="url"
@@ -59,7 +67,9 @@
               />
             </label>
             <label class="block">
-              <span class="text-sm font-medium text-gray-700">Twitter / X URL</span>
+              <span class="text-sm font-medium text-gray-700"
+                >Twitter / X URL</span
+              >
               <input
                 v-model="editable.socials.twitter"
                 type="url"
@@ -69,7 +79,9 @@
               />
             </label>
             <label class="block">
-              <span class="text-sm font-medium text-gray-700">Instagram URL</span>
+              <span class="text-sm font-medium text-gray-700"
+                >Instagram URL</span
+              >
               <input
                 v-model="editable.socials.instagram"
                 type="url"
@@ -94,7 +106,9 @@
           <div class="border rounded-lg p-3">
             <p class="text-sm font-medium text-gray-700 mb-2">Profile Image</p>
             <div class="flex items-center gap-4">
-              <div class="w-20 h-20 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+              <div
+                class="w-20 h-20 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center"
+              >
                 <img
                   v-if="avatarPreview || editable.avatar"
                   :src="avatarPreview || editable.avatar"
@@ -112,20 +126,28 @@
                   @change="onAvatarFileChange"
                 />
                 <div class="flex gap-2 mt-2">
-                  <button v-if="avatarPreview" class="btn btn-ghost btn-sm" @click="clearAvatarPreview">
+                  <button
+                    v-if="avatarPreview"
+                    class="btn btn-ghost btn-sm"
+                    @click="clearAvatarPreview"
+                  >
                     Remove
                   </button>
                 </div>
               </div>
             </div>
-            <p class="text-xs text-gray-500 mt-2">Max ~5MB. Square images look best.</p>
+            <p class="text-xs text-gray-500 mt-2">
+              Max ~5MB. Square images look best.
+            </p>
           </div>
 
           <!-- Cover -->
           <div class="border rounded-lg p-3">
             <p class="text-sm font-medium text-gray-700 mb-2">Cover Image</p>
             <div class="flex items-center gap-4">
-              <div class="w-28 h-14 overflow-hidden rounded-md bg-gray-100 flex items-center justify-center">
+              <div
+                class="w-28 h-14 overflow-hidden rounded-md bg-gray-100 flex items-center justify-center"
+              >
                 <img
                   v-if="coverPreview || editable.cover"
                   :src="coverPreview || editable.cover"
@@ -143,23 +165,40 @@
                   @change="onCoverFileChange"
                 />
                 <div class="flex gap-2 mt-2">
-                  <button v-if="coverPreview" class="btn btn-ghost btn-sm" @click="clearCoverPreview">
+                  <button
+                    v-if="coverPreview"
+                    class="btn btn-ghost btn-sm"
+                    @click="clearCoverPreview"
+                  >
                     Remove
                   </button>
                 </div>
               </div>
             </div>
-            <p class="text-xs text-gray-500 mt-2">Widescreen (e.g., 1200×300) recommended.</p>
+            <p class="text-xs text-gray-500 mt-2">
+              Widescreen (e.g., 1200×300) recommended.
+            </p>
           </div>
         </div>
       </div>
 
       <!-- Footer -->
-      <div class="mt-6 flex flex-col md:flex-row items-center gap-3 md:justify-end">
-        <p v-if="validationError" class="text-sm text-red-600 mr-auto">{{ validationError }}</p>
+      <div
+        class="mt-6 flex flex-col md:flex-row items-center gap-3 md:justify-end"
+      >
+        <p v-if="validationError" class="text-sm text-red-600 mr-auto">
+          {{ validationError }}
+        </p>
         <div class="flex gap-3 w-full md:w-auto">
-          <button class="btn btn-ghost w-full md:w-auto" @click="$emit('close')">Cancel</button>
-          <button class="btn btn-primary w-full md:w-auto" @click="save">Save</button>
+          <button
+            class="btn btn-ghost w-full md:w-auto"
+            @click="$emit('close')"
+          >
+            Cancel
+          </button>
+          <button class="btn btn-primary w-full md:w-auto" @click="save">
+            Save
+          </button>
         </div>
       </div>
     </div>
@@ -178,10 +217,12 @@ export default {
       editable: {
         firstName: "",
         lastName: "",
-        bio: "",
+        description: "",
         socials: { facebook: "", twitter: "", instagram: "", github: "" },
         avatar: "",
         cover: "",
+        newAvatarFile: null,
+        newCoverFile: null,
       },
       avatarPreview: "",
       coverPreview: "",
@@ -192,7 +233,7 @@ export default {
     // preload from props
     this.editable.firstName = this.profile.firstName || "";
     this.editable.lastName = this.profile.lastName || "";
-    this.editable.bio = this.profile.bio || "";
+    this.editable.description = this.profile.description || "";
     this.editable.socials = {
       facebook: this.profile.socials?.facebook || "",
       twitter: this.profile.socials?.twitter || "",
@@ -220,6 +261,7 @@ export default {
       }
       this.validationError = "";
       this.replacePreview("avatarPreview", file);
+      this.editable.newAvatarFile = file;
     },
     onCoverFileChange(e) {
       const file = e.target.files && e.target.files[0];
@@ -234,6 +276,7 @@ export default {
       }
       this.validationError = "";
       this.replacePreview("coverPreview", file);
+      this.editable.newCoverFile = file;
     },
     replacePreview(key, file) {
       this.revokePreview(key);
@@ -249,10 +292,12 @@ export default {
     clearAvatarPreview() {
       this.revokePreview("avatarPreview");
       if (this.$refs.avatarFile) this.$refs.avatarFile.value = "";
+      this.editable.newAvatarFile = null;
     },
     clearCoverPreview() {
       this.revokePreview("coverPreview");
       if (this.$refs.coverFile) this.$refs.coverFile.value = "";
+      this.editable.newCoverFile = null;
     },
     save() {
       // basic URL validation
@@ -268,7 +313,7 @@ export default {
       const payload = {
         firstName: this.editable.firstName.trim() || this.profile.firstName,
         lastName: this.editable.lastName.trim() || this.profile.lastName,
-        bio: this.editable.bio.trim(),
+        description: this.editable.description.trim(),
         socials: {
           facebook: this.editable.socials.facebook.trim(),
           twitter: this.editable.socials.twitter.trim(),
@@ -277,8 +322,8 @@ export default {
         },
         // In production: upload files and replace with CDN URLs.
         // Here we commit previews (object URLs) if set; else keep existing.
-        avatar: this.avatarPreview || this.editable.avatar,
-        cover: this.coverPreview || this.editable.cover,
+        profileImageFile: this.editable.newAvatarFile,
+        coverImageFile: this.editable.newCoverFile,
       };
 
       this.$emit("save", payload);
