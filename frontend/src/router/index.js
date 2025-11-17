@@ -22,12 +22,17 @@ const routes = [
   // Root & Landing
   { path: "/", redirect: "/landing-page" },
   { path: "/landing-page", component: LandingPage, meta: { layout: "blank" } },
-  { path: "/home", component: AppHome },
 
   // Auth
   { path: "/login", component: LoginForm },
   { path: "/register", component: RegisterForm },
   { path: "/register-company", component: CompanyRegisterForm },
+
+  {
+    path: "/home", 
+    component: AppHome,
+    meta: { requiresAuth: true},
+  },
 
   // Dashboards
   {
@@ -128,6 +133,8 @@ router.beforeEach(async (to, from, next) => {
 
     localStorage.removeItem("email");
     localStorage.removeItem("role");
+
+    window.dispatchEvent(new Event ("auth-changed"));
 
     await router.push('/login');
     return

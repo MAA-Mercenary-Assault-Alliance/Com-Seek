@@ -130,10 +130,14 @@
           </label>
 
           <vue-tel-input
-            v-model="form.contactNumber"
+            v-model="phoneInput"
             placeholder="+66804250689"
-            :default-country="'th'"
-            @input="normalizePhone"
+            :defaultCountry="'th'"
+            mode="international"
+            :enabledCountryCode="true"
+            :inputOptions="{ showDialCode: true }"
+            valid-characters-only
+            @input="onPhoneInput"
             :class="{ 'input-error': errors.contactNumber }"
             input-class="input input-bordered w-full !focus:border-black !focus:ring-0"
             dropdown-class="bg-white shadow-md rounded-lg"
@@ -210,6 +214,7 @@ export default {
   emits: ["switch-to-login"],
   data() {
     return {
+      phoneInput: "",
       form: {
         companyName: "",
         location: "",
@@ -237,12 +242,16 @@ export default {
       return password.length >= 8;
     },
 
-    normalizePhone(value) {
-    if (!value) {
-      this.form.contactNumber = '';
-      return;
-    }
-    this.form.contactNumber = value.replace(/\s+/g, '');
+    onPhoneInput(value) {
+      this.phoneInput = value || "";
+
+      if (!value) {
+        this.form.contactNumber = "";
+        return;
+      }
+
+      // Remove all spaces → "+66970161250"
+      this.form.contactNumber = value.replace(/\s+/g, "");
     },
 
     validateForm() {
@@ -330,6 +339,7 @@ export default {
     },
 
     resetForm() {
+      this.phoneInput = "";
       this.form = {
         companyName: "",
         location: "",

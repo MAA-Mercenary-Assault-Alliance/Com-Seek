@@ -1,13 +1,23 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 
-const role = ref(localStorage.getItem("role"));
+const role = ref<string | null>(localStorage.getItem("role"));
+
+const syncRole = () => {
+  role.value = localStorage.getItem("role");
+};
+
 onMounted(() => {
-  window.addEventListener("storage", () => {
-    role.value = localStorage.getItem("role");
-  });
+  syncRole();
+
+  window.addEventListener("auth-changed", syncRole);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("auth-changed", syncRole);
 });
 </script>
+
 
 <template>
   <div
