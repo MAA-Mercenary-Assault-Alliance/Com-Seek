@@ -14,7 +14,7 @@
     <!-- Identity -->
     <div class="min-w-0">
       <h1 class="text-5xl font-bold text-gray-800 truncate">
-        {{ profile.first_name || profile.firstName }} {{ profile.last_name || profile.lastName }}
+          {{ profile.first_name || profile.firstName }} {{ profile.last_name || profile.lastName }}
       </h1>
 
       <!-- Socials (supports either nested socials.* or top-level fields from API) -->
@@ -71,6 +71,7 @@
     <div class="ml-auto" v-if="canEdit">
       <button
         class="p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary transition"
+        id="edit-profile"
         aria-label="Edit profile" title="Edit profile" @click="handleEdit"
       >
         <span class="material-icons text-3xl text-gray-600 hover:rotate-90 transition">settings</span>

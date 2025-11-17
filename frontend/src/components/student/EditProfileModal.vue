@@ -22,6 +22,7 @@
             <span class="text-sm font-medium text-gray-700">First Name</span>
             <input
               v-model="editable.firstName"
+              id="edit-first-name"
               type="text"
               class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="Enter first name"
@@ -32,6 +33,7 @@
             <span class="text-sm font-medium text-gray-700">Last Name</span>
             <input
               v-model="editable.lastName"
+              id="edit-last-name"
               type="text"
               class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="Enter last name"
@@ -44,6 +46,7 @@
             >
             <textarea
               v-model="editable.description"
+              id="edit-desc"
               rows="6"
               class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="Tell people a bit about yourself…"
@@ -60,6 +63,7 @@
               >
               <input
                 v-model="editable.socials.facebook"
+                id="edit-facebook"
                 type="url"
                 inputmode="url"
                 class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -72,6 +76,7 @@
               >
               <input
                 v-model="editable.socials.twitter"
+                id="edit-twitter"
                 type="url"
                 inputmode="url"
                 class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -84,6 +89,7 @@
               >
               <input
                 v-model="editable.socials.instagram"
+                id="edit-instagram"
                 type="url"
                 inputmode="url"
                 class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -94,6 +100,7 @@
               <span class="text-sm font-medium text-gray-700">GitHub URL</span>
               <input
                 v-model="editable.socials.github"
+                id="edit-github"
                 type="url"
                 inputmode="url"
                 class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -120,6 +127,7 @@
               <div class="flex-1">
                 <input
                   ref="avatarFile"
+                  id="edit-profile"
                   type="file"
                   accept="image/*"
                   class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-primary file:text-white hover:file:opacity-90"
@@ -159,6 +167,7 @@
               <div class="flex-1">
                 <input
                   ref="coverFile"
+                  id="edit-cover"
                   type="file"
                   accept="image/*"
                   class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-primary file:text-white hover:file:opacity-90"
@@ -196,7 +205,7 @@
           >
             Cancel
           </button>
-          <button class="btn btn-primary w-full md:w-auto" @click="save">
+          <button class="btn btn-primary w-full md:w-auto" id="save" @click="save">
             Save
           </button>
         </div>

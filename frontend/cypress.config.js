@@ -3,7 +3,7 @@ export default {
   e2e: {
     baseUrl: 'http://localhost:5173', // your URL
     supportFile: 'cypress/support/e2e.js',
-    viewportWidth: 1280,
-    viewportHeight: 720
+    viewportWidth: 1920,
+    viewportHeight: 1080
   }
 }

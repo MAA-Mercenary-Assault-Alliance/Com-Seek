@@ -1,4 +1,11 @@
 {
   "email": "student@gmail.com",
-  "password": "12345678"
+  "password": "12345678",
+  "firstName": "New",
+  "lastName": "Student",
+  "description": "# Here's a new guy",
+  "facebook": "https://www.facebook.com/new",
+  "twitter": "https://x.com/new",
+  "instagram": "https://www.instagram.com/new",
+  "github": "https://github.com/new"
 }
