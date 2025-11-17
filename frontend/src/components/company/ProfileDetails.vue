@@ -107,6 +107,7 @@
           >
           <input
             v-model.trim="form.name"
+            id="edit-name"
             class="input input-bordered w-full focus:outline-none focus:border-[#44B15B] focus:ring-2 focus:ring-[#44B15B]/30"
             placeholder="Acme Robotics"
           />
@@ -116,6 +117,7 @@
           >
           <input
             v-model.trim="form.website"
+            id="edit-website"
             class="input input-bordered w-full focus:outline-none focus:border-[#44B15B] focus:ring-2 focus:ring-[#44B15B]/30"
             placeholder="https://…"
           />
@@ -125,6 +127,7 @@
           >
           <input
             v-model.trim="form.location"
+            id="edit-location"
             class="input input-bordered w-full focus:outline-none focus:border-[#44B15B] focus:ring-2 focus:ring-[#44B15B]/30"
             placeholder="Bangkok"
           />
@@ -137,6 +140,7 @@
           >
           <input
             v-model.trim="form.contact_email"
+            id="edit-contact-email"
             type="email"
             class="input input-bordered w-full focus:outline-none focus:border-[#44B15B] focus:ring-2 focus:ring-[#44B15B]/30"
             :class="emailError ? 'input-error' : ''"
@@ -156,6 +160,7 @@
           >
           <input
             v-model.trim="form.contact_number"
+            id="edit-contact-number"
             type="tel"
             inputmode="numeric"
             class="input input-bordered w-full focus:outline-none focus:border-[#44B15B] focus:ring-2 focus:ring-[#44B15B]/30"
@@ -173,6 +178,7 @@
           >
           <textarea
             v-model.trim="form.description"
+            id="edit-desc"
             class="textarea textarea-bordered w-full focus:outline-none focus:border-[#44B15B] focus:ring-2 focus:ring-[#44B15B]/30"
             rows="5"
             placeholder="About the company…"
@@ -201,6 +207,7 @@
 
               <input
                 type="file"
+                id="edit-profile"
                 ref="profileImageFileInput"
                 class="file-input file-input-bordered w-full file-input-sm focus:outline-none focus:border-[#44B15B] focus:ring-2 focus:ring-[#44B15B]/30"
                 accept="image/*"
@@ -229,6 +236,7 @@
 
                 <input
                     type="file"
+                    id="edit-cover"
                     ref="coverImageFileInput"
                     class="file-input file-input-bordered w-full file-input-sm focus:outline-none focus:border-[#44B15B] focus:ring-2 focus:ring-[#44B15B]/30"
                     accept="image/*"
