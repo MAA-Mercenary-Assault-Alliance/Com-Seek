@@ -3,6 +3,7 @@ package controllers
 import (
 	"com-seek/backend/models"
 	"com-seek/backend/services"
+	"errors"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -27,8 +28,9 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 
 	type CreateJobApplicationInput struct {
-		JobID uint                  `form:"job_id" binding:"required"`
-		File  *multipart.FileHeader `form:"file" binding:"required"`
+		JobID          uint                  `form:"job_id" binding:"required"`
+		File           *multipart.FileHeader `form:"file" binding:"required"`
+		ReCAPTCHAToken string                `form:"recaptcha_response" binding:"required"`
 	}
 
 	student := models.Student{
@@ -49,6 +51,19 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 
 	if err := c.ShouldBind(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := services.VerifyRecaptchaToken(input.ReCAPTCHAToken); err != nil {
+		if errors.Is(err, services.ErrRecaptchaFailed) {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err,
+			})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err,
+			})
+		}
 		return
 	}
 

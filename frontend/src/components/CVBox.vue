@@ -1,13 +1,25 @@
 <script setup lang="ts">
 // @ts-nocheck
 import { onMounted, ref } from "vue";
+import { renderRecaptcha } from "../services/reCAPTCHA";
 import { api } from "../../api/client";
+
+const reCAPTCHASiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+
 const props = defineProps({ jobID: Number });
 
 const dialog = ref(null);
 
 function open() {
-  dialog.value.showModal();
+  try {
+    // eslint-disable-next-line no-undef
+    grecaptcha.reset();
+    // eslint-disable-next-line no-unused-vars
+  } catch (error) {
+    console.log("Rendering reCAPTCHA");
+  }
+  renderRecaptcha(this.$refs.recaptchaContainer, reCAPTCHASiteKey);
+  dialog.value.show();
 }
 
 function close() {
@@ -49,6 +61,8 @@ async function applyJob() {
 
     fd.append("job_id", String(props.jobID));
     fd.append("file", selectedFile.value);
+    // eslint-disable-next-line no-undef
+    fd.append("recaptcha_response", grecaptcha.getResponse());
 
     const res = await api.post("/job/apply", fd);
 
@@ -106,7 +120,10 @@ function handleFileUpload(event) {
 <template>
   <dialog ref="dialog" class="modal">
     <div class="modal-box">
-      <div v-if ="loading" class="flex flex-col justify-center items-center p-10 space-y-5">
+      <div
+        v-if="loading"
+        class="flex flex-col justify-center items-center p-10 space-y-5"
+      >
         <svg
           class="animate-spin h-10 w-10 text-blue-600"
           xmlns="http://www.w3.org/2000/svg"
@@ -129,7 +146,10 @@ function handleFileUpload(event) {
         </svg>
         <p class="text-lg">Submitting your application...</p>
       </div>
-      <div v-if="!loading" class="flex flex-col justify-center items-center p-10 space-y-5">
+      <div
+        v-if="!loading"
+        class="flex flex-col justify-center items-center p-10 space-y-5"
+      >
         <p class="py-4 text-xl">Upload your CV/Resume here</p>
         <div class="relative inline-flex items-center">
           <!-- Hidden file input -->
@@ -156,6 +176,12 @@ function handleFileUpload(event) {
             selectedFile.name
           }}</span>
         </div>
+
+        <div
+          class="g-recaptcha flex justify-center"
+          ref="recaptchaContainer"
+          :data-sitekey="reCAPTCHASiteKey"
+        ></div>
 
         <button
           class="btn shadow-none border-0 h-10 w-30 rounded-md text-white text-md font-extralight px-7 disabled:bg-gray-200 bg-lighter"

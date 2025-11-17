@@ -182,7 +182,7 @@ func (jc *JobController) GetJob(c *gin.Context) {
 
 	if job.CompanyID == userID {
 		var applicants []JobApplicantResponse
-		if err := jc.DB.Debug().Table("job_applications").
+		if err := jc.DB.Table("job_applications").
 			Joins("LEFT JOIN students ON students.user_id = job_applications.student_id").
 			Where("job_id = ?", job.ID).
 			Scan(&applicants).
