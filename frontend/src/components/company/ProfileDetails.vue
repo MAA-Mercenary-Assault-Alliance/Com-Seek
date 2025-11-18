@@ -354,9 +354,9 @@ function validatePhone() {
   const val = form.contact_number.trim();
   if (!val) {
     phoneError.value = "Phone number is required.";
-  } else if (!/^[0-9\s-()]*$/.test(val)) {
+  } else if (!/^\+?[0-9\s-()]*$/.test(val)) {
     phoneError.value =
-      "Phone number can only contain digits and common symbols.";
+      "Phone number can start with + and only contain digits and separators.";
   } else {
     phoneError.value = "";
   }
