@@ -153,6 +153,12 @@
           </label>
         </div>
 
+        <div
+          class="g-recaptcha flex justify-center"
+          ref="recaptchaContainer"
+          :data-sitekey="reCAPTCHASiteKey"
+        ></div>
+
         <!-- Submit -->
         <div class="form-control mt-4 flex justify-center">
           <button
@@ -204,7 +210,10 @@
 
 <script>
 import { api } from "../../../api/client";
+import { renderRecaptcha } from "../../services/reCAPTCHA";
 import { defineAsyncComponent } from "vue";
+
+const reCAPTCHASiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 
 export default {
   name: "RegisterForm",
@@ -219,6 +228,7 @@ export default {
   emits: ["switch-to-login"],
   data() {
     return {
+      reCAPTCHASiteKey: reCAPTCHASiteKey,
       userType: "student", // or 'alumni'
       form: {
         firstName: "",
@@ -238,6 +248,9 @@ export default {
       // internal flag to know we should continue right after accept
       continueAfterTos: false,
     };
+  },
+  mounted() {
+    renderRecaptcha(this.$refs.recaptchaContainer, this.reCAPTCHASiteKey);
   },
   methods: {
     setUserType(type) {
@@ -307,6 +320,15 @@ export default {
 
     // Called after ToS accept or direct submit
     async performRegister() {
+      // eslint-disable-next-line no-undef
+      if (grecaptcha.getResponse() == "") {
+        this.alert = {
+          message: "Please complete the CAPTCHA",
+          type: "error",
+        };
+        return;
+      }
+
       this.loading = true;
       this.alert = { message: "Creating account...", type: "success" };
 
@@ -320,6 +342,8 @@ export default {
         fd.append("last_name", this.form.lastName);
         fd.append("is_alum", isAlum ? "true" : "false");
         if (this.form.transcript) fd.append("transcript", this.form.transcript);
+        // eslint-disable-next-line no-undef
+        fd.append("recaptcha_response", grecaptcha.getResponse());
         await api.post("/auth/register/student", fd, {
           headers: {},
         });
@@ -345,15 +369,15 @@ export default {
       }
     },
 
-      onAcceptTos() {
-        this.tosAccepted = true;
-        this.showTos = false;
+    onAcceptTos() {
+      this.tosAccepted = true;
+      this.showTos = false;
 
-        if (this.continueAfterTos) {
-          this.continueAfterTos = false;
-          this.performRegister();
-        }
-      },
+      if (this.continueAfterTos) {
+        this.continueAfterTos = false;
+        this.performRegister();
+      }
+    },
 
     resetForm() {
       this.form = {

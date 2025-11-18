@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"com-seek/backend/models"
+	"com-seek/backend/services"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -33,6 +35,7 @@ func (jc *JobController) CreateJob(c *gin.Context) {
 		MinExperience    *uint  `json:"min_experience" binding:"required"`
 		MaxExperience    *uint  `json:"max_experience" binding:"required"`
 		Description      string `json:"description" binding:"required,max=10240"`
+		ReCAPTCHAToken   string `json:"recaptcha_response" binding:"required"`
 	}
 
 	company := models.Company{
@@ -53,6 +56,19 @@ func (jc *JobController) CreateJob(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := services.VerifyRecaptchaToken(input.ReCAPTCHAToken); err != nil {
+		if errors.Is(err, services.ErrRecaptchaFailed) {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err,
+			})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err,
+			})
+		}
 		return
 	}
 
@@ -182,7 +198,7 @@ func (jc *JobController) GetJob(c *gin.Context) {
 
 	if job.CompanyID == userID {
 		var applicants []JobApplicantResponse
-		if err := jc.DB.Debug().Table("job_applications").
+		if err := jc.DB.Table("job_applications").
 			Joins("LEFT JOIN students ON students.user_id = job_applications.student_id").
 			Where("job_id = ?", job.ID).
 			Scan(&applicants).

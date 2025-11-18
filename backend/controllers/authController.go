@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -9,6 +10,7 @@ import (
 
 	"com-seek/backend/helpers"
 	"com-seek/backend/models"
+	"com-seek/backend/services"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -29,21 +31,23 @@ func NewAuthController(db *gorm.DB, fileController *FileController) *AuthControl
 }
 
 type RegisterStudentInput struct {
-	Email        string                `form:"email" binding:"required,email"`
-	Password     string                `form:"password" binding:"required"`
-	FirstName    string                `form:"first_name" binding:"required"`
-	LastName     string                `form:"last_name" binding:"required"`
-	IsAlumString string                `form:"is_alum" binding:"required,oneof=true false 1 0"`
-	Transcript   *multipart.FileHeader `form:"transcript" binding:"required"`
+	Email          string                `form:"email" binding:"required,email"`
+	Password       string                `form:"password" binding:"required"`
+	FirstName      string                `form:"first_name" binding:"required"`
+	LastName       string                `form:"last_name" binding:"required"`
+	IsAlumString   string                `form:"is_alum" binding:"required,oneof=true false 1 0"`
+	Transcript     *multipart.FileHeader `form:"transcript" binding:"required"`
+	ReCAPTCHAToken string                `form:"recaptcha_response" binding:"required"`
 }
 
 type RegisterCompanyInput struct {
-	Email         string `json:"email" binding:"required,email"`
-	Password      string `json:"password" binding:"required"`
-	Name          string `json:"name" binding:"required"`
-	Location      string `json:"location" binding:"required"`
-	ContactEmail  string `json:"contact_email" binding:"required,email"`
-	ContactNumber string `json:"contact_number" binding:"required"`
+	Email          string `json:"email" binding:"required,email"`
+	Password       string `json:"password" binding:"required"`
+	Name           string `json:"name" binding:"required"`
+	Location       string `json:"location" binding:"required"`
+	ContactEmail   string `json:"contact_email" binding:"required,email"`
+	ContactNumber  string `json:"contact_number" binding:"required"`
+	ReCAPTCHAToken string `json:"recaptcha_response" binding:"required"`
 }
 
 func (ac *AuthController) RegisterStudent(c *gin.Context) {
@@ -51,6 +55,19 @@ func (ac *AuthController) RegisterStudent(c *gin.Context) {
 
 	if err := c.ShouldBind(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := services.VerifyRecaptchaToken(input.ReCAPTCHAToken); err != nil {
+		if errors.Is(err, services.ErrRecaptchaFailed) {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err,
+			})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err,
+			})
+		}
 		return
 	}
 
@@ -119,6 +136,19 @@ func (ac *AuthController) RegisterCompany(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := services.VerifyRecaptchaToken(input.ReCAPTCHAToken); err != nil {
+		if errors.Is(err, services.ErrRecaptchaFailed) {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err,
+			})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err,
+			})
+		}
 		return
 	}
 
