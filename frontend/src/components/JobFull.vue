@@ -23,18 +23,22 @@ const cvBox = ref(null);
 const confirmBox = ref(null);
 
 const DEFAULT_AVATAR = "/images/avatar.png";
-const company_logo_url = ref("");
+const company_logo_url = ref(getFileUrl(props.jobInfo.Company?.profile_image_id, DEFAULT_AVATAR));
 
 let desc_html = marked(props.jobInfo?.Description || "")
 const date = computed(() => {
   return DateConverter(props.jobInfo?.CreatedAt || "")
 })
 
-watch(() => props.jobInfo, (newJobInfo) => {
-  console.log('JobFull received jobInfo:', newJobInfo)
-  desc_html = marked(newJobInfo.Description || "")
-  company_logo_url.value = getFileUrl(props.jobInfo.Company?.profile_image_id, DEFAULT_AVATAR)
-})
+watch(
+  () => props.jobInfo,
+  (newJobInfo) => {
+    console.log('JobFull received jobInfo:', newJobInfo)
+    desc_html = marked(newJobInfo.Description || "")
+    company_logo_url.value = getFileUrl(newJobInfo.Company?.profile_image_id, DEFAULT_AVATAR)
+  },
+  { immediate: true }
+)
 
 const role = ref(localStorage.getItem('role'));
 onMounted(() => {
@@ -79,7 +83,7 @@ function alertNotVerified() {
   <div id="job full" class="flex w-full px-25 py-10 flex-col rounded-2xl box-shadow bg-white sticky">
 
     <div id="title-box" class="flex row items-center mt-3">
-      <img :src=company_logo_url class="w-20 h-20 rounded-2xl" alt="company-logo"/>
+      <img :src=company_logo_url class="w-20 h-20 rounded-2xl" alt="company-logo" @error="event => event.target.src = DEFAULT_AVATAR"/>
       <div id="title" class="flex flex-col ml-7 space-y-4">
         <router-link :to="{ name: 'CompanyProfilePublic', params: { id: Number(jobInfo.Company?.UserID) }}" class="text-2xl" >{{ jobInfo.Company?.Name }}</router-link>
         <span class="underline">{{ jobInfo.Title }}</span>
