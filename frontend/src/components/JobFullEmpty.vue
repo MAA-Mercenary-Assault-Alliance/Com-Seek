@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div id="job full" class="flex relative w-2/3 px-25 py-10 flex-col rounded-2xl box-shadow bg-white w-full items-center">
+  <div id="job full" class="flex relative w-full px-25 py-10 flex-col rounded-2xl box-shadow bg-white items-center">
 
   <span class="text-gray-500">Empty</span>
 
