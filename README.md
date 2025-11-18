@@ -37,7 +37,7 @@ A web application for Computer Engineering students and alumni at Kasetsart Univ
     
     For email config, refer to [this](./backend/email_config.md).
     
-    For reCAPTCHA config, please create one [here](https://www.google.com/recaptcha/admin/create) if you don't have them.
+    For reCAPTCHA config, please create one [here](https://www.google.com/recaptcha/admin/create) if you don't have them. Select V2 checkbox when creating them.
 
 4. Set up database
 
@@ -72,7 +72,7 @@ A web application for Computer Engineering students and alumni at Kasetsart Univ
 
     Change the values in .env to match your configuration.
     
-    For reCAPTCHA config, please create one [here](https://www.google.com/recaptcha/admin/create) if you don't have them.
+    For reCAPTCHA config, please create one [here](https://www.google.com/recaptcha/admin/create) if you don't have them. Select V2 checkbox when creating them.
 
 ## Running the Application
 
