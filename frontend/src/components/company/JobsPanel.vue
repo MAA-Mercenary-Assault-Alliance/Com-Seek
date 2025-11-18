@@ -65,10 +65,25 @@
 
       <!-- Detail: fills to end and scrolls without overflowing parent -->
       <div class="md:col-span-2 h-full min-h-0 flex">
-        <div v-if="modelValue" class="rounded-lg p-5 bg-white shadow-md flex-1 overflow-auto">
+        <div
+          v-if="jobs.length === 0"
+          class="flex flex-col flex-1 items-center justify-center -translate-y-10"
+        >
+          <img src="../../assets/leaf.svg" class="w-30" alt="leaf" />
+          <span class="text-2xl text-gray-500 mt-10">
+            No jobs posted yet
+          </span>
+        </div>
+
+        <div
+          v-else-if="modelValue"
+          class="rounded-lg p-5 bg-white shadow-md flex-1 overflow-auto"
+        >
           <div class="flex items-start justify-between">
             <div>
-              <h3 class="text-lg font-bold text-[#0A3B1F]">{{ modelValue.Title }}</h3>
+              <h3 class="text-lg font-bold text-[#0A3B1F]">
+                {{ modelValue.Title }}
+              </h3>
               <div class="text-sm text-gray-600">
                 {{ modelValue.Location }} • {{ modelValue.EmploymentStatus }}
               </div>
@@ -116,8 +131,14 @@
           </div>
         </div>
 
-        <div v-else class="text-gray-500 h-full flex items-center justify-center">
-          Select a job to see details.
+        <!-- ℹ️ Jobs exist, but none selected -->
+        <div
+          v-else
+          class="flex flex-1 justify-center items-center"
+        >
+          <p class="text-gray-500 text-lg">
+            Select a job to see details.
+          </p>
         </div>
       </div>
     </div>

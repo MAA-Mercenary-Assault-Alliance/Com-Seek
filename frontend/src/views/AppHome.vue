@@ -14,6 +14,7 @@ const location = ref('')
 const isLoading = ref(true)
 const selectedJob = ref(null) // need to pass this value to JobBoard
 const verified = ref(false)
+const role = ref(localStorage.getItem("role"));
 
 watch(keyword, (newVal) => {
   console.log('keyword changed:', newVal)
@@ -52,6 +53,10 @@ async function findJobs() {
 
 async function getMyStatus() {
   try {
+    if (role.value != "student") {
+      verified.value = true
+      return
+    }
     const res = await api.get("/student")
     console.log("User status:", res.data.profile.approved)
     verified.value = res.data.profile.approved

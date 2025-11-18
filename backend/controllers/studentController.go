@@ -144,6 +144,7 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 		Twitter      *string               `form:"twitter" binding:"omitempty,max=256"`
 		ProfileImage *multipart.FileHeader `form:"profile_image"`
 		CoverImage   *multipart.FileHeader `form:"cover_image"`
+		Transcript   *multipart.FileHeader `form:"transcript"`
 		CV           *multipart.FileHeader `form:"cv"`
 	}
 
@@ -163,13 +164,17 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 		return
 	}
 
-	var oldProfileImageID, oldCoverImageID, oldCVID string
+	var oldProfileImageID, oldCoverImageID, oldCVID, oldTranscriptID string
 
 	if student.ProfileImageID != nil {
 		oldProfileImageID = *student.ProfileImageID
 	}
 	if student.CoverImageID != nil {
 		oldCoverImageID = *student.CoverImageID
+	}
+	oldTranscriptID = student.TranscriptID
+	if student.CVID != nil {
+		oldCVID = *student.CVID
 	}
 
 	if input.FirstName != "" {
@@ -236,6 +241,16 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 		*student.CoverImageID = cover.ID
 	}
 
+	if input.Transcript != nil {
+		transcript, err := sc.fileController.SaveFile(c, userID, input.Transcript, models.FileCategoryTranscript)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		student.TranscriptID = transcript.ID
+	}
+
 	if input.CV != nil {
 		cover, err := sc.fileController.SaveFile(c, userID, input.CV, models.FileCategoryCV)
 		if err != nil {
@@ -256,6 +271,12 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 		return
 	}
 
+	if input.Transcript != nil {
+		if oldTranscriptID != "" && oldTranscriptID != student.TranscriptID {
+			go helpers.DeleteFileRecord(sc.DB, oldTranscriptID)
+		}
+	}
+
 	if oldProfileImageID != "" && oldProfileImageID != *student.ProfileImageID {
 		go helpers.DeleteFileRecord(sc.DB, oldProfileImageID)
 	}
@@ -264,7 +285,7 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 		go helpers.DeleteFileRecord(sc.DB, oldCoverImageID)
 	}
 
-	if oldCVID != "" && oldCVID != *student.CVID {
+	if oldCVID != "" && student.CVID != nil && oldCVID != *student.CVID {
 		go helpers.DeleteFileRecord(sc.DB, oldCVID)
 	}
 

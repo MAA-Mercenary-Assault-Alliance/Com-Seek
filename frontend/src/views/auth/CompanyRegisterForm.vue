@@ -125,20 +125,26 @@
 
         <!-- Contact Number -->
         <div class="form-control">
-          <label class="label"
-            ><span class="label-text">Contact Number</span></label
-          >
-          <input
-            v-model.trim="form.contactNumber"
-            type="text"
-            placeholder="02-123-4567"
-            class="input input-bordered w-full"
+          <label class="label">
+            <span class="label-text">Contact Number</span>
+          </label>
+
+          <vue-tel-input
+            v-model="phoneInput"
+            placeholder="+66804250689"
+            :defaultCountry="'th'"
+            mode="international"
+            :enabledCountryCode="true"
+            :inputOptions="{ showDialCode: true }"
+            valid-characters-only
             :class="{ 'input-error': errors.contactNumber }"
-            required
+            input-class="input input-bordered w-full !focus:border-black !focus:ring-0"
+            dropdown-class="bg-white shadow-md rounded-lg"
           />
-          <label v-if="errors.contactNumber" class="label text-error text-sm">{{
-            errors.contactNumber
-          }}</label>
+
+          <label v-if="errors.contactNumber" class="label text-error text-sm">
+            {{ errors.contactNumber }}
+          </label>
         </div>
 
         <!-- Submit -->
@@ -207,6 +213,7 @@ export default {
   emits: ["switch-to-login"],
   data() {
     return {
+      phoneInput: "",
       form: {
         companyName: "",
         location: "",
@@ -226,6 +233,21 @@ export default {
       continueAfterTos: false,
     };
   },
+      watch: {
+      phoneInput(value) {
+        if (!value) {
+          this.form.contactNumber = "";
+          return;
+        }
+
+        const raw =
+          typeof value === "string"
+            ? value
+            : (value && (value.number || value.phone)) || "";
+
+        this.form.contactNumber = raw.replace(/\s+/g, "");
+      },
+    },
   methods: {
     validateEmail(email) {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -259,13 +281,14 @@ export default {
 
     // Public submit handler (ToS-gated)
     async handleRegister() {
+      if (!this.validateForm()) return;
+
       if (!this.tosAccepted) {
         this.continueAfterTos = true;
         this.showTos = true;
         return;
       }
 
-      if (!this.validateForm()) return;
       await this.performRegister();
     },
 
@@ -319,6 +342,7 @@ export default {
     },
 
     resetForm() {
+      this.phoneInput = "";
       this.form = {
         companyName: "",
         location: "",
