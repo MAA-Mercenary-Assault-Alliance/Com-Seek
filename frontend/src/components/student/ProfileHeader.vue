@@ -13,9 +13,50 @@
 
     <!-- Identity -->
     <div class="min-w-0">
-      <h1 class="text-5xl font-bold text-gray-800 truncate">
-        {{ profile.first_name || profile.firstName }} {{ profile.last_name || profile.lastName }}
-      </h1>
+      <div class="flex items-center gap-3">
+        <h1 class="text-5xl font-bold text-gray-800 truncate flex-1 min-w-0">
+          {{ profile.first_name || profile.firstName }} {{ profile.last_name || profile.lastName }}
+        </h1>
+        <div
+          v-if="profile.transcript || profile.cv"
+          class="flex items-center gap-3 text-gray-600 text-2xl"
+        >
+          <a
+            v-if="profile.transcript"
+            :href="profile.transcript"
+            target="_blank"
+            rel="noopener"
+            :download="fileDownloadName('transcript')"
+            class="group relative inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition"
+            aria-label="View transcript"
+            title="View transcript"
+          >
+            <i class="fa-regular fa-file-lines"></i>
+            <span
+              class="pointer-events-none absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition"
+            >
+              {{ fileDownloadName('transcript') }}
+            </span>
+          </a>
+          <a
+            v-if="profile.cv"
+            :href="profile.cv"
+            target="_blank"
+            rel="noopener"
+            :download="fileDownloadName('cv')"
+            class="group relative inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition"
+            aria-label="View CV"
+            title="View CV"
+          >
+            <i class="fa-regular fa-file"></i>
+            <span
+              class="pointer-events-none absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition"
+            >
+              {{ fileDownloadName('cv') }}
+            </span>
+          </a>
+        </div>
+      </div>
 
       <!-- Socials (supports either nested socials.* or top-level fields from API) -->
       <div class="flex items-center space-x-4 mt-1 text-3xl text-gray-700">
@@ -80,7 +121,6 @@
 
 <script>
 export default {
-  
   name: 'ProfileHeader',
   props: {
     profile: { type: Object, required: true },
@@ -93,8 +133,13 @@ export default {
     },
     onImgError(event) {
       event.target.src = '/images/avatar.png';
+    },
+    fileDownloadName(type) {
+      const first = this.profile.first_name || this.profile.firstName || 'Student';
+      const last = this.profile.last_name || this.profile.lastName || 'Profile';
+      const suffix = type === 'cv' ? 'CV' : 'Transcript';
+      return `${first}_${last}_${suffix}`.replace(/\s+/g, '_');
     }
   }
-
 };
 </script>

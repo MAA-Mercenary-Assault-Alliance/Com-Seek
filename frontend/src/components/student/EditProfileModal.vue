@@ -4,7 +4,9 @@
     @keydown.esc="$emit('close')"
   >
     <!-- Main card -->
-    <div class="bg-white w-full max-w-3xl rounded-2xl shadow-xl border border-[#E6F5EA]">
+    <div
+      class="bg-white w-full max-w-4xl rounded-2xl shadow-xl border border-[#E6F5EA] max-h-[90vh] flex flex-col overflow-hidden"
+    >
       <!-- Header -->
       <div class="flex items-start justify-between px-6 pt-5 pb-3 border-b border-[#EAF6EC]">
         <h3 class="text-2xl font-semibold text-[#0A3B1F]">Edit Profile</h3>
@@ -18,7 +20,7 @@
       </div>
 
       <!-- Body -->
-      <div class="px-6 pb-6 pt-4">
+      <div class="px-6 pb-6 pt-4 flex-1 overflow-y-auto">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- Names + Bio -->
           <div class="space-y-4">
@@ -188,6 +190,87 @@
                 Widescreen (e.g., 1200×300) recommended.
               </p>
             </div>
+
+            <!-- Transcript -->
+            <div class="border border-[#E6F5EA] rounded-xl p-3 bg-[#F8FFFA]">
+              <p class="text-sm font-medium text-[#0A3B1F] mb-2">Transcript (PDF)</p>
+              <div class="space-y-2">
+                <input
+                  ref="transcriptFile"
+                  type="file"
+                  accept="application/pdf"
+                  class="block w-full text-xs text-gray-700
+                         file:mr-3 file:py-1.5 file:px-4
+                         file:rounded-full file:border-0
+                         file:bg-[#44B15B] file:text-white
+                         hover:file:bg-[#3AA04F] cursor-pointer"
+                  @change="onTranscriptFileChange"
+                />
+                <div class="text-xs text-gray-600">
+                  <span v-if="transcriptFileName">Selected: {{ transcriptFileName }}</span>
+                  <span v-else-if="editable.transcript">
+                    Current:
+                    <a
+                      :href="editable.transcript"
+                      target="_blank"
+                      rel="noopener"
+                      class="underline hover:text-[#44B15B]"
+                    >
+                      Open transcript
+                    </a>
+                  </span>
+                  <span v-else>No transcript uploaded yet.</span>
+                </div>
+                <button
+                  v-if="editable.newTranscriptFile"
+                  class="text-xs px-3 py-1 rounded-full border border-transparent text-gray-600 hover:bg-[#EAF6EC] transition"
+                  @click="clearTranscriptFile"
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+
+            <!-- CV -->
+            <div class="border border-[#E6F5EA] rounded-xl p-3 bg-[#F8FFFA]">
+              <p class="text-sm font-medium text-[#0A3B1F] mb-2">CV / Resume (PDF, optional)</p>
+              <div class="space-y-2">
+                <input
+                  ref="cvFile"
+                  type="file"
+                  accept="application/pdf"
+                  class="block w-full text-xs text-gray-700
+                         file:mr-3 file:py-1.5 file:px-4
+                         file:rounded-full file:border-0
+                         file:bg-[#44B15B] file:text-white
+                         hover:file:bg-[#3AA04F] cursor-pointer"
+                  @change="onCvFileChange"
+                />
+                <div class="text-xs text-gray-600">
+                  <span v-if="cvFileName">Selected: {{ cvFileName }}</span>
+                  <span v-else-if="editable.cv">
+                    Current:
+                    <a
+                      :href="editable.cv"
+                      target="_blank"
+                      rel="noopener"
+                      class="underline hover:text-[#44B15B]"
+                    >
+                      Open CV
+                    </a>
+                  </span>
+                  <span v-else>No CV uploaded.</span>
+                </div>
+                <button
+                  v-if="editable.newCvFile"
+                  class="text-xs px-3 py-1 rounded-full border border-transparent text-gray-600 hover:bg-[#EAF6EC] transition"
+                  @click="clearCvFile"
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -237,10 +320,16 @@ export default {
         cover: "",
         newAvatarFile: null,
         newCoverFile: null,
+        transcript: "",
+        cv: "",
+        newTranscriptFile: null,
+        newCvFile: null,
       },
       avatarPreview: "",
       coverPreview: "",
       validationError: "",
+      transcriptFileName: "",
+      cvFileName: "",
     };
   },
   created() {
@@ -256,6 +345,8 @@ export default {
     };
     this.editable.avatar = this.profile.avatar || "";
     this.editable.cover = this.profile.cover || "";
+    this.editable.transcript = this.profile.transcript || "";
+    this.editable.cv = this.profile.cv || "";
   },
   beforeUnmount() {
     this.revokePreview("avatarPreview");
@@ -313,6 +404,58 @@ export default {
       if (this.$refs.coverFile) this.$refs.coverFile.value = "";
       this.editable.newCoverFile = null;
     },
+    onTranscriptFileChange(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      if (file.type !== "application/pdf") {
+        this.validationError = "Transcript must be a PDF file.";
+        if (this.$refs.transcriptFile) this.$refs.transcriptFile.value = "";
+        this.editable.newTranscriptFile = null;
+        this.transcriptFileName = "";
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        this.validationError = "Transcript exceeds 10MB.";
+        if (this.$refs.transcriptFile) this.$refs.transcriptFile.value = "";
+        this.editable.newTranscriptFile = null;
+        this.transcriptFileName = "";
+        return;
+      }
+      this.validationError = "";
+      this.editable.newTranscriptFile = file;
+      this.transcriptFileName = file.name;
+    },
+    onCvFileChange(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      if (file.type !== "application/pdf") {
+        this.validationError = "CV must be a PDF file.";
+        if (this.$refs.cvFile) this.$refs.cvFile.value = "";
+        this.editable.newCvFile = null;
+        this.cvFileName = "";
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        this.validationError = "CV exceeds 10MB.";
+        if (this.$refs.cvFile) this.$refs.cvFile.value = "";
+        this.editable.newCvFile = null;
+        this.cvFileName = "";
+        return;
+      }
+      this.validationError = "";
+      this.editable.newCvFile = file;
+      this.cvFileName = file.name;
+    },
+    clearTranscriptFile() {
+      if (this.$refs.transcriptFile) this.$refs.transcriptFile.value = "";
+      this.editable.newTranscriptFile = null;
+      this.transcriptFileName = "";
+    },
+    clearCvFile() {
+      if (this.$refs.cvFile) this.$refs.cvFile.value = "";
+      this.editable.newCvFile = null;
+      this.cvFileName = "";
+    },
     save() {
       // basic URL validation
       const urlFields = ["facebook", "twitter", "instagram", "github"];
@@ -338,6 +481,8 @@ export default {
         // Here we commit previews (object URLs) if set; else keep existing.
         profileImageFile: this.editable.newAvatarFile,
         coverImageFile: this.editable.newCoverFile,
+        transcriptFile: this.editable.newTranscriptFile,
+        cvFile: this.editable.newCvFile,
       };
 
       this.$emit("save", payload);

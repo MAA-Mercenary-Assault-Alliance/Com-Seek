@@ -92,10 +92,16 @@ export default {
 
         const profileImageId = p.profile_image_id;
         const coverImageId = p.cover_image_id;
+        const transcriptId = p.transcript_id;
+        const cvId = p.cv_id;
 
         this.profile = {
           cover: getFileUrl(coverImageId, DEFAULT_COVER),
           avatar: getFileUrl(profileImageId, DEFAULT_AVATAR),
+          transcript: transcriptId ? getFileUrl(transcriptId, "") : "",
+          cv: cvId ? getFileUrl(cvId, "") : "",
+          transcriptId: transcriptId || "",
+          cvId: cvId || "",
 
           // identity
           firstName: p.first_name || "",
@@ -170,6 +176,12 @@ export default {
         }
         if (updated.coverImageFile && updated.coverImageFile instanceof File) {
           fd.append("cover_image", updated.coverImageFile);
+        }
+        if (updated.transcriptFile && updated.transcriptFile instanceof File) {
+          fd.append("transcript", updated.transcriptFile);
+        }
+        if (updated.cvFile && updated.cvFile instanceof File) {
+          fd.append("cv", updated.cvFile);
         }
 
         await api.patch("/student", fd);
