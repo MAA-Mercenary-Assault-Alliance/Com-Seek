@@ -33,6 +33,7 @@ const date = computed(() => {
 watch(() => props.jobInfo, (newJobInfo) => {
   console.log('JobFull received jobInfo:', newJobInfo)
   desc_html = marked(newJobInfo.Description || "")
+  company_logo_url.value = getFileUrl(props.jobInfo.Company?.profile_image_id, DEFAULT_AVATAR)
 })
 
 const role = ref(localStorage.getItem('role'));
@@ -72,10 +73,6 @@ function goToEdit() {
 function alertNotVerified() {
   alert("Your student profile is not verified. You cannot apply for jobs.")
 }
-
-onMounted(() => {
-  company_logo_url.value = getFileUrl(props.jobInfo.Company?.profile_image_id, DEFAULT_AVATAR)
-})
 </script>
 
 <template>
