@@ -1,9 +1,13 @@
 export function renderRecaptcha(element, sitekey) {
   return new Promise((resolve, reject) => {
-    // eslint-disable-next-line no-undef
-    if (typeof grecaptcha === "undefined" && !grecaptcha.render) {
+    /* eslint-disable no-undef */
+    if (
+      typeof grecaptcha === "undefined" &&
+      typeof grecaptcha.render !== "function"
+    ) {
       reject(new Error("reCAPTCHA script not loaded"));
     }
+    /* eslint-enable no-undef */
 
     if (!element.hasChildNodes()) {
       // eslint-disable-next-line no-undef
