@@ -320,6 +320,15 @@ export default {
 
     // Called after ToS accept or direct submit
     async performRegister() {
+      // eslint-disable-next-line no-undef
+      if (grecaptcha.getResponse() == "") {
+        this.alert = {
+          message: "Please complete the CAPTCHA",
+          type: "error",
+        };
+        return;
+      }
+
       this.loading = true;
       this.alert = { message: "Creating account...", type: "success" };
 
@@ -360,15 +369,15 @@ export default {
       }
     },
 
-      onAcceptTos() {
-        this.tosAccepted = true;
-        this.showTos = false;
+    onAcceptTos() {
+      this.tosAccepted = true;
+      this.showTos = false;
 
-        if (this.continueAfterTos) {
-          this.continueAfterTos = false;
-          this.performRegister();
-        }
-      },
+      if (this.continueAfterTos) {
+        this.continueAfterTos = false;
+        this.performRegister();
+      }
+    },
 
     resetForm() {
       this.form = {

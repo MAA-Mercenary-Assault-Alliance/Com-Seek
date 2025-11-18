@@ -148,6 +148,12 @@ const submitJob = async () => {
       return;
     }
 
+    // eslint-disable-next-line no-undef
+    if (grecaptcha.getResponse() == "") {
+      alert("Please complete the CAPTCHA");
+      return;
+    }
+
     const payload = {
       title: jobName.value,
       location: location.value,

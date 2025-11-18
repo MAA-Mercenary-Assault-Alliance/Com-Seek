@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // @ts-nocheck
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { renderRecaptcha } from "../services/reCAPTCHA";
 import { api } from "../../api/client";
 
@@ -10,15 +10,20 @@ const props = defineProps({ jobID: Number });
 
 const dialog = ref(null);
 
+const recaptchaContainer = ref(null);
+const recaptchaFilled = ref(false);
+
 function open() {
-  try {
-    // eslint-disable-next-line no-undef
+  /* eslint-disable no-undef */
+  if (
+    window.grecaptcha &&
+    typeof grecaptcha.reset === "function" &&
+    recaptchaContainer.value.hasChildNodes()
+  ) {
     grecaptcha.reset();
-    // eslint-disable-next-line no-unused-vars
-  } catch (error) {
-    console.log("Rendering reCAPTCHA");
+    /* eslint-enable no-undef */
   }
-  renderRecaptcha(this.$refs.recaptchaContainer, reCAPTCHASiteKey);
+  renderRecaptcha(recaptchaContainer.value, reCAPTCHASiteKey);
   dialog.value.show();
 }
 
@@ -40,6 +45,32 @@ const fileInput = ref(null);
 const selectedFile = ref(null);
 const loading = ref(false);
 
+let recaptchaPoll = null;
+onMounted(() => {
+  recaptchaPoll = window.setInterval(() => {
+    try {
+      /* eslint-disable no-undef */
+      if (window.grecaptcha && typeof grecaptcha.getResponse === "function") {
+        const resp = grecaptcha.getResponse();
+        /* eslint-enable no-undef */
+        recaptchaFilled.value = resp && resp.length > 0;
+      } else {
+        recaptchaFilled.value = false;
+      }
+      // eslint-disable-next-line no-unused-vars
+    } catch (e) {
+      recaptchaFilled.value = false;
+    }
+  }, 300);
+});
+
+onUnmounted(() => {
+  if (recaptchaPoll != null) {
+    clearInterval(recaptchaPoll);
+    recaptchaPoll = null;
+  }
+});
+
 async function applyJob() {
   if (role.value !== "student") {
     alert("Only students can apply to jobs.");
@@ -48,6 +79,12 @@ async function applyJob() {
 
   if (!selectedFile.value) {
     alert("Please upload your CV/Resume (PDF) before applying.");
+    return;
+  }
+
+  // eslint-disable-next-line no-undef
+  if (grecaptcha.getResponse() == "") {
+    alert("Please complete the CAPTCHA");
     return;
   }
 
@@ -185,7 +222,7 @@ function handleFileUpload(event) {
 
         <button
           class="btn shadow-none border-0 h-10 w-30 rounded-md text-white text-md font-extralight px-7 disabled:bg-gray-200 bg-lighter"
-          :disabled="!selectedFile"
+          :disabled="!selectedFile || !recaptchaFilled"
           @click="applyJob"
         >
           Apply

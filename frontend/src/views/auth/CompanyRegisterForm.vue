@@ -307,6 +307,15 @@ export default {
 
     // Called after ToS accept or direct submit
     async performRegister() {
+      // eslint-disable-next-line no-undef
+      if (grecaptcha.getResponse() == "") {
+        this.alert = {
+          message: "Please complete the CAPTCHA",
+          type: "error",
+        };
+        return;
+      }
+
       this.loading = true;
       this.alert = { message: "Creating account...", type: "success" };
 
