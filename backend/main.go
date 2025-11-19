@@ -7,7 +7,12 @@ import (
 	"com-seek/backend/config"
 	"com-seek/backend/controllers"
 	"com-seek/backend/database"
+	"com-seek/backend/helpers"
+	"fmt"
 
+	"io"
+
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
@@ -23,6 +28,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error loading file configuration: %v", err)
 	}
+
+	// Logging to a file.
+	logFileName := helpers.GenerateLogFileName("req")
+	f, _ := os.Create(fmt.Sprintf("logs/requests/%s", logFileName))
+	gin.DefaultWriter = io.MultiWriter(f)
 
 	router := controllers.NewRouter(db, *fileConfig)
 
