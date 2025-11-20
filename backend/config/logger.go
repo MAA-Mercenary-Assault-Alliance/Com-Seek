@@ -1,10 +1,10 @@
-package helpers
+package config
 
 import (
-	"com-seek/backend/helpers"
 	"fmt"
 	"io"
 	"log"
+	"log/slog"
 	"math/rand"
 	"os"
 	"time"
@@ -25,17 +25,19 @@ type Logger struct {
 	*log.Logger
 }
 
-func NewLogger() *Logger {
+func NewFileWriter() io.Writer {
+	// Create logs directory if it doesn't exist
+	os.Mkdir("logs/actions", 0755)
 	// Create log file
-	logFileName := helpers.GenerateLogFileName("act")
+	logFileName := GenerateLogFileName("act")
 	f, _ := os.Create(fmt.Sprintf("logs/actions/%s", logFileName))
 	multiWriter := io.MultiWriter(f)
 
-	return &Logger{
-		Logger: log.New(multiWriter, "[ACTION] ", log.LstdFlags),
-	}
+	return multiWriter
 }
 
-func (l *Logger) LogAction(action, userID, details string) {
-	l.Printf("Action: %s | UserID: %s | Details: %s", action, userID, details)
+var actionLogger = slog.New(slog.NewTextHandler(NewFileWriter(), &slog.HandlerOptions{Level: slog.LevelInfo}))
+
+func GetLogger() *slog.Logger {
+	return actionLogger
 }

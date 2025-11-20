@@ -7,7 +7,6 @@ import (
 	"com-seek/backend/config"
 	"com-seek/backend/controllers"
 	"com-seek/backend/database"
-	"com-seek/backend/helpers"
 	"fmt"
 
 	"io"
@@ -29,10 +28,12 @@ func main() {
 		log.Fatalf("Error loading file configuration: %v", err)
 	}
 
+	os.Mkdir("logs", 0755)
 	// Logging to a file.
-	logFileName := helpers.GenerateLogFileName("req")
+	os.Mkdir("logs/requests", 0755)
+	logFileName := config.GenerateLogFileName("req")
 	f, _ := os.Create(fmt.Sprintf("logs/requests/%s", logFileName))
-	gin.DefaultWriter = io.MultiWriter(f)
+	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 
 	router := controllers.NewRouter(db, *fileConfig)
 
