@@ -3,6 +3,7 @@ package controllers
 import (
 	"com-seek/backend/models"
 	"com-seek/backend/services"
+	"fmt"
 	"log"
 	"strconv"
 
@@ -92,12 +93,14 @@ func (ac *AdminController) ReviewCompany(c *gin.Context) {
 
 	// Check for Admin Status
 	if !IsAdmin(ac.DB, userID) {
+		logger.Error(fmt.Sprintf("<Admin id: %d> Attempt to Review <Company id: %s>: unauthorized", userID, idStr))
 		c.JSON(403, gin.H{"error": "Unauthorized: For Admin only"})
 		return
 	}
 
 	var payload ReviewPayload
 	if err := c.ShouldBindJSON(&payload); err != nil {
+		logger.Error(fmt.Sprintf("<Admin id: %d> Attempt to Review <Company id: %s>: invalid payload", userID, idStr))
 		c.JSON(400, gin.H{"error": "Invalid payload"})
 		return
 	}
@@ -113,6 +116,7 @@ func (ac *AdminController) ReviewCompany(c *gin.Context) {
 	}
 
 	if err := ac.DB.Preload("User").First(&company).Error; err != nil {
+		logger.Error(fmt.Sprintf("<Admin id: %d> Attempt to Review <Company id: %d>: error fetching company", userID, uintID))
 		c.JSON(500, gin.H{"error": "Error fetching company"})
 		return
 	}
@@ -120,18 +124,22 @@ func (ac *AdminController) ReviewCompany(c *gin.Context) {
 	if *payload.Approved {
 		company.Approved = true
 		if err := ac.DB.Save(&company).Error; err != nil {
+			logger.Error(fmt.Sprintf("<Admin id: %d> Attempt to Review <Company id: %d>: failed to approve company", userID, uintID))
 			c.JSON(500, gin.H{"error": "Failed to approve company"})
 			return
 		}
+		logger.Info(fmt.Sprintf("<Admin id: %d> Successfully Reviewed <Company id: %d>: Approved", userID, uintID))
 		c.JSON(200, gin.H{"message": "Company approved"})
 	} else {
 		notificationEmail := company.User.Email
 
 		// Just delete the user
 		if err := ac.DB.Unscoped().Delete(&company.User).Error; err != nil {
+			logger.Error(fmt.Sprintf("<Admin id: %d> Attempt to Review <Company id: %d>: failed to reject and delete company's user", userID, uintID))
 			c.JSON(500, gin.H{"error": "Failed to delete company's user"})
 			return
 		}
+		logger.Info(fmt.Sprintf("<Admin id: %d> Successfully Reviewed <Company id: %d>: Rejected", userID, uintID))
 		c.JSON(200, gin.H{"message": "Company's user deleted"})
 
 		go SendDeletionEmail(notificationEmail)
@@ -181,12 +189,14 @@ func (ac *AdminController) ReviewStudent(c *gin.Context) {
 
 	// Check for Admin Status
 	if !IsAdmin(ac.DB, userID) {
+		logger.Error(fmt.Sprintf("<Admin id: %d> Attempt to Review <Student id: %s>: unauthorized", userID, idStr))
 		c.JSON(403, gin.H{"error": "Unauthorized: For Admin only"})
 		return
 	}
 
 	var payload ReviewPayload
 	if err := c.ShouldBindJSON(&payload); err != nil {
+		logger.Error(fmt.Sprintf("<Admin id: %d> Attempt to Review <Student id: %s>: invalid payload", userID, idStr))
 		c.JSON(400, gin.H{"error": "Invalid payload"})
 		return
 	}
@@ -201,6 +211,7 @@ func (ac *AdminController) ReviewStudent(c *gin.Context) {
 	}
 
 	if err := ac.DB.Preload("User").Where("user_id = ?", idStr).First(&student).Error; err != nil {
+		logger.Error(fmt.Sprintf("<Admin id: %d> Attempt to Review <Student id: %d>: error fetching student", userID, uintID))
 		c.JSON(500, gin.H{"error": "Error fetching pending students"})
 		return
 	}
@@ -208,18 +219,22 @@ func (ac *AdminController) ReviewStudent(c *gin.Context) {
 	if *payload.Approved {
 		student.Approved = true
 		if err := ac.DB.Save(&student).Error; err != nil {
+			logger.Error(fmt.Sprintf("<Admin id: %d> Attempt to Review <Student id: %d>: failed to approve student", userID, uintID))
 			c.JSON(500, gin.H{"error": "Failed to approve student"})
 			return
 		}
+		logger.Info(fmt.Sprintf("<Admin id: %d> Successfully Reviewed <Student id: %d>: Approved", userID, uintID))
 		c.JSON(200, gin.H{"message": "Student approved"})
 	} else {
 		notificationEmail := student.User.Email
 
 		// Just delete the student
 		if err := ac.DB.Unscoped().Delete(&student.User).Error; err != nil {
+			logger.Error(fmt.Sprintf("<Admin id: %d> Attempt to Review <Student id: %d>: failed to reject and delete student's user", userID, uintID))
 			c.JSON(500, gin.H{"error": "Failed to reject and delete student"})
 			return
 		}
+		logger.Info(fmt.Sprintf("<Admin id: %d> Successfully Reviewed <Student id: %d>: Rejected", userID, uintID))
 		c.JSON(200, gin.H{"message": "Student's user deleted"})
 
 		go SendDeletionEmail(notificationEmail)
@@ -248,12 +263,14 @@ func (ac *AdminController) ReviewJob(c *gin.Context) {
 
 	// Check for Admin Status
 	if !IsAdmin(ac.DB, userID) {
+		logger.Error(fmt.Sprintf("<Admin id: %d> Attempt to Review <Job id: %s>: unauthorized", userID, idStr))
 		c.JSON(403, gin.H{"error": "Unauthorized: For Admin only"})
 		return
 	}
 
 	var payload ReviewPayload
 	if err := c.ShouldBindJSON(&payload); err != nil {
+		logger.Error(fmt.Sprintf("<Admin id: %d> Attempt to Review <Job id: %s>: invalid payload", userID, idStr))
 		c.JSON(400, gin.H{"error": "Invalid payload"})
 		return
 	}
@@ -268,11 +285,13 @@ func (ac *AdminController) ReviewJob(c *gin.Context) {
 		ID: uintID,
 	}
 	if err := ac.DB.First(&job).Error; err != nil {
+		logger.Error(fmt.Sprintf("<Admin id: %d> Attempt to Review <Job id: %s>: error fetching job", userID, idStr))
 		c.JSON(404, gin.H{"error": "Job not found"})
 		return
 	}
 
 	if !job.CheckNeeded {
+		logger.Error(fmt.Sprintf("<Admin id: %d> Attempt to Review <Job id: %s>: job already reviewed", userID, idStr))
 		c.JSON(304, gin.H{"message": "Job already reviewed"})
 		return
 	}
@@ -287,9 +306,11 @@ func (ac *AdminController) ReviewJob(c *gin.Context) {
 	}
 
 	if err := ac.DB.Save(&job).Error; err != nil {
+		logger.Error(fmt.Sprintf("<Admin id: %d> Attempt to Review <Job id: %s>: failed to save job review", userID, idStr))
 		c.JSON(500, gin.H{"error": "Failed to review job"})
 		return
 	}
-	c.JSON(200, gin.H{"message": "Job Reviewed"})
 
+	logger.Info(fmt.Sprintf("<Admin id: %d> Successfully Reviewed <Job id: %s>: Approved=%t", userID, idStr, *payload.Approved))
+	c.JSON(200, gin.H{"message": "Job Reviewed"})
 }
