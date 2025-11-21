@@ -43,11 +43,13 @@ func (jc *JobController) CreateJob(c *gin.Context) {
 	}
 
 	if err := jc.DB.First(&company).Error; err != nil {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Create Job: %s", userID, err.Error()))
 		c.JSON(http.StatusForbidden, gin.H{"error": "not a company account"})
 		return
 	}
 
 	if !company.Approved {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Create Job: company account is not approved", userID))
 		c.JSON(http.StatusForbidden, gin.H{"error": "company account is not approved"})
 		return
 	}
@@ -55,16 +57,19 @@ func (jc *JobController) CreateJob(c *gin.Context) {
 	var input CreateJobInput
 
 	if err := c.ShouldBindJSON(&input); err != nil {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Create Job: %s", userID, err.Error()))
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	if err := services.VerifyRecaptchaToken(input.ReCAPTCHAToken); err != nil {
 		if errors.Is(err, services.ErrRecaptchaFailed) {
+			logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Create Job: %s", userID, err.Error()))
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err,
 			})
 		} else {
+			logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Create Job: %s", userID, err.Error()))
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"error": err,
 			})
@@ -73,11 +78,13 @@ func (jc *JobController) CreateJob(c *gin.Context) {
 	}
 
 	if *input.MaxSalary < *input.MinSalary {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Create Job: max salary must be greater than or equal to min salary", userID))
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "max salary must be greater than or equal to min salary"})
 		return
 	}
 
 	if *input.MaxExperience < *input.MinExperience {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Create Job: max experience must be greater than or equal to min experience", userID))
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "max experience must be greater than or equal to min experience"})
 		return
 	}
@@ -97,10 +104,12 @@ func (jc *JobController) CreateJob(c *gin.Context) {
 	}
 
 	if err := jc.DB.Create(&job).Error; err != nil {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Create Job: %s", userID, err.Error()))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
+	logger.Info(fmt.Sprintf("<Company id: %d> Successfully created <Job id: %d>", userID, job.ID))
 	c.JSON(http.StatusOK, gin.H{"job": job})
 }
 
@@ -225,6 +234,7 @@ func (jc *JobController) UpdateJob(c *gin.Context) {
 	u, err := strconv.ParseUint(jobIDStr, 10, strconv.IntSize)
 
 	if err != nil {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Update <Job id: %s>: Invalid ID", userID, jobIDStr))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
@@ -247,6 +257,7 @@ func (jc *JobController) UpdateJob(c *gin.Context) {
 	var input UpdateJobInput
 
 	if err := c.ShouldBindJSON(&input); err != nil {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Update <Job id: %s>: %s", userID, jobIDStr, err.Error()))
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -256,11 +267,13 @@ func (jc *JobController) UpdateJob(c *gin.Context) {
 	}
 
 	if err := jc.DB.Preload("Company.User").First(&job).Error; err != nil {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Update <Job id: %d>: job not found", userID, jobID))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "job not found"})
 		return
 	}
 
 	if job.CompanyID != userID {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Update <Job id: %d>: Unauthorized", userID, jobID))
 		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized"})
 		return
 	}
@@ -296,10 +309,12 @@ func (jc *JobController) UpdateJob(c *gin.Context) {
 		job.Visibility = *input.Visibility
 	}
 	if job.MaxSalary < job.MinSalary {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Update <Job id: %d>: max salary must be greater than or equal to min salary", userID, jobID))
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "max salary must be greater than or equal to min salary"})
 		return
 	}
 	if job.MaxExperience < job.MinExperience {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Update <Job id: %d>: max experience must be greater than or equal to min experience", userID, jobID))
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "max experience must be greater than or equal to min experience"})
 		return
 	}
@@ -307,10 +322,12 @@ func (jc *JobController) UpdateJob(c *gin.Context) {
 	job.CheckNeeded = true
 
 	if err := jc.DB.Save(&job).Error; err != nil {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Update <Job id: %d>: %s", userID, jobID, err.Error()))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
+	logger.Info(fmt.Sprintf("<Company id: %d> Successfully updated <Job id: %d>", userID, jobID))
 	c.JSON(http.StatusOK, gin.H{"message": "successfully updated the job"})
 }
 
@@ -323,6 +340,7 @@ func (jc *JobController) DeleteJob(c *gin.Context) {
 	u, err := strconv.ParseUint(jobIDStr, 10, strconv.IntSize)
 
 	if err != nil {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Delete <Job id: %s>: Invalid ID", userID, jobIDStr))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
@@ -334,19 +352,23 @@ func (jc *JobController) DeleteJob(c *gin.Context) {
 	}
 
 	if err := jc.DB.Preload("Company.User").First(&job).Error; err != nil {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Delete <Job id: %d>: job not found", userID, jobID))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "job not found"})
 		return
 	}
 
 	if job.CompanyID != userID {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Delete <Job id: %d>: Unauthorized", userID, jobID))
 		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized"})
 		return
 	}
 
 	if err := jc.DB.Delete(&job).Error; err != nil {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Delete <Job id: %d>: %s", userID, jobID, err.Error()))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
+	logger.Info(fmt.Sprintf("<Company id: %d> Successfully deleted <Job id: %d>", userID, jobID))
 	c.JSON(http.StatusOK, gin.H{"message": "successfully deleted the job"})
 }

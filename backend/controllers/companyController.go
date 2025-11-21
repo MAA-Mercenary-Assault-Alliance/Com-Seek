@@ -4,6 +4,7 @@ import (
 	"com-seek/backend/helpers"
 	"com-seek/backend/models"
 	"errors"
+	"fmt"
 	"mime/multipart"
 	"net/http"
 	"strconv"
@@ -86,6 +87,7 @@ func (cc *CompanyController) UpdateCompanyProfile(c *gin.Context) {
 	var input CompanyProfileInput
 
 	if err := c.ShouldBind(&input); err != nil {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Update Company Profile: %s", userID, err.Error()))
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -95,6 +97,7 @@ func (cc *CompanyController) UpdateCompanyProfile(c *gin.Context) {
 	}
 
 	if err := cc.DB.First(&company).Error; err != nil {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Update Company Profile: %s", userID, err.Error()))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -135,6 +138,7 @@ func (cc *CompanyController) UpdateCompanyProfile(c *gin.Context) {
 	if input.ProfileImage != nil {
 		profile, err := cc.fileController.SaveFile(c, userID, input.ProfileImage, models.FileCategoryProfile)
 		if err != nil {
+			logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Update Company Profile: %s", userID, err.Error()))
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
@@ -149,6 +153,7 @@ func (cc *CompanyController) UpdateCompanyProfile(c *gin.Context) {
 	if input.CoverImage != nil {
 		cover, err := cc.fileController.SaveFile(c, userID, input.CoverImage, models.FileCategoryCover)
 		if err != nil {
+			logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Update Company Profile: %s", userID, err.Error()))
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
@@ -162,6 +167,7 @@ func (cc *CompanyController) UpdateCompanyProfile(c *gin.Context) {
 
 	res := cc.DB.Save(&company)
 	if res.Error != nil {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Update Company Profile: %s", userID, res.Error.Error()))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": res.Error.Error()})
 		return
 	}
@@ -174,6 +180,7 @@ func (cc *CompanyController) UpdateCompanyProfile(c *gin.Context) {
 		go helpers.DeleteFileRecord(cc.DB, oldCoverImageID)
 	}
 
+	logger.Info(fmt.Sprintf("<Company id: %d> Successfully updated the profile", userID))
 	c.JSON(http.StatusOK, gin.H{"message": "successfully updated the profile"})
 }
 

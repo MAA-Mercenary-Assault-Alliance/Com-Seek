@@ -3,6 +3,7 @@ package controllers
 import (
 	"com-seek/backend/helpers"
 	"com-seek/backend/models"
+	"fmt"
 	"mime/multipart"
 	"net/http"
 	"strconv"
@@ -151,6 +152,7 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 	var input StudentProfileInput
 
 	if err := c.ShouldBind(&input); err != nil {
+		logger.Error(fmt.Sprintf("<Student id: %d> Attempt to Update Student Profile: %s", userID, err.Error()))
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -160,6 +162,7 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 	}
 
 	if err := sc.DB.First(&student).Error; err != nil {
+		logger.Error(fmt.Sprintf("<Student id: %d> Attempt to Update Student Profile: %s", userID, err.Error()))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -216,6 +219,7 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 	if input.ProfileImage != nil {
 		profile, err := sc.fileController.SaveFile(c, userID, input.ProfileImage, models.FileCategoryProfile)
 		if err != nil {
+			logger.Error(fmt.Sprintf("<Student id: %d> Attempt to Update Student Profile: %s", userID, err.Error()))
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
@@ -230,6 +234,7 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 	if input.CoverImage != nil {
 		cover, err := sc.fileController.SaveFile(c, userID, input.CoverImage, models.FileCategoryCover)
 		if err != nil {
+			logger.Error(fmt.Sprintf("<Student id: %d> Attempt to Update Student Profile: %s", userID, err.Error()))
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
@@ -244,6 +249,7 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 	if input.Transcript != nil {
 		transcript, err := sc.fileController.SaveFile(c, userID, input.Transcript, models.FileCategoryTranscript)
 		if err != nil {
+			logger.Error(fmt.Sprintf("<Student id: %d> Attempt to Update Student Profile: %s", userID, err.Error()))
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
@@ -254,6 +260,7 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 	if input.CV != nil {
 		cover, err := sc.fileController.SaveFile(c, userID, input.CV, models.FileCategoryCV)
 		if err != nil {
+			logger.Error(fmt.Sprintf("<Student id: %d> Attempt to Update Student Profile: %s", userID, err.Error()))
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
@@ -267,6 +274,7 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 
 	res := sc.DB.Save(&student)
 	if res.Error != nil {
+		logger.Error(fmt.Sprintf("<Student id: %d> Attempt to Update Student Profile: %s", userID, res.Error.Error()))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": res.Error.Error()})
 		return
 	}
@@ -289,5 +297,6 @@ func (sc *StudentController) UpdateStudentProfile(c *gin.Context) {
 		go helpers.DeleteFileRecord(sc.DB, oldCVID)
 	}
 
+	logger.Info(fmt.Sprintf("<Student id: %d> Successfully updated the profile", userID))
 	c.JSON(http.StatusOK, gin.H{"message": "successfully updated the profile"})
 }

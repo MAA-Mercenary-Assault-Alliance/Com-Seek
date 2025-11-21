@@ -4,6 +4,7 @@ import (
 	"com-seek/backend/models"
 	"com-seek/backend/services"
 	"errors"
+	"fmt"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -38,11 +39,13 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 	}
 
 	if err := jc.DB.First(&student).Error; err != nil {
+		logger.Error(fmt.Sprintf("<Student id: %d> Attempt to Create Job Application: not a student account", userID))
 		c.JSON(http.StatusForbidden, gin.H{"error": "not a student account"})
 		return
 	}
 
 	if !student.Approved {
+		logger.Error(fmt.Sprintf("<Student id: %d> Attempt to Create Job Application: student account is not approved", userID))
 		c.JSON(http.StatusForbidden, gin.H{"error": "student account is not approved"})
 		return
 	}
@@ -50,16 +53,19 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 	var input CreateJobApplicationInput
 
 	if err := c.ShouldBind(&input); err != nil {
+		logger.Error(fmt.Sprintf("<Student id: %d> Attempt to Create Job Application for <Job id: %d>: %s", userID, input.JobID, err.Error()))
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	if err := services.VerifyRecaptchaToken(input.ReCAPTCHAToken); err != nil {
 		if errors.Is(err, services.ErrRecaptchaFailed) {
+			logger.Error(fmt.Sprintf("<Student id: %d> Attempt to Create Job Application for <Job id: %d>: reCAPTCHA verification failed", userID, input.JobID))
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err,
 			})
 		} else {
+			logger.Error(fmt.Sprintf("<Student id: %d> Attempt to Create Job Application for <Job id: %d>: reCAPTCHA verification error: %s", userID, input.JobID, err.Error()))
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"error": err,
 			})
@@ -72,11 +78,13 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 	}
 
 	if err := jc.DB.First(&job).Error; err != nil {
+		logger.Error(fmt.Sprintf("<Student id: %d> Attempt to Create Job Application for <Job id: %d>: no job found with the given id", userID, input.JobID))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "no job found with the given id"})
 		return
 	}
 
 	if !job.Approved {
+		logger.Error(fmt.Sprintf("<Student id: %d> Attempt to Create Job Application for <Job id: %d>: job is not approved", userID, input.JobID))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "job is not approved"})
 		return
 	}
@@ -88,6 +96,7 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 
 	file, err := input.File.Open()
 	if err != nil {
+		logger.Error(fmt.Sprintf("<Student id: %d> Attempt to Create Job Application for <Job id: %d>: failed to open attachment file", userID, input.JobID))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to open attachment file"})
 		return
 	}
@@ -96,6 +105,7 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 	buffer := make([]byte, 512)
 	_, err = file.Read(buffer)
 	if err != nil && err != io.EOF {
+		logger.Error(fmt.Sprintf("<Student id: %d> Attempt to Create Job Application for <Job id: %d>: failed to read file", userID, input.JobID))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to read file"})
 		return
 	}
@@ -103,6 +113,7 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 	mime := mimetype.Detect(buffer)
 
 	if mime.String() != "application/pdf" && mime.String() != "application/x-pdf" {
+		logger.Error(fmt.Sprintf("<Student id: %d> Attempt to Create Job Application for <Job id: %d>: invalid file type", userID, input.JobID))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "only PDF files are allowed"})
 		return
 	}
@@ -113,11 +124,13 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 	result := tx.Where("student_id = ? AND job_id = ?", student.UserID, job.ID).FirstOrCreate(&jobApplication)
 
 	if result.Error != nil {
+		logger.Error(fmt.Sprintf("<Student id: %d> Attempt to Create Job Application for <Job id: %d>: %s", userID, input.JobID, result.Error.Error()))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 		return
 	}
 
 	if result.RowsAffected == 0 {
+		logger.Error(fmt.Sprintf("<Student id: %d> Attempt to Create Job Application for <Job id: %d>: job application already exists", userID, input.JobID))
 		c.JSON(http.StatusConflict, gin.H{"error": "job application already exists"})
 		return
 	}
@@ -135,15 +148,18 @@ func (jc *JobApplicationController) CreateJobApplication(c *gin.Context) {
 		subject,
 		body,
 		input.File); err != nil {
+		logger.Error(fmt.Sprintf("<Student id: %d> Attempt to Create Job Application for <Job id: %d>: failed to send email to company: %s", userID, input.JobID, err.Error()))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	if err := tx.Commit().Error; err != nil {
+		logger.Error(fmt.Sprintf("<Student id: %d> Attempt to Create Job Application for <Job id: %d>: failed to submit the application: %s", userID, input.JobID, err.Error()))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to submit the application"})
 		return
 	}
 
+	logger.Info(fmt.Sprintf("<Student id: %d> Successfully Created Job Application for <Job id: %d>", userID, input.JobID))
 	c.JSON(http.StatusOK, gin.H{"message": "successfully applied"})
 }
 
@@ -156,6 +172,7 @@ func (jc *JobApplicationController) DeleteJobApplication(c *gin.Context) {
 	u, err := strconv.ParseUint(jobApplicationIDStr, 10, strconv.IntSize)
 
 	if err != nil {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Reject Job Application: invalid Job Application ID", userID))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
@@ -167,19 +184,23 @@ func (jc *JobApplicationController) DeleteJobApplication(c *gin.Context) {
 	}
 
 	if err := jc.DB.Preload("Job").First(&jobApplication).Error; err != nil {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Reject <Job Application id: %d> of <Student id: %d> in <Job id: %d>: job application not found", userID, jobApplicationID, jobApplication.StudentID, jobApplication.JobID))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "job application not found"})
 		return
 	}
 
 	if jobApplication.Job.CompanyID != userID {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Reject <Job Application id: %d> of <Student id: %d> in <Job id: %d>: unauthorized", userID, jobApplicationID, jobApplication.StudentID, jobApplication.JobID))
 		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized"})
 		return
 	}
 
 	if err := jc.DB.Delete(&jobApplication).Error; err != nil {
+		logger.Error(fmt.Sprintf("<Company id: %d> Attempt to Reject <Job Application id: %d> of <Student id: %d> in <Job id: %d>: %s", userID, jobApplicationID, jobApplication.StudentID, jobApplication.JobID, err.Error()))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
+	logger.Info(fmt.Sprintf("<Company id: %d> Successfully Rejected <Job Application id: %d> of <Student id: %d> in <Job id: %d>", userID, jobApplicationID, jobApplication.StudentID, jobApplication.JobID))
 	c.JSON(http.StatusOK, gin.H{"message": "successfully deleted the job application"})
 }
