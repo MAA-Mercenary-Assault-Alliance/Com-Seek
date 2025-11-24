@@ -10,6 +10,8 @@ import (
 	"gorm.io/gorm"
 )
 
+var logger = config.GetLogger()
+
 func NewRouter(db *gorm.DB, fileConfig config.FileConfig) *gin.Engine {
 	router := gin.Default()
 
