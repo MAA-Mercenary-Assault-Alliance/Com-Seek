@@ -107,12 +107,22 @@ jobs:
       # Wait for services to be ready
       - name: Wait for backend
         run: |
-          timeout 60 bash -c 'until curl -f http://localhost:8000; do echo "Waiting for backend..."; sleep 3; done'
-      
+          timeout 60 bash -c '
+            until nc -z localhost 8000; do 
+              echo "Waiting for backend..."; 
+              sleep 3; 
+            done
+          '
+
       - name: Wait for frontend
         run: |
-          timeout 60 bash -c 'until curl -f http://localhost:5173; do echo "Waiting for frontend..."; sleep 3; done'
-      
+          timeout 60 bash -c '
+            until nc -z localhost 5173; do
+              echo "Waiting for frontend...";
+              sleep 3;
+            done
+          '
+
       # Run ZAP Full Scan
       - name: ZAP Full Scan
         uses: zaproxy/action-full-scan@v0.13.0
