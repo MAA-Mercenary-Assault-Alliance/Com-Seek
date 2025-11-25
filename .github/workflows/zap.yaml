@@ -7,16 +7,115 @@ on:
     branches: [ main ]
 
 jobs:
-  zap-full-scan:
+  zap-scan:
     runs-on: ubuntu-latest
-    name: Run OWASP ZAP Full Scan
+    
+    services:
+      mysql:
+        image: mysql:9.0.0
+        env:
+          MYSQL_ROOT_PASSWORD: mysqlrootpass
+          MYSQL_DATABASE: mysqldb
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+      
+      mailhog:
+        image: mailhog/mailhog
+        ports:
+          - 1025:1025
+          - 8025:8025
+    
     steps:
-      # Checkout the repository code
       - name: Checkout code
         uses: actions/checkout@v4
-
-      # Run the OWASP ZAP full scan action against the target site
-      - name: ZAP Scan
+      
+      # Setup Go for backend
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+      
+      # Setup Node.js for frontend
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      
+      # Backend setup
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: go mod download
+      
+      - name: Create backend .env file
+        working-directory: ./backend
+        run: |
+          cat > .env << EOF
+          SERVER_ADDRESS=:8000
+          DB_ROOT_PASSWORD=mysqlrootpass
+          DB_NAME=mysqldb
+          DB_HOST=127.0.0.1
+          DB_PORT=3306
+          JWT_SECRET=your_jwt_secret_key
+          FRONTEND_ORIGIN=http://localhost:5173
+          EMAIL=noreply@test.local
+          EMAIL_PASSWORD=test
+          SMTP_PROVIDER=smtp.gmail.com
+          SMTP_PROVIDER_PORT=587
+          FILE_SAVE_PATH=./uploaded_files
+          MAX_FILE_SIZE=10485760
+          MAX_PROFILE_HEIGHT=1600
+          MAX_PROFILE_WIDTH=1600
+          MAX_COVER_HEIGHT=3000
+          MAX_COVER_WIDTH=3000
+          RECAPTCHA_SECRET_KEY=${{ secrets.RECAPTCHA_SECRET_KEY }}
+          EOF
+      
+      - name: Start backend server
+        working-directory: ./backend
+        run: |
+          go run main.go &
+          echo $! > backend.pid
+        env:
+          CI: true
+      
+      # Frontend setup
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm install
+      
+      - name: Create frontend .env file
+        working-directory: ./frontend
+        run: |
+          cat > .env << EOF
+          VITE_API_URL=http://localhost:8000
+          VITE_FRONTEND_ORIGIN=http://localhost:5173
+          VITE_RECAPTCHA_SITE_KEY=${{ secrets.RECAPTCHA_SITE_KEY }}
+          EOF
+      
+      - name: Build and start frontend
+        working-directory: ./frontend
+        run: |
+          npm run build
+          npm run preview -- --port 5173 &
+          echo $! > frontend.pid
+      
+      # Wait for services to be ready
+      - name: Wait for backend
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:8000; do echo "Waiting for backend..."; sleep 3; done'
+      
+      - name: Wait for frontend
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:5173; do echo "Waiting for frontend..."; sleep 3; done'
+      
+      # Run ZAP Full Scan
+      - name: ZAP Full Scan
         uses: zaproxy/action-full-scan@v0.13.0
         with:
-          target: 'https://www.zaproxy.org/'
+          target: 'http://localhost:5173/'
+          cmd_options: '-a'
