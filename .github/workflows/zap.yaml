@@ -1,0 +1,22 @@
+name: OWASP ZAP Full Scan
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  zap-full-scan:
+    runs-on: ubuntu-latest
+    name: Run OWASP ZAP Full Scan
+    steps:
+      # Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Run the OWASP ZAP full scan action against the target site
+      - name: ZAP Scan
+        uses: zaproxy/action-full-scan@v0.13.0
+        with:
+          target: 'https://www.zaproxy.org/'
