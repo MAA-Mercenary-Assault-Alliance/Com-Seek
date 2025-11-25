@@ -1,14 +1,15 @@
-name: Build
+name: sonarqube-analysis
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 
 jobs:
   build:
-    name: Build and analyze
+    name: Build and SonarQube analyze
     runs-on: ubuntu-latest
     
     steps:
