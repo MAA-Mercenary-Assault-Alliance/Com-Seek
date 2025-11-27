@@ -1,5 +1,5 @@
   <template>
-  <div class="py-32">
+  <div class="py-32 relative">
   <div class="max-w-md mx-auto p-6 bg-base-100 shadow-xl rounded-xl">
     <h2 class="text-2xl font-bold text-center mb-6">Login</h2>
 
@@ -60,6 +60,24 @@
 </div>
 
   </div>
+  <!-- Inactivity timeout modal -->
+  <div
+    v-if="showTimeoutModal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+  >
+    <div class="bg-white rounded-xl shadow-2xl p-6 max-w-sm w-full space-y-4 text-center">
+      <h3 class="text-xl font-semibold text-[#0A3B1F]">Login timed out</h3>
+      <p class="text-sm text-[#0A3B1F]/80">
+        You were inactive for 2 minutes on the login page. You&rsquo;ll be sent back to the landing page.
+      </p>
+      <button
+        class="btn bg-[#56A45C] text-white hover:bg-[#44B15B] w-full"
+        @click="redirectToLanding"
+      >
+        Go to landing page now
+      </button>
+    </div>
+  </div>
   </div>
 </template>
 
@@ -86,6 +104,11 @@ export default {
       },
       loading: false,
       showPassword: false,
+      inactivityTimer: null,
+      redirectTimer: null,
+      activityEvents: null,
+      timeoutDelayMs: 2 * 60 * 1000, // 2 minutes
+      showTimeoutModal: false,
     };
   },
   methods: {
@@ -152,8 +175,61 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+    handleUserActivity() {
+      if (this.showTimeoutModal) return;
+      this.resetInactivityTimer();
+    },
+    startInactivityTimer() {
+      this.clearInactivityTimer();
+      this.inactivityTimer = setTimeout(this.handleTimeout, this.timeoutDelayMs);
+    },
+    resetInactivityTimer() {
+      this.startInactivityTimer();
+    },
+    clearInactivityTimer() {
+      if (this.inactivityTimer) {
+        clearTimeout(this.inactivityTimer);
+        this.inactivityTimer = null;
+      }
+    },
+    handleTimeout() {
+      this.showTimeoutModal = true;
+      this.redirectTimer = setTimeout(() => {
+        this.redirectToLanding();
+      }, 2000);
+    },
+    redirectToLanding() {
+      if (this.redirectTimer) {
+        clearTimeout(this.redirectTimer);
+        this.redirectTimer = null;
+      }
+      this.$router.push("/landing-page");
+    },
+    attachActivityListeners() {
+      const events = ["mousemove", "keydown", "click", "touchstart"];
+      this.activityEvents = events;
+      events.forEach((evt) => window.addEventListener(evt, this.handleUserActivity));
+    },
+    removeActivityListeners() {
+      if (!this.activityEvents) return;
+      this.activityEvents.forEach((evt) =>
+        window.removeEventListener(evt, this.handleUserActivity)
+      );
+      this.activityEvents = null;
+    },
+  },
+  mounted() {
+    this.attachActivityListeners();
+    this.startInactivityTimer();
+  },
+  beforeUnmount() {
+    this.removeActivityListeners();
+    this.clearInactivityTimer();
+    if (this.redirectTimer) {
+      clearTimeout(this.redirectTimer);
+      this.redirectTimer = null;
     }
   }
 };
 </script>
-

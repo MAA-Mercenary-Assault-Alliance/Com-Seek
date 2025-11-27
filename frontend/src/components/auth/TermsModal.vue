@@ -165,7 +165,9 @@
             <br />Address: <em>Bagkhen, Bangkok, Thailand</em>
           </p>
 
-          <h3 class="text-base font-semibold pt-2">Privacy Policy</h3>
+          <br>
+
+          <h3 class="text-xl font-semibold pt-2">Privacy Policy</h3>
           <p class="text-xs text-gray-500">Privacy Policy Last Updated: November 22, 2025</p>
           <p>
             <strong>Com-Seek</strong> is an online job platform designed for Kasetsart University. This privacy policy
@@ -266,7 +268,7 @@
             :disabled="!scrolledToBottom"
           />
           <label for="agree" class="text-sm">
-            I have read and agree to the Terms of Service & Privacy Policy.
+            I agree to the Terms of Service & Privacy Policy.
             <br>
             <span v-if="!scrolledToBottom" class="text-gray-500">
               (scroll to the end to enable)
