@@ -17,6 +17,7 @@ func NewRouter(db *gorm.DB, fileConfig config.FileConfig) *gin.Engine {
 
 	corsConfig := middlewares.SetupCors()
 	router.Use(cors.New(corsConfig))
+	router.Use(middlewares.SecurityHeaders())
 
 	fileController := NewFileController(db, fileConfig)
 	authController := NewAuthController(db, fileController)
