@@ -1,21 +1,14 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import Router from './router'
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import axios from "axios";
+import '@fortawesome/fontawesome-free/css/all.min.css'
 
-axios.interceptors.response.use(
-  res => res,
-  err => {
-    if (err.response && err.response.status === 401) {
-      const msg = err.response.data?.error;
-      if (msg === 'token expired') {
-        localStorage.removeItem('role');
-        window.location.href = '/login';
-      }
-    }
-    return Promise.reject(err);
-  }
-);
+import VueTelInput from 'vue-tel-input'
+import 'vue-tel-input/vue-tel-input.css'   // <-- FIXED PATH
 
-createApp(App).use(Router).mount('#app')
+const app = createApp(App)
+
+app.use(VueTelInput)
+app.use(Router)
+
+app.mount('#app')

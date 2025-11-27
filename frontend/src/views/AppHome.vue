@@ -13,6 +13,8 @@ const jobType = ref('')
 const location = ref('')
 const isLoading = ref(true)
 const selectedJob = ref(null) // need to pass this value to JobBoard
+const verified = ref(false)
+const role = ref(localStorage.getItem("role"));
 
 watch(keyword, (newVal) => {
   console.log('keyword changed:', newVal)
@@ -49,8 +51,23 @@ async function findJobs() {
   }
 }
 
+async function getMyStatus() {
+  try {
+    if (role.value != "student") {
+      verified.value = true
+      return
+    }
+    const res = await api.get("/student")
+    console.log("User status:", res.data.profile.approved)
+    verified.value = res.data.profile.approved
+  } catch (error) {
+    console.error("Error fetching user status:", error)
+  }
+}
+
 onMounted(() => {
   findJobs();
+  getMyStatus();
 });
 
 console.log("SelectedJob: ", selectedJob)
@@ -58,8 +75,11 @@ console.log("SelectedJob: ", selectedJob)
 </script>
 
 <template>
-  <div class="flex flex-col w-full">
-    <div class="flex bg-title w-full h-40">
+  <div class="flex flex-grow flex-col w-full">
+    <div
+        class="flex bg-title w-full h-40"
+        style="background-image: url('/images/banner.png');"
+    >
       <div class="flex px-42 w-full flex-col justify-center items-center space-y-7 text-xl">
         <div class="text-white min-w-300 w-1/2">
           Search for your jobs now
@@ -70,10 +90,10 @@ console.log("SelectedJob: ", selectedJob)
           </label>
           <div class="relative w-2/7">
             <img src="../assets/case.svg" class="absolute px-2 w-12 left-3 top-2 z-10" alt="case"/>
-            <select v-model="jobType" class="select rounded-2xl select-lg pl-18 z-0">
+            <select v-model="jobType" class="select rounded-2xl select-lg pl-18 z-0 w-full">
               <option disabled value="">Job Type</option>
               <option value="">Any</option>
-              <option>Software & Application Development</option>
+              <option value="Software & Application Development">Software & Application Development&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
               <option>Data & AI</option>
               <option>Cloud & Infrastructure</option>
               <option>Cybersecurity</option>
@@ -96,19 +116,25 @@ console.log("SelectedJob: ", selectedJob)
 
     </div>
 
-    <div v-if="jobs.length==0" class="flex w-full justify-center items-center h-60 text-2xl text-gray-500">
-      Jobs not Found
+    <div v-if="isLoading" class="flex flex-col flex-grow -translate-y-10 w-full justify-center items-center h-60 text-2xl text-gray-500 space-y-5">
+      <img src="../../src/assets/bubble-load.svg" class="w-40 mb-10" alt="loading-bubble"/>
+      <span>Loading Jobs...</span>
     </div>
 
-    <div v-if="!isLoading && jobs.length>0" class="flex w-full flex-row px-42 py-10 bg-[#f2f6fc] space-x-20 scroll">
+    <div v-else-if="jobs.length==0" class="flex flex-col flex-grow -translate-y-10 w-full justify-center items-center h-60 text-2xl text-gray-500 space-y-5">
+      <img src="../../src/assets/leaf2.svg" class="w-50" alt="leaf"/>
+      <span>Jobs not Found</span>
+    </div>
 
-      <div id="job-box-column" class="flex w-1/3 flex-col space-y-10 mr-10">
+    <div v-else-if="!isLoading && jobs.length>0" class="flex w-full flex-row px-42 py-10 bg-background space-x-20 scroll">
+
+      <div id="job-box-column" class="flex w-1/3 flex-col space-y-5 mr-10">
         <JobBox v-for="job in jobs" :key=job.ID :jobInfo=job :h-r="false" @click="selectedJob=job"/>
       </div>
 
       <div class="relative w-2/3">
         <div class="flex sticky top-10">
-        <JobFull v-if="selectedJob" :job-info="selectedJob"/>
+        <JobFull v-if="selectedJob" :job-info="selectedJob" :h-r="false" :verified="verified"/>
         <JobFullEmpty v-if="!selectedJob"/>
         </div>
       </div>

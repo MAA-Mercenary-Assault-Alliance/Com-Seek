@@ -29,7 +29,7 @@
           <h4 class="font-semibold text-base">1. Introduction</h4>
           <p>
             These Terms of Service (“<strong>Terms</strong>”) govern your access to and use of the
-            website, application, and related services provided by <strong>[Your Organization]</strong>
+            website, application, and related services provided by <strong>Com-Seek</strong>
             (“<strong>we</strong>,” “<strong>us</strong>,” or “<strong>our</strong>”). By creating an
             account, accessing, or using our services (collectively, the “<strong>Services</strong>”),
             you agree to be bound by these Terms. If you do not agree, do not use the Services.
@@ -46,7 +46,7 @@
           <ul class="list-disc pl-6 space-y-1">
             <li><strong>Registration:</strong> Provide accurate, current, and complete information and keep it updated.</li>
             <li><strong>Credentials:</strong> Keep your login credentials confidential; you’re responsible for all activity under your account.</li>
-            <li><strong>Notification:</strong> Notify us immediately at <em>[support@email.com]</em> if you suspect unauthorized access.</li>
+            <li><strong>Notification:</strong> Notify us immediately at <em>support@email.com</em> if you suspect unauthorized access.</li>
             <li><strong>One Account:</strong> Unless we permit otherwise, you may not maintain more than one account.</li>
           </ul>
 
@@ -80,7 +80,7 @@
 
           <h4 class="font-semibold text-base">7. Intellectual Property</h4>
           <p>
-            The Services (excluding User Content) are owned by or licensed to <strong>[Your Organization]</strong> and
+            The Services (excluding User Content) are owned by or licensed to <strong>Com-Seek</strong> and
             protected by intellectual property laws. Except as expressly permitted, you may not reproduce, modify,
             distribute, or create derivative works without prior written consent.
           </p>
@@ -106,7 +106,7 @@
 
           <h4 class="font-semibold text-base">11. DMCA / IP Complaints</h4>
           <p>
-            If you believe content on the Services infringes your copyright, email <em>[legal@email.com]</em> with:
+            If you believe content on the Services infringes your copyright, email <em>legal@email.com</em> with:
             (a) identification of the copyrighted work; (b) identification of the allegedly infringing material;
             (c) your contact information; (d) a good-faith statement; (e) a statement under penalty of perjury; and
             (f) your physical or electronic signature.
@@ -128,7 +128,7 @@
 
           <h4 class="font-semibold text-base">14. Limitation of Liability</h4>
           <p class="italic">
-            TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT SHALL <strong>[YOUR ORGANIZATION]</strong> OR ITS
+            TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT SHALL <strong>Kasetsart University</strong> OR ITS
             AFFILIATES, OFFICERS, EMPLOYEES, OR AGENTS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL,
             EXEMPLARY, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS, REVENUE, DATA, OR GOODWILL, ARISING OUT OF OR
             RELATED TO YOUR USE OF THE SERVICES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. OUR TOTAL
@@ -138,7 +138,7 @@
 
           <h4 class="font-semibold text-base">15. Indemnification</h4>
           <p>
-            You agree to defend, indemnify, and hold harmless <strong>[Your Organization]</strong> and its affiliates,
+            You agree to defend, indemnify, and hold harmless <strong>Com-Seek</strong> and its affiliates,
             officers, employees, and agents from and against any claims, liabilities, damages, losses, and expenses
             (including reasonable attorneys’ fees) arising out of or related to your User Content, your use of the
             Services, or your violation of these Terms or any applicable law.
@@ -162,8 +162,8 @@
           <h4 class="font-semibold text-base">18. Contact</h4>
           <p>
             If you have questions about these Terms, please contact us at:
-            <br />Email: <em>[support@email.com]</em>
-            <br />Address: <em>[Company Address, Bangkok, Thailand]</em>
+            <br />Email: <em>support@email.com</em>
+            <br />Address: <em>Bagkhen, Bangkok, Thailand</em>
           </p>
         </div>
 
@@ -187,7 +187,7 @@
           <div class="ml-auto flex gap-2">
             <button class="btn btn-ghost" @click="onClose">Cancel</button>
             <button
-              class="btn btn-primary"
+              class="btn bg-[#56A45C] text-white hover:bg-[#44B15B]"
               :disabled="!canAccept"
               @click="onAccept"
             >

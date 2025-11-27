@@ -3,7 +3,7 @@ const emit = defineEmits<{ (e: 'goto', id: string): void }>()
 </script>
 
 <template>
-  <section class="relative overflow-hidden bg-gradient-to-b from-[#F2F6FC] via-white to-[#F2F6FC]">
+  <section class="relative overflow-hidden bg-gradient-to-b from-background via-white to-background">
     <!-- Decorative gradient overlay -->
     <div class="absolute inset-0 -z-10 bg-gradient-to-br from-[#56A45C]/10 via-[#44B15B]/10 to-transparent"></div>
 
@@ -79,7 +79,7 @@ const emit = defineEmits<{ (e: 'goto', id: string): void }>()
         <div
           class="mockup-window border border-[#56A45C]/20 bg-white shadow-xl rounded-xl overflow-hidden"
         >
-          <div class="bg-[#F2F6FC] px-8 py-10">
+          <div class="bg-background px-8 py-10">
             <div class="grid md:grid-cols-3 gap-4">
               <div
                 v-for="(card, i) in [

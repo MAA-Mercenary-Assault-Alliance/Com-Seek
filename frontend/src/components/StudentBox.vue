@@ -1,17 +1,21 @@
 <script setup lang="ts">
-import {StudentTemplate} from './temp_template'
-import {ref} from "vue";
+import {StudentTemplate} from '../services/model_template'
+import {onMounted, ref} from "vue";
 import { api } from "../../api/client.js";
 import ConfirmBox from "./ComfirmBox.vue";
-import DateConverter from "./dateConverter";
+import DateConverter from "../services/dateConverter";
 import { useRouter } from 'vue-router';
+import {getFileUrl} from "@/services/fileUpload";
 const props = defineProps<{
   studentInfo: StudentTemplate,
 }>();
 
 const confirmBox = ref(null);
 const emit = defineEmits(["refresh"]);
+const date = ref()
 const router = useRouter();
+const DEFAULT_AVATAR = "/images/avatar.png";
+const student_logo_url = ref("");
 
 async function rejectStudent() {
   try {
@@ -37,17 +41,26 @@ async function acceptStudent() {
   }
 }
 
-function gotoStudent(studentID: number) {
-  router.push({ name: 'StudentProfile', params: {id: studentID}})
+function gotoStudent(newTab: boolean = false) {
+  const route = { name: 'StudentProfilePublic', params: {id: props.studentInfo.UserID}}
+  if (newTab) {
+    const url = router.resolve(route).href
+    window.open(url, '_blank')
+    return
+  }
+  router.push(route)
 }
 
-const date = DateConverter(props.studentInfo.User.CreatedAt);
+onMounted(() => {
+  date.value = DateConverter(props.studentInfo.CreatedAt);
+  student_logo_url.value = getFileUrl(props.studentInfo.profile_image_id, DEFAULT_AVATAR)
+})
 </script>
 
 <template>
-  <div id="student-box" class="flex relative rounded-2xl flex-row p-4 space-x-7 box-shadow bg-white" @click="gotoStudent(studentInfo.UserID)">
+  <div id="student-box" class="flex relative rounded-2xl flex-row p-4 space-x-7 box-shadow bg-white" @click="gotoStudent(false)">
     <div class="items-center flex-shrink-0">
-      <img src="/nagi.png" class="w-30 h-30 rounded-full ml-2" alt="company-logo"/>
+      <img :src=student_logo_url class="w-30 h-30 rounded-full ml-2" alt="company-logo"/>
     </div>
     <div id="student-box-content" class="flex mr-2 flex-col space-y-1.5 max-w-1/3">
       <span class="text-2xl">{{ studentInfo.FirstName }} {{ studentInfo.LastName }}</span>
@@ -56,9 +69,9 @@ const date = DateConverter(props.studentInfo.User.CreatedAt);
 
     <div class="flex flex-col ml-auto items-end space-y-3 mr-4">
       <span class="text-gray-500">{{ date }}</span>
-      <img src="../assets/newTab.svg" class="w-5 h-5" alt="new-tab-icon"/>
+      <img src="../assets/newTab.svg" class="w-5 h-5 cursor-pointer" alt="new-tab-icon" @click.stop="gotoStudent(true)"/>
       <div class="flex flex-row mt-auto space-x-6">
-        <button class="btn shadow-none bg-[#1F7AB9] border-0 h-8 rounded-4xl text-white text-md font-extralight px-7" @click="acceptStudent">Accept</button>
+        <button class="btn shadow-none bg-[#1F7AB9] border-0 h-8 rounded-4xl text-white text-md font-extralight px-7" @click.stop="acceptStudent">Accept</button>
         <button class="btn shadow-none bg-[#9A0000] border-0 h-8 rounded-4xl text-white text-md font-extralight px-7" @click="confirmBox.open()">Reject</button>
       </div>
     </div>
