@@ -2,17 +2,17 @@ name: OWASP ZAP Full Scan
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 permissions:
   contents: read
-  
+
 jobs:
   zap-scan:
     runs-on: ubuntu-latest
-    
+
     services:
       mysql:
         image: mysql:9.0.0
@@ -26,34 +26,34 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
-      
+
       mailhog:
         image: mailhog/mailhog
         ports:
           - 1025:1025
           - 8025:8025
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       # Setup Go for backend
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.23'
-      
-      # # Setup Node.js for frontend
-      # - name: Setup Node.js
-      #   uses: actions/setup-node@v4
-      #   with:
-      #     node-version: '22'
-      
+          go-version: "1.23"
+
+      # Setup Node.js for frontend
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
       # Backend setup
       - name: Install backend dependencies
         working-directory: ./backend
         run: go mod download
-      
+
       - name: Create backend .env file
         working-directory: ./backend
         run: |
@@ -77,7 +77,7 @@ jobs:
           MAX_COVER_WIDTH=3000
           RECAPTCHA_SECRET_KEY=${{ secrets.RECAPTCHA_SECRET_KEY }}
           EOF
-      
+
       - name: Start backend server
         working-directory: ./backend
         run: |
@@ -85,50 +85,51 @@ jobs:
           echo $! > backend.pid
         env:
           CI: true
-      
-      # # Frontend setup
-      # - name: Install frontend dependencies
-      #   working-directory: ./frontend
-      #   run: npm install
-      
-      # - name: Create frontend .env file
-      #   working-directory: ./frontend
-      #   run: |
-      #     cat > .env << EOF
-      #     VITE_API_URL=http://localhost:8000
-      #     VITE_FRONTEND_ORIGIN=http://localhost:5173
-      #     VITE_RECAPTCHA_SITE_KEY=${{ secrets.RECAPTCHA_SITE_KEY }}
-      #     EOF
-      
-      # - name: Build and start frontend
-      #   working-directory: ./frontend
-      #   run: |
-      #     npm run build
-      #     npm run preview -- --port 5173 &
-      #     echo $! > frontend.pid
-      
+
+      # Frontend setup
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Create frontend .env file
+        working-directory: ./frontend
+        run: |
+          cat > .env << EOF
+          VITE_API_URL=http://localhost:8000
+          VITE_FRONTEND_ORIGIN=http://localhost:5173
+          VITE_RECAPTCHA_SITE_KEY=${{ secrets.RECAPTCHA_SITE_KEY }}
+          EOF
+
+      - name: Build and start frontend
+        working-directory: ./frontend
+        run: |
+          npm run build
+          npm run preview -- --port 5173 &
+          echo $! > frontend.pid
+
       # Wait for services to be ready
       - name: Wait for backend
         run: |
           timeout 60 bash -c '
-            until nc -z localhost 8000; do 
-              echo "Waiting for backend..."; 
-              sleep 3; 
+            until nc -z localhost 8000; do
+              echo "Waiting for backend...";
+              sleep 3;
             done
           '
 
-      # - name: Wait for frontend
-      #   run: |
-      #     timeout 60 bash -c '
-      #       until nc -z localhost 5173; do
-      #         echo "Waiting for frontend...";
-      #         sleep 3;
-      #       done
-      #     '
+      - name: Wait for frontend
+        run: |
+          timeout 60 bash -c '
+            until nc -z localhost 5173; do
+              echo "Waiting for frontend...";
+              sleep 3;
+            done
+          '
 
       # Run ZAP Full Scan
       - name: ZAP Full Scan
         uses: zaproxy/action-full-scan@v0.13.0
         with:
-          target: 'http://localhost:8000/'
+          target: "http://localhost:5173/"
+          cmd_options: "-a"
           allow_issue_writing: false
