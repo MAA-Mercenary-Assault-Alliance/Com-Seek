@@ -265,10 +265,8 @@ func (ac *AuthController) Login(c *gin.Context) {
 	maxAge := int((time.Minute * 30) / time.Second)
 
 	sameSite := http.SameSiteLaxMode
-	secure := false
 	if os.Getenv("ENV") != "dev" {
 		sameSite = http.SameSiteNoneMode
-		secure = true
 	}
 
 	c.SetSameSite(sameSite)
@@ -278,7 +276,7 @@ func (ac *AuthController) Login(c *gin.Context) {
 		maxAge,
 		"/",
 		"",
-		secure,
+		true,
 		true,
 	)
 
