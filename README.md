@@ -47,6 +47,12 @@ A web application for Computer Engineering students and alumni at Kasetsart Univ
 
     Or use your local MySQL database
 
+5. Create an admin account
+
+    ```
+    go run .\scripts\createAdmin.go <email>
+    ```
+
 ### Front end
 
 1. Navigate to the front end directory
