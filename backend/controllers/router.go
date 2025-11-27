@@ -17,6 +17,7 @@ func NewRouter(db *gorm.DB, fileConfig config.FileConfig) *gin.Engine {
 
 	corsConfig := middlewares.SetupCors()
 	router.Use(cors.New(corsConfig))
+	router.Use(middlewares.SecurityHeaders())
 
 	fileController := NewFileController(db, fileConfig)
 	authController := NewAuthController(db, fileController)
@@ -63,6 +64,13 @@ func NewRouter(db *gorm.DB, fileConfig config.FileConfig) *gin.Engine {
 	admin.GET("/companies", middlewares.RateLimiterFor(http.MethodGet), adminController.GetPendingCompanies)
 	admin.GET("/students", middlewares.RateLimiterFor(http.MethodGet), adminController.GetPendingStudents)
 	admin.GET("/jobs", middlewares.RateLimiterFor(http.MethodGet), adminController.GetPendingJobs)
+
+	router.Static("/public", "./public")
+
+	// Serve index.html at root
+	router.GET("/", func(c *gin.Context) {
+		c.File("./public/index.html")
+	})
 
 	return router
 }

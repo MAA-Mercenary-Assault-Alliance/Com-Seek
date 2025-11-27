@@ -48,7 +48,7 @@ import { api } from "../../api/client.js";
 import ProfileHeader from "../components/student/ProfileHeader.vue";
 import ProfileDetails from "../components/student/ProfileDetails.vue";
 import EditProfileModal from "../components/student/EditProfileModal.vue";
-import {getFileUrl} from "@/services/fileUpload.js";
+import { getFileUrl } from "@/services/fileUpload.js";
 
 const DEFAULT_AVATAR = "/images/avatar.png";
 const DEFAULT_COVER = "/images/student_cover.png";
@@ -190,7 +190,20 @@ export default {
 
         this.showEdit = false;
       } catch (err) {
-        console.error("Error updating student profile:", err);
+        let message = "An unknown error occurred while updating the profile.";
+
+        if (err && err.response && err.response.data) {
+          const data = err.response.data;
+          if (typeof data === "string") {
+            message = data;
+          } else if (data.message) {
+            message = data.message;
+          } else {
+            message = JSON.stringify(data.error);
+          }
+        }
+
+        window.alert(`Error updating profile: ${message}`);
       }
     },
     onCoverError(e) {
