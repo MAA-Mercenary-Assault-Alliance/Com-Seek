@@ -28,6 +28,12 @@ func main() {
 		log.Fatalf("Error loading file configuration: %v", err)
 	}
 
+	if os.Getenv("APP_ENV") == "production" {
+		gin.SetMode(gin.ReleaseMode)
+	} else {
+		gin.SetMode(gin.DebugMode)
+	}
+
 	os.Mkdir("logs", 0755)
 	// Logging to a file.
 	os.Mkdir("logs/requests", 0755)

@@ -3,7 +3,6 @@ package middlewares
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,22 +15,21 @@ func SecurityHeaders() gin.HandlerFunc {
 		c.Writer.Header().Set("X-Content-Type-Options", "nosniff")
 		c.Writer.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
 
-		csp := "default-src 'none'; frame-ancestors 'none';"
-
+		baseConnect := "'self'"
 		if frontend != "" {
-			csp = fmt.Sprintf("default-src 'none'; connect-src 'self' %s; frame-ancestors 'none';", frontend)
+			baseConnect = fmt.Sprintf("'self' %s", frontend)
 		}
+
+		csp := fmt.Sprintf("default-src 'self'; "+
+			"script-src 'self' https://www.google.com https://www.gstatic.com; "+
+			"style-src 'self' https://fonts.googleapis.com; "+
+			"font-src 'self' https://fonts.gstatic.com; "+
+			"img-src 'self' data:; "+
+			"connect-src %s; "+
+			"frame-ancestors 'none';", baseConnect)
 
 		c.Writer.Header().Set("Content-Security-Policy", csp)
 
 		c.Next()
-
-		contentType := c.Writer.Header().Get("Content-Type")
-
-		if strings.Contains(contentType, "image/") || strings.Contains(contentType, "application/pdf") {
-			fileCsp := "default-src 'none'; img-src 'self' data:; object-src 'self';"
-
-			c.Writer.Header().Set("Content-Security-Policy", fileCsp)
-		}
 	}
 }
